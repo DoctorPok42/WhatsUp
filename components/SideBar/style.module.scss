@@ -1,0 +1,113 @@
+.SideBar_container {
+  width: 5em;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+
+  .content {
+    width: 100%;
+    height: 95%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+    .logo {
+      width: 100%;
+      height: 12%;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+
+      img {
+        width: 3em;
+        height: 3em;
+        border-radius: 12px;
+      }
+    }
+
+    .list {
+      width: 100%;
+      height: 65%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .button {
+        width: 100%;
+        height: 3em;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 12px;
+        gap: 0.5em;
+        cursor: pointer;
+        color: #8393a3;
+
+        .icon {
+          transform: scale(1.2);
+          transition: var(--transition);
+        }
+
+        a {
+          text-decoration: none;
+          color: var(--white);
+          font-size: 0.7em;
+        }
+
+        &:hover {
+          .icon {
+            filter: brightness(0.8);
+          }
+        }
+      }
+    }
+
+    .footer {
+      width: 100%;
+      height: 22%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 2em;
+
+      .profile {
+        width: 3em;
+        height: 3em;
+        border-radius: 50%;
+        background-color: var(--white);
+        cursor: pointer;
+
+        img {
+          width: 100%;
+          height: 100%;
+          transition: var(--transition);
+        }
+      }
+
+      .profile:hover {
+        img {
+          transform: scale(1.05);
+        }
+      }
+
+      .params {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .icon {
+          width: 100%;
+          height: 100%;
+          transition: var(--transition);
+        }
+
+        .icon:hover {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+}
