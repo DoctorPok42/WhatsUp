@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+server/node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
@@ -15,6 +16,7 @@
 
 # production
 /build
+server/build
 
 # misc
 .DS_Store
@@ -34,3 +36,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+server/.env
