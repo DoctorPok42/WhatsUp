@@ -28,6 +28,8 @@ io.on("connection", (socket) => {
 
     for (const [eventName, event] of Object.entries(events)) {
         socket.on(eventName, async (data) => {
+            if (!data || Object.keys(data).length === 0) return socket.emit(eventName, { status: "error", message: "Data not found." });
+
             try {
                 const response = await event(data);
                 socket.emit(eventName, response);
@@ -36,7 +38,11 @@ io.on("connection", (socket) => {
                 socket.emit(eventName, { status: "error", message: "An error occurred." });
             }
         });
-    }
+      }
+
+    socket.on("disconnect", () => {
+        console.log(color("text", `🔌 Client ${color("variable", socket.id)} has been ${color("variable", "disconnected.")}`));
+    });
 });
 
 server.listen(process.env.PORT, () => {

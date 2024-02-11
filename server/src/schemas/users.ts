@@ -7,7 +7,7 @@ const userSchema = new Schema<User>({
   username: { type: String },
   options: {
     darkMode: { type: Boolean, default: false },
-    online: { type: Boolean, default: false },
+    online: { type: Boolean, default: true },
     lastSeen: { type: Date, default: Date.now }
   },
   joinedAt: { type: Date, default: Date.now }
