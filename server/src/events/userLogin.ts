@@ -1,21 +1,28 @@
+import { createAuthToken } from "../functions";
 import UserModel from "../schemas/users";
 import { User } from "../types";
+import bcrypt from 'bcrypt'
 
-const event = async (phone: User["phone"], password: User["password"]): Promise<{ success: boolean, message: string }> => {
+const userLogin = async ({ phone, password }: User): Promise<{ success: boolean, message: string, token: string | null }> => {
   try {
+    if (!phone || !password) return { success: false, message: "Data not found.", token: null };
+
     const user = await UserModel.findOne({ phone });
 
-    if (!user) return { success: false, message: "User not found." };
+    if (!user) return { success: false, message: "User not found.", token: null };
 
-    if (user.password !== password) return { success: false, message: "Password is incorrect." };
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) return { success: false, message: "Password is incorrect.", token: null };
+
+    const token = createAuthToken(user._id);
+
+    if (token && isMatch) return { success: true, message: "User logged in.", token };
+    else return { success: false, message: "An error occurred.", token: null };
 
   } catch (error) {
-    console.error(error);
-
-    return { success: false, message: "An error occurred." };
+    return { success: false, message: "An error occurred.", token: null };
   }
-
-  return { success: true, message: "User has been logged in." };
 }
 
-export default event;
+export default userLogin;

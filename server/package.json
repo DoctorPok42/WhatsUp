@@ -10,13 +10,17 @@
     "keywords": [],
     "dependencies": {
         "@types/node": "^18.7.14",
+        "bcrypt": "^5.1.1",
         "chalk": "^4.1.2",
         "cls": "^0.1.5",
         "dotenv": "^16.0.2",
+        "jsonwebtoken": "^9.0.2",
         "mongoose": "^6.5.4",
         "socket.io-client": "^4.7.4"
     },
     "devDependencies": {
+        "@types/bcrypt": "^5.0.2",
+        "@types/jsonwebtoken": "^9.0.5",
         "typescript": "^4.8.2"
     }
 }
