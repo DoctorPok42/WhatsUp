@@ -4,17 +4,19 @@ import { readdirSync } from "fs";
 import { join } from "path";
 import { config } from "dotenv";
 import { Events } from "./types";
-import { color } from './functions';
+import { checkCollections, color } from './functions';
 
 config();
 
 let events = {} as Events;
 
 const handlersDir = join(__dirname, "./handlers")
-readdirSync(handlersDir).forEach(handler => {
+readdirSync(handlersDir).forEach((handler) => {
     if (!handler.endsWith(".js")) return;
     require(`${handlersDir}/${handler}`)(events);
 })
+
+checkCollections()
 
 const server = createServer();
 const io = new Server(server, {
