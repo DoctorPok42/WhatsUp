@@ -18,5 +18,5 @@ module.exports = async (events: Events) => {
   })
 
   let nbEvents = Object.keys(events).length;
-  console.log(color("text", `🔔 ${color("variable", nbEvents)} have been ${color("variable", "registered.")}`));
+  console.log(color("text", `🔔 ${color("variable", nbEvents)} events have been ${color("variable", "registered.")}`));
 }
