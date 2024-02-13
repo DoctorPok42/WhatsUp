@@ -28,11 +28,11 @@ export const verifyAuthToken = (token: string) => {
 export const checkCollections = () => {
   UserModel.find({}, (err: any, res: any) => {
     if (err) console.error(err)
-    if (res) console.log(color('text', `📦 ${res.length} users found.`))
+    if (res) console.log(color("text", `📦 ${color('variable', res.length)} users found.`))
   })
 
   ConversationsModel.find({}, (err: any, res: any) => {
     if (err) console.error(err)
-    if (res) console.log(color('text', `📦 ${res.length} conversations found.`))
+    if (res) console.log(color("text", `📦 ${color('variable', res.length)} conversations found.`))
   })
 }
