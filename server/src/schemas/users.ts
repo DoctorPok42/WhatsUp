@@ -12,7 +12,8 @@ const userSchema = new Schema<User>({
     lastSeen: { type: Date, default: Date.now }
   },
   joinedAt: { type: Date, default: Date.now },
-  publicKey: { type: String }
+  publicKey: { type: String },
+  socketId: { type: String }
 });
 
 const UserModel = model<User>("user", userSchema);
