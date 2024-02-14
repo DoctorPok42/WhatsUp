@@ -14,6 +14,7 @@ export interface User extends mongoose.Document {
   options: UserOptions;
   joinedAt: Date;
   publicKey: string;
+  socketId: string;
 }
 
 interface ConversationsLinks {
@@ -44,6 +45,19 @@ export interface Conversations extends mongoose.Document {
   lastMessage: string;
   lastMessageDate: Date;
   lastMessageAuthorId: string;
+}
+
+interface MessageOptions {
+  isLink: boolean;
+  isFile: boolean;
+  data?: string;
+}
+
+export interface Message extends mongoose.Document {
+  content: string;
+  authorId: string;
+  date: Date;
+  options: MessageOptions;
 }
 
 export interface Events {
