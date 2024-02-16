@@ -10,54 +10,8 @@ export interface User extends mongoose.Document {
   phone: string;
   password: string;
   username?: string;
-  conversationsId: [];
   options: UserOptions;
   joinedAt: Date;
-  publicKey: string;
-  socketId: string;
-}
-
-interface ConversationsLinks {
-  content: string,
-  authorsId: string,
-  date: Date
-}
-
-interface ConversationsFiles {
-  name: string,
-  data: string,
-  authorsId: string,
-  date: Date
-}
-
-export interface Conversations extends mongoose.Document {
-  conversationType: 'private' | 'group';
-  name?: string;
-  links: ConversationsLinks[];
-  files: ConversationsFiles[];
-  membersId: string[];
-  membersPublicKey: {
-    key: string,
-    userId: string
-  }[];
-  createdAt: Date;
-  updatedAt: Date;
-  lastMessage: string;
-  lastMessageDate: Date;
-  lastMessageAuthorId: string;
-}
-
-interface MessageOptions {
-  isLink: boolean;
-  isFile: boolean;
-  data?: string;
-}
-
-export interface Message extends mongoose.Document {
-  content: string;
-  authorId: string;
-  date: Date;
-  options: MessageOptions;
 }
 
 export interface Events {
