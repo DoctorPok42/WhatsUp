@@ -9,6 +9,7 @@ const userCreate = async (user: User): Promise<{ status: string, message: string
 
   const newUser = new UserModel({
     phone: user.phone,
+    username: user.username || user.phone,
     password: user.password,
     options: user.options,
     joinedAt: user.joinedAt

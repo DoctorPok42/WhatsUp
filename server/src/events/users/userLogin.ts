@@ -3,7 +3,7 @@ import UserModel from "../../schemas/users";
 import { User } from "../../types";
 import bcrypt from 'bcrypt'
 
-const userLogin = async ({ phone, password }: User): Promise<{ status: string, message: string, token: string | null }> => {
+const userLogin = async ({ phone, password }: User): Promise<{ status: string, message: string, token: string | null, userId?: string }> => {
   try {
     if (!phone || !password) return { status: "error", message: "Data not found.", token: null };
 
@@ -17,7 +17,7 @@ const userLogin = async ({ phone, password }: User): Promise<{ status: string, m
 
     const token = createAuthToken(user._id);
 
-    if (token && isMatch) return { status: "success", message: "User logged in.", token };
+    if (token && isMatch) return { status: "success", message: "User logged in.", token, userId: user._id };
     else return { status: "error", message: "An error occurred.", token: null };
 
   } catch (error) {
