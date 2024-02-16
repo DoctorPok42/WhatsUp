@@ -1,7 +1,7 @@
-import UserModel from "../schemas/users";
-import { User } from "../types";
+import UserModel from "../../schemas/users";
+import { User } from "../../types";
 import bcrypt from 'bcrypt'
-import { createAuthToken } from "../functions";
+import { createAuthToken } from "../../functions";
 
 const userCreate = async (user: User): Promise<{ status: string, message: string, token: string | null }> => {
   const salt = await bcrypt.genSalt(10);
@@ -9,6 +9,7 @@ const userCreate = async (user: User): Promise<{ status: string, message: string
 
   const newUser = new UserModel({
     phone: user.phone,
+    username: user.username || user.phone,
     password: user.password,
     options: user.options,
     joinedAt: user.joinedAt
