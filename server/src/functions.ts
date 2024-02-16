@@ -1,5 +1,7 @@
 import chalk from "chalk"
 import jwt from 'jsonwebtoken'
+import UserModel from "./schemas/users"
+import ConversationsModel from "./schemas/conversations"
 
 const themeColors = {
   text: "#2B2",
@@ -21,4 +23,16 @@ export const createAuthToken = (id: string) => {
 
 export const verifyAuthToken = (token: string) => {
   return jwt.verify(token, process.env.JWT_SECRET as string);
+}
+
+export const checkCollections = () => {
+  UserModel.find({}, (err: any, res: any) => {
+    if (err) console.error(err)
+    if (res) console.log(color("text", `📦 ${color('variable', res.length)} users found.`))
+  })
+
+  ConversationsModel.find({}, (err: any, res: any) => {
+    if (err) console.error(err)
+    if (res) console.log(color("text", `📦 ${color('variable', res.length)} conversations found.`))
+  })
 }

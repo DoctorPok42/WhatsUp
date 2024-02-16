@@ -4,17 +4,19 @@ import { readdirSync } from "fs";
 import { join } from "path";
 import { config } from "dotenv";
 import { Events } from "./types";
-import { color } from './functions';
+import { checkCollections, color } from './functions';
 
 config();
 
 let events = {} as Events;
 
 const handlersDir = join(__dirname, "./handlers")
-readdirSync(handlersDir).forEach(handler => {
+readdirSync(handlersDir).forEach((handler) => {
     if (!handler.endsWith(".js")) return;
     require(`${handlersDir}/${handler}`)(events);
 })
+
+checkCollections()
 
 const server = createServer();
 const io = new Server(server, {
@@ -31,7 +33,7 @@ io.on("connection", (socket) => {
             if (!data || Object.keys(data).length === 0) return socket.emit(eventName, { status: "error", message: "Data not found." });
 
             try {
-                const response = await event(data);
+                const response = await event(data, socket.id);
                 socket.emit(eventName, response);
             } catch (error) {
                 console.error(error);
@@ -48,3 +50,5 @@ io.on("connection", (socket) => {
 server.listen(process.env.PORT, () => {
     console.log(color("text", `🚀 Server is running on ${color("variable", process.env.PORT)}`));
 });
+
+export { io };

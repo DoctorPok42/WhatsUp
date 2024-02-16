@@ -1,6 +1,6 @@
-import { verifyAuthToken } from "../functions";
-import UserModel from "../schemas/users";
-import { User } from "../types";
+import { verifyAuthToken } from "../../functions";
+import UserModel from "../../schemas/users";
+import { User } from "../../types";
 
 const userGet = async ({ token }: any): Promise<{ status: string, message: string, data: User | null }> => {
   try {
