@@ -1,5 +1,5 @@
-import UserModel from "../../schemas/users";
-import { User } from "../../types";
+import UserModel from "../schemas/users";
+import { User } from "../types";
 
 const userUpdate = async (phone: User["phone"], user: User): Promise<{ status: string, message: string }> => {
   try {

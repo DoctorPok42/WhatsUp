@@ -1,5 +1,5 @@
-import UserModel from "../../schemas/users";
-import { User } from "../../types";
+import UserModel from "../schemas/users";
+import { User } from "../types";
 
 const userDelete = async (phone: User["phone"]): Promise<{ status: string, message: string }> => {
   try {
