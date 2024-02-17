@@ -26,8 +26,7 @@ export default function Login() {
 
   const handleSubmit = async () => {
     const userPhone = phone.replace(/\s/g, "");
-
-    emitEvent(loginType === "signin" ? "userlogin" : "userCreate", { phone: userPhone, username }, (data: any) => {
+    emitEvent(loginType === "signin" ? "userLogin" : "userCreate", { phone: userPhone, ...username ? { username } : {}}, (data: any) => {
       if (data.status === "success") {
         const cookies = new Cookies();
         cookies.set("token", data.token, { path: "/", maxAge: 60 * 60 * 24 });
