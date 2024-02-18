@@ -5,10 +5,12 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import styles from './style.module.scss';
 
 interface SearchBarProps {
-  onSearch?: (value: string) => void;
+  onSearch: (value: string) => void;
 }
 
-const SearchBar = ({ }: SearchBarProps) => {
+const SearchBar = ({
+  onSearch,
+}: SearchBarProps) => {
   return (
     <div className={styles.SearchBar_container}>
       <div className={styles.content}>
@@ -17,7 +19,7 @@ const SearchBar = ({ }: SearchBarProps) => {
         </div>
 
         <div className={styles.input}>
-          <input type="text" placeholder="Search" />
+          <input type="text" placeholder="Search" onChange={(e: any) => onSearch(e.target.value)} />
         </div>
       </div>
     </div>
