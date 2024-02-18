@@ -9,10 +9,12 @@ import styles from './style.module.scss';
 
 interface SideBarProps {
   path: string;
+  phone?: string;
 }
 
 const SideBar = ({
   path,
+  phone,
 }: SideBarProps) => {
   const listButtons = [
     { name: 'All chats', path: '/chats', icon: faComments },
@@ -38,7 +40,7 @@ const SideBar = ({
 
         <div className={styles.footer}>
           <div className={styles.profile} onClick={() => router.push('/me')}>
-            <Image src={`https://api.dicebear.com/7.x/avataaars/png?seed=Toto&radius=20&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="favicon" width={50} height={50} />
+            <Image src={`https://api.dicebear.com/7.x/avataaars/png?seed=${phone}&radius=20&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="favicon" width={50} height={50} />
           </div>
 
           <div className={styles.params}>
