@@ -1,41 +1,81 @@
 .Chats_container {
+  max-height: calc(100vh - 1em);
   background-color: #202329;
   border-radius: 22px 0 0 22px;
   display: flex;
   padding: 1em 0.5em;
+  padding-bottom: 0;
   transition: var(--transition);
-  overflow: hidden;
 
   .Contact_container {
-    width: 23em;
-    height: 100%;
+    width: 22em;
     padding: 1em 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+
+    .userSearched,
+    .conversations {
+      width: calc(100% - 1em);
+      max-height: 80%;
+      margin-top: 1em;
+      border-radius: 22px;
+      background-color: #2e333d;
+      transition: var(--transition);
+
+      .noUserFound {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        h2 {
+          margin-top: 1.3em;
+          font-size: 1.3em;
+          color: #ddd;
+        }
+      }
+    }
+
+    .userSearched {
+      position: absolute;
+      top: 5em;
+    }
+
+    .conversations {
+      width: 100%;
+      height: 100%;
+      background: none;
+    }
   }
 
-  .content {
+  .Chats_content {
+    position: relative;
     width: calc(100% - 23em);
     height: 100%;
-    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    margin-left: 2em;
+    overflow: hidden;
+    overflow-y: auto;
 
     .header {
-      width: 100%;
+      width: 98%;
       height: 2em;
+      padding: 1em;
       display: flex;
       align-items: center;
+      z-index: 10;
 
       .title {
-        width: 40%;
-        margin-top: 1.5em;
-        margin-left: 10%;
-        font-size: 1.2em;
+        width: 50%;
+        font-size: 1em;
       }
 
       .headerActions {
         width: 50%;
-        margin-top: 1.5em;
         display: flex;
         justify-content: flex-end;
         gap: 0.7em;
@@ -62,6 +102,29 @@
           }
         }
 
+        .searchBar {
+          min-height: 100%;
+          display: flex;
+          align-items: center;
+
+          input {
+            width: 20em;
+            height: 100%;
+            padding: 0 0.5em;
+            background-color: #2e333d;
+            border: 2px solid #7d7f92;
+            border-radius: 12px;
+            color: #ccc;
+            font-size: 1em;
+            transition: var(--transition);
+            outline: none;
+
+            &::placeholder {
+              color: #7d7f92;
+            }
+          }
+        }
+
         .info {
           img {
             width: 1.5em;
@@ -69,6 +132,200 @@
           }
         }
       }
+    }
+
+    .Chats_messages {
+      width: calc(100% - 2em);
+      max-height: calc(100% - 10em);
+      padding: 1em;
+      overflow-y: auto;
+
+      .Chats_date {
+        width: 100%;
+        text-align: center;
+        border-top: 1px solid #2e333d;
+        position: relative;
+        user-select: none;
+
+        p {
+          width: fit-content;
+          margin: 0 auto;
+          margin-top: -0.7em;
+          padding: 0 0.5em;
+          color: #7d7f92;
+          font-size: 0.8em;
+          font-weight: bold;
+          background-color: #202329;
+        }
+      }
+    }
+
+    .Chats_messages::-webkit-scrollbar {
+      width: 0.4em;
+    }
+
+    .Chats_messages::-webkit-scrollbar-thumb {
+      background-color: #7d7f92;
+      border-radius: 22px;
+    }
+
+    .Chats_messages::-webkit-scrollbar-track {
+      background-color: #2e333d;
+      border-radius: 22px;
+    }
+  }
+
+  .Chats_typing {
+    position: absolute;
+    bottom: 3.5em;
+    left: 0.5em;
+    color: #7d7f92;
+  }
+
+  .InputBar_container {
+    position: absolute;
+    bottom: 0em;
+    width: calc(100% - 2em);
+    margin-left: 0.5em;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0.2em 0.5em;
+    margin-bottom: 0.5em;
+    background-color: #2e333d;
+    border-radius: 12px;
+    gap: 0.5em;
+    z-index: 100000;
+
+    .Input_files {
+      width: 100%;
+      display: flex;
+      padding: 0.3em 0;
+      gap: 0.5em;
+      overflow: hidden;
+      overflow-x: auto;
+      z-index: 1;
+
+      .Input_file {
+        min-width: 8em;
+        max-width: 8em;
+        height: 8em;
+        padding: 1em;
+        border: 2px dashed #7d7f92;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+
+        .remove {
+          position: absolute;
+          top: 0em;
+          right: 0em;
+          width: 1.7em;
+          height: 1.7em;
+          border: 2px solid #7d7f92;
+          border-radius: 8px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          opacity: 0;
+          transition: var(--transition);
+          transform: translateY(-1em);
+        }
+
+        p {
+          color: #7d7f92;
+          font-size: 1em;
+          margin-bottom: -0.8em;
+          margin-left: -0.5em;
+        }
+      }
+
+      .Input_file:hover {
+        border-color: #3e4453;
+
+        .remove {
+          opacity: 1;
+          transform: translateY(0em);
+        }
+      }
+    }
+
+    .Input_files::-webkit-scrollbar {
+      width: 0.5em;
+      height: 0.5em;
+    }
+
+    .Input_files::-webkit-scrollbar-thumb {
+      background-color: #7d7f92;
+      border-radius: 8px;
+    }
+
+    .Input_icon {
+      width: 2em;
+      height: 2em;
+      margin-left: 0.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: var(--transition);
+
+      img {
+        width: 1.5em;
+        height: 1.5em;
+      }
+
+      &:hover {
+        background-color: #3e4453;
+      }
+    }
+
+    .Input {
+      width: 90%;
+      min-height: 3em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+
+      textarea {
+        width: 100%;
+        min-height: 3em;
+        max-height: 30em;
+        outline: none;
+        background-color: transparent;
+        resize: none;
+        border: none;
+        padding: 10px;
+        font-size: 16px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        color: #ccc;
+      }
+
+      textarea::placeholder {
+        color: #7d7f92;
+      }
+    }
+
+    textarea::-webkit-scrollbar {
+      width: 0.5em;
+      height: 0.5em;
+    }
+
+    textarea::-webkit-scrollbar-thumb {
+      background-color: #7d7f92;
+      border-radius: 8px;
+    }
+
+    textarea::-webkit-scrollbar-track {
+      background-color: #202329;
+      border-radius: 8px;
     }
   }
 }

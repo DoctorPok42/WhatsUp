@@ -1,47 +1,149 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState } from 'react';
 import { Contact } from '..';
+import HeaderChats from './header';
+import InputBar from './inputBar';
+import emitEvent from '../../src/tools/webSocketHandler';
+import formatDate from '@/tools/formatDate';
+import ChatsMessage from '../ChatsMessage';
+import { socket } from '@/pages/_app';
 
 import styles from './style.module.scss';
-import Image from 'next/image';
 
 interface ChatsProps {
-
+  token: string
+  isConversation: boolean
+  id?: string
+  userId: string
+  isInfoOpen?: boolean
+  setIsInfoOpen?: (e: boolean) => void
 }
 
-const Chats = ({ }: ChatsProps) => {
-  const [isInfoOpen, setIsInfoOpen] = useState(false)
+const Chats = ({
+  token,
+  isConversation,
+  id,
+  userId,
+  isInfoOpen,
+  setIsInfoOpen
+}: ChatsProps) => {
+  const [files, setFiles] = useState<File[]>([]);
+  const [conversations, setConversations] = useState<any[]>([])
+
+  const [allMessages, setAllMessages] = useState<any[]>([])
+  const [messageLoaded, setMessageLoaded] = useState<number>(0)
+  const [userTyping, setUserTyping] = useState<string>("")
+
+  const getConversations = async () => {
+    emitEvent("getConversations", { token }, (data: any) => {
+      if (data.status === "success") {
+        setConversations(data.data)
+      } else {
+        alert(data.message)
+      }
+    })
+  }
+
+  const getMessages = async () => {
+    emitEvent("getMessages", { token, conversationId: id, messageLoaded }, (data: any) => {
+      if (data.status === "success") {
+        setAllMessages(data.data)
+        setMessageLoaded(messageLoaded + 10)
+      } else {
+        alert(data.message)
+      }
+    })
+  }
+
+  socket.on("message", (data: any) => {
+    setAllMessages([...allMessages, data])
+  })
+
+  socket.on("isTypingUser", (data: any) => {
+    setTimeout(() => {
+      setUserTyping("")
+    }, 3000)
+
+    setUserTyping(data)
+  })
+
+  useEffect(() => {
+    getConversations()
+    getMessages()
+  }, [])
+
+  const conversationName = conversations.find(e => e._id === id)?.name
+
+  const onSend = (message: string) => {
+    emitEvent("sendMessage", { token, conversationId: id, content: message }, (data: any) => {
+      if (data.status === "success") {
+        setAllMessages([...allMessages, data.data])
+        getConversations()
+      } else {
+        alert(data.message)
+      }
+    })
+  }
+
+  const onAttach = (e: File[]) => {
+    setFiles([...files, ...e]);
+  }
+
+  const onTyping = () => {
+    emitEvent("isTyping", { token, conversationId: id }, (data: any) => {
+      if (data.status === "error") {
+        alert(data.message)
+      }
+    })
+  }
+
+  const isSameDay = (date1: Date, date2: Date) => {
+    return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate()
+  }
+
+  const handleScroll = (e: any) => {
+    const element = e.target
+    if (element.scrollTop === 0) {
+      getMessages()
+    }
+  }
+
   return (
     <div className={styles.Chats_container} style={{
-      width: isInfoOpen ? 'calc(100% - 30em)' : 'calc(100% - 6em)',
+      width: isInfoOpen ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
       borderRadius: isInfoOpen ? '20px' : '20px 0 0 20px',
     }}>
-      <Contact />
+      <Contact token={token} id={id} conversations={conversations} userId={userId} />
 
-      <div className={styles.content}>
-        <div className={styles.header}>
-          <div className={styles.title}>
-            <h2>Chats Title</h2>
-          </div>
+      {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) && <div className={styles.Chats_content}>
+        <HeaderChats isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} conversationName={conversationName} conversationId={id} token={token} />
 
-          <div className={styles.headerActions}>
-            <div className={styles.search}>
-              <FontAwesomeIcon icon={faSearch} width={18} height={18} color='#7d7f92' />
-            </div>
-
-            <div className={styles.info} onClick={() => setIsInfoOpen(!isInfoOpen)}>
-              <Image src="/sidebar.svg" alt="settings" width={5} height={5} style={{
-                transform: isInfoOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-              }} />
-            </div>
-
-            <div className={styles.buttonParams}>
-              <FontAwesomeIcon icon={faEllipsisVertical} width={18} height={18} color='#7d7f92' />
-            </div>
-          </div>
+        <div className={styles.Chats_messages} onScroll={handleScroll} onLoad={() => {
+          const element = document.querySelector(`.${styles.Chats_messages}`)
+          if (element && allMessages.length === 20) {
+            element.scrollTop = element.scrollHeight
+          }
+        }
+        }>
+          {allMessages.map((e, index) => {
+            if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
+              return (
+                <div key={index} className={styles.Chats_date}>
+                  <p>{formatDate(new Date(e.date), true)}</p>
+                  <ChatsMessage key={index} message={e} isGroup={false} userId={userId} allMessages={allMessages} index={index} />
+                </div>
+              )
+            } else {
+              return <ChatsMessage key={index} message={e} isGroup={false} userId={userId} allMessages={allMessages} index={index} />
+            }
+          })}
         </div>
-      </div>
+
+        {userTyping && <div className={styles.Chats_typing}>
+          <p>{userTyping} is typing...</p>
+        </div>}
+
+        <InputBar files={files} onSend={onSend} onAttach={onAttach} onTyping={onTyping} setFiles={setFiles} />
+      </div>}
     </div>
   );
 };
