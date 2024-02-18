@@ -1,0 +1,45 @@
+.ConversationCard_container {
+  width: calc(100% - 2em);
+  height: 3em;
+  padding: 1em;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  cursor: pointer;
+  transition: var(--transition);
+
+  .userInfo {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.5em;
+
+    .title {
+      display: flex;
+      justify-content: space-between;
+      h3 {
+        margin: 0;
+        font-size: 1em;
+        font-weight: 100;
+      }
+
+      span {
+        font-size: 0.9em;
+        color: #a0a5b0;
+      }
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.9em;
+      color: #828387;
+    }
+  }
+}
+
+.ConversationCard_container:hover {
+  background-color: #3e4453 !important;
+}
