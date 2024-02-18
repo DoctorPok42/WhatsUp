@@ -3,7 +3,7 @@ import { User } from "../types";
 
 const userSchema = new Schema<User>({
   phone: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String },
   username: { type: String },
   conversationsId: { type: [], default: [] },
   options: {

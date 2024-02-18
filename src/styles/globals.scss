@@ -191,6 +191,12 @@ h6 {
 
         button:hover {
           text-decoration: underline;
+          outline: none;
+        }
+
+        bottom:focus {
+          outline: none;
+          box-shadow: none;
         }
       }
     }
