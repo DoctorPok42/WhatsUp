@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
+import router from "next/router";
 import { Chats, SideBar } from "../../components";
+import Cookies from "universal-cookie";
 
-export default function Home() {
+const ChatsPage = () => {
+  const cookies = new Cookies();
+  const token = cookies.get("token");
+  const phone = cookies.get("phone");
+  const userId = cookies.get("userId");
+
+  useEffect(() => {
+    if (!token || !phone || !userId) {
+      router.push("/login");
+    }
+  }, [token, phone, userId]);
+
   return (
     <>
       <Head>
@@ -13,9 +26,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container">
-        <SideBar path="/chats" />
-        <Chats />
+        <SideBar path="/chats" phone={phone} />
+        <Chats token={token} isConversation={false} userId={userId} />
       </main>
     </>
   );
 }
+
+export default ChatsPage;
