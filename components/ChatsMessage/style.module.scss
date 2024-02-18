@@ -1,0 +1,49 @@
+.ChatsMessage_container {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+  transition: var(--transition);
+  animation: fadeIn 0.5s ease;
+
+  .ChatsMessage_content {
+    max-width: 40%;
+    padding: 0.8em 1.2em;
+    border-radius: 22px;
+    overflow-wrap: break-word;
+
+    .title {
+      font-size: 0.8em;
+      display: flex;
+      justify-content: space-between;
+      gap: 1em;
+
+      span {
+        margin: 0;
+      }
+    }
+
+    .content {
+      font-size: 1.1em;
+      margin: 0;
+    }
+  }
+
+  .ChatsMessage_author {
+    width: 3.125em;
+    height: 3.125em;
+    user-select: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(1em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
