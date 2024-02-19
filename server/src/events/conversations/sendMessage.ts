@@ -6,6 +6,13 @@ import { Message, User } from "../../types";
 import { Socket } from "socket.io";
 import mongoose from "mongoose";
 
+const detectLink = (text: string) => {
+  const links = text.match(/(https?:\/\/[^\s]+)/g);
+  if (!links) return { isLink: false, link: null };
+
+  return { isLink: true, link: links };
+}
+
 const sendMessage = async ({ token, conversationId, content }: any): Promise<{ status: string, message: string, data: Message | null }> => {
   try {
     if (!token) return { status: "error", message: "Data not found.", data: null };
@@ -15,10 +22,17 @@ const sendMessage = async ({ token, conversationId, content }: any): Promise<{ s
     const author = await UserModel.findOne({ _id: decoded.id });
     if (!author) return { status: "error", message: "Author not found.", data: null };
 
+    const { isLink, link } = detectLink(content);
+
+    const messageDate = new Date();
+
     const message = new MessageModel({
       content,
       authorId: decoded.id,
-      date: new Date(),
+      date: messageDate,
+      options: {
+        ...isLink && { isLink: true },
+      }
     });
 
     // Put the message in the lastMessage field of the conversation
@@ -26,8 +40,18 @@ const sendMessage = async ({ token, conversationId, content }: any): Promise<{ s
     if (!conversation) return { status: "error", message: "Conversation not found.", data: null };
 
     conversation.lastMessage = content;
-    conversation.lastMessageDate = new Date();
+    conversation.lastMessageDate = messageDate;
     conversation.lastMessageAuthorId = decoded.id;
+    conversation.updatedAt = messageDate;
+    if (isLink) {
+      link?.forEach((element: string) => {
+        conversation.links.push({
+          content: element,
+          authorId: decoded.id,
+          date: messageDate
+        });
+      });
+    }
     conversation.save();
 
     // Insert the message in the conversation collection

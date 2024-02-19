@@ -27,6 +27,16 @@
     .content {
       font-size: 1.1em;
       margin: 0;
+      white-space: pre-line;
+
+      a {
+        color: var(--dark-blue);
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 

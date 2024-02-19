@@ -19,7 +19,7 @@ export interface User extends mongoose.Document {
 
 interface ConversationsLinks {
   content: string,
-  authorsId: string,
+  authorId: string,
   date: Date
 }
 
@@ -28,6 +28,7 @@ interface ConversationsFiles {
   data: string,
   authorsId: string,
   date: Date
+  type: "image" | "video" | "audio" | "file"
 }
 
 export interface Conversations extends mongoose.Document {

@@ -9,6 +9,9 @@ interface ChatsMessageProps {
     date: Date
     authorId: string
     phone: string
+    options?: {
+      isLink: boolean
+    }
   }
   allMessages: any[]
   isGroup?: boolean
@@ -24,6 +27,13 @@ const ChatsMessage = ({
   index,
 }: ChatsMessageProps) => {
   const isOtherMessage = allMessages[index + 1] && allMessages[index + 1].authorId === message.authorId;
+
+  const returnJustLink = (content: string): { link: string, text: string} => {
+    const link = content.match(/(https?:\/\/[^\s]+)/g);
+    if (!link) return { link: "", text: content };
+
+    return { link: link[0], text: content.replace(link[0], "") };
+  }
 
   return (
     <div className={styles.ChatsMessage_container} style={{
@@ -52,7 +62,19 @@ const ChatsMessage = ({
         </div>
 
         <div className={styles.content}>
-          {message.content}
+          {
+            message.options?.isLink ?
+              message.content.split(" ").map((e, index) => {
+                const link = returnJustLink(e);
+                return (
+                  <span key={index}>
+                    {link.link ? <>{" "}<a href={link.link} target="_blank" rel="noreferrer">{link.link}</a></> : link.text}
+                  </span>
+                )
+              }) :
+              message.content
+
+          }
         </div>
       </div>
 
