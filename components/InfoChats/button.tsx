@@ -23,7 +23,7 @@ const ButtonChat = ({
         <Tooltip {...props} classes={{ popper: className }} />
     ))(({ theme }) => ({
         [`& .${tooltipClasses.tooltip}`]: {
-            backgroundColor: 'var(--orange)',
+            backgroundColor: 'var(--grey)',
             color: 'var(--white)',
             boxShadow: theme.shadows[1],
             fontSize: 13,
@@ -31,22 +31,22 @@ const ButtonChat = ({
 
         },
         [`& .${tooltipClasses.arrow}`]: {
-            color: 'var(--orange)',
+            color: 'var(--grey)',
         },
     }));
 
   return (
-      // <NameTooltip
-      //   title={name}
-      //   placement="top"
-      //   TransitionComponent={Zoom}
-      //   TransitionProps={{ timeout: 150 }}
-      //   arrow
-      // >
+      <NameTooltip
+        title={name}
+        placement="top"
+        TransitionComponent={Zoom}
+        TransitionProps={{ timeout: 150 }}
+        arrow
+      >
       <div className={styles.ButtonChat_container} onClick={onClick}>
           <FontAwesomeIcon icon={icon} color='white' width={20} height={20} {...color && { color }} />
       </div>
-    // </NameTooltip>
+    </NameTooltip>
   );
 };
 
