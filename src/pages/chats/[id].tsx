@@ -4,9 +4,11 @@ import router from "next/router";
 import { Chats, SideBar } from "../../../components";
 import Cookies from "universal-cookie";
 import InfoChats from "../../../components/InfoChats";
+import emitEvent from "@/tools/webSocketHandler";
 
 const ChatsPage = ({ id } : { id: string }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
+  const [conversations, setConversations] = useState<any>([])
 
   const cookies = new Cookies();
   const token = cookies.get("token");
@@ -19,6 +21,21 @@ const ChatsPage = ({ id } : { id: string }) => {
     }
   }, [token, phone, userId]);
 
+  const getConversations = async () => {
+    emitEvent("getConversations", { token }, (data: any) => {
+      if (data.status === "success") {
+        setConversations(data.data)
+      } else {
+        alert(data.message)
+        return []
+      }
+    })
+  }
+
+  useEffect(() => {
+    getConversations()
+  }, [])
+
   return (
     <>
       <Head>
@@ -30,8 +47,23 @@ const ChatsPage = ({ id } : { id: string }) => {
       </Head>
       <main className="container">
         <SideBar path="/chats" phone={phone} />
-        <Chats token={token} isConversation={true} id={id} userId={userId} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} />
-        <InfoChats isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} id={id} token={token} />
+        <Chats
+          token={token}
+          isConversation={true}
+          id={id}
+          userId={userId}
+          isInfoOpen={isInfoOpen}
+          setIsInfoOpen={setIsInfoOpen}
+          getConversations={getConversations}
+          conversations={conversations}
+        />
+        <InfoChats
+          isInfoOpen={isInfoOpen}
+          setIsInfoOpen={setIsInfoOpen}
+          id={id}
+          token={token}
+          conversations={conversations}
+        />
       </main>
     </>
   );

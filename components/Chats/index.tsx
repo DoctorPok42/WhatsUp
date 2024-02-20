@@ -16,6 +16,8 @@ interface ChatsProps {
   userId: string
   isInfoOpen?: boolean
   setIsInfoOpen?: (e: boolean) => void
+  conversations: any[]
+  getConversations?: () => void
 }
 
 const Chats = ({
@@ -24,24 +26,15 @@ const Chats = ({
   id,
   userId,
   isInfoOpen,
-  setIsInfoOpen
+  setIsInfoOpen,
+  conversations,
+  getConversations
 }: ChatsProps) => {
   const [files, setFiles] = useState<File[]>([]);
-  const [conversations, setConversations] = useState<any[]>([])
 
   const [allMessages, setAllMessages] = useState<any[]>([])
   const [messageLoaded, setMessageLoaded] = useState<number>(0)
   const [userTyping, setUserTyping] = useState<string>("")
-
-  const getConversations = async () => {
-    emitEvent("getConversations", { token }, (data: any) => {
-      if (data.status === "success") {
-        setConversations(data.data)
-      } else {
-        alert(data.message)
-      }
-    })
-  }
 
   const getMessages = async () => {
     emitEvent("getMessages", { token, conversationId: id, messageLoaded }, (data: any) => {
@@ -67,7 +60,7 @@ const Chats = ({
   })
 
   useEffect(() => {
-    getConversations()
+    getConversations && getConversations()
     getMessages()
   }, [])
 
@@ -77,7 +70,7 @@ const Chats = ({
     emitEvent("sendMessage", { token, conversationId: id, content: message }, (data: any) => {
       if (data.status === "success") {
         setAllMessages([...allMessages, data.data])
-        getConversations()
+        getConversations && getConversations()
       } else {
         alert(data.message)
       }

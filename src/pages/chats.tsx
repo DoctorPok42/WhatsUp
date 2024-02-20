@@ -1,10 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import router from "next/router";
 import { Chats, SideBar } from "../../components";
 import Cookies from "universal-cookie";
+import emitEvent from "@/tools/webSocketHandler";
 
 const ChatsPage = () => {
+  const [conversations, setConversations] = useState<any>([])
+
   const cookies = new Cookies();
   const token = cookies.get("token");
   const phone = cookies.get("phone");
@@ -15,6 +18,21 @@ const ChatsPage = () => {
       router.push("/login");
     }
   }, [token, phone, userId]);
+
+  const getConversations = async () => {
+    emitEvent("getConversations", { token }, (data: any) => {
+      if (data.status === "success") {
+        setConversations(data.data)
+      } else {
+        alert(data.message)
+        return []
+      }
+    })
+  }
+
+  useEffect(() => {
+    getConversations()
+  }, [])
 
   return (
     <>
@@ -27,7 +45,12 @@ const ChatsPage = () => {
       </Head>
       <main className="container">
         <SideBar path="/chats" phone={phone} />
-        <Chats token={token} isConversation={false} userId={userId} />
+        <Chats
+          token={token}
+          isConversation={false}
+          userId={userId}
+          conversations={conversations}
+        />
       </main>
     </>
   );
