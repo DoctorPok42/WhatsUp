@@ -21,7 +21,7 @@ const UserCard = ({
       <Image src={`https://api.dicebear.com/7.x/avataaars/png?seed=${user.phone}&radius=22&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="userCardIcon" width={60} height={60} />
       <div className={styles.userInfo}>
         {user.username && <p>{user.username}</p>}
-        <p>{user.phone}</p>
+        <p>{user.phone.replace(/(\d{2})(?=\d)/g, "$1 ")}</p>
       </div>
     </div>
   );
