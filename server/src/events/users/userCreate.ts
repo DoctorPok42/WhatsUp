@@ -4,8 +4,8 @@ import bcrypt from 'bcrypt'
 import { createAuthToken } from "../../functions";
 
 const userCreate = async (user: User): Promise<{ status: string, message: string, token: string | null }> => {
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt);
+  // const salt = await bcrypt.genSalt(10);
+  // user.password = await bcrypt.hash(user.password, salt);
 
   const newUser = new UserModel({
     phone: user.phone,
