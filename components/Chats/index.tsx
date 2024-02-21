@@ -3,6 +3,7 @@ import { Contact } from '..';
 import HeaderChats from './header';
 import InputBar from './inputBar';
 import emitEvent from '../../src/tools/webSocketHandler';
+import SearchGlobalBar from '../SearchGlobalBar';
 import formatDate from '@/tools/formatDate';
 import ChatsMessage from '../ChatsMessage';
 import { socket } from '@/pages/_app';
@@ -18,6 +19,8 @@ interface ChatsProps {
   setIsInfoOpen?: (e: boolean) => void
   conversations: any[]
   getConversations?: () => void
+  isSearchOpen?: boolean
+  setIsSearchOpen?: (e: boolean) => void
 }
 
 const Chats = ({
@@ -28,7 +31,9 @@ const Chats = ({
   isInfoOpen,
   setIsInfoOpen,
   conversations,
-  getConversations
+  getConversations,
+  isSearchOpen,
+  setIsSearchOpen,
 }: ChatsProps) => {
   const [files, setFiles] = useState<File[]>([]);
 
@@ -107,6 +112,7 @@ const Chats = ({
       width: isInfoOpen ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
       borderRadius: isInfoOpen ? '20px' : '20px 0 0 20px',
     }}>
+      <SearchGlobalBar isOpen={isSearchOpen} setIsOpen={setIsSearchOpen} onSearch={(e) => console.log(e)} />
       <Contact token={token} id={id} conversations={conversations} userId={userId} />
 
       {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) && <div className={styles.Chats_content}>

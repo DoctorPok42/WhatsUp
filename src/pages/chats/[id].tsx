@@ -9,6 +9,7 @@ import emitEvent from "@/tools/webSocketHandler";
 const ChatsPage = ({ id } : { id: string }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
   const [conversations, setConversations] = useState<any>([])
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
 
   const cookies = new Cookies();
   const token = cookies.get("token");
@@ -56,6 +57,8 @@ const ChatsPage = ({ id } : { id: string }) => {
           setIsInfoOpen={setIsInfoOpen}
           getConversations={getConversations}
           conversations={conversations}
+          isSearchOpen={isSearchOpen}
+          setIsSearchOpen={setIsSearchOpen}
         />
         <InfoChats
           isInfoOpen={isInfoOpen}
@@ -63,6 +66,7 @@ const ChatsPage = ({ id } : { id: string }) => {
           id={id}
           token={token}
           conversations={conversations}
+          setIsSearchOpen={setIsSearchOpen}
         />
       </main>
     </>
