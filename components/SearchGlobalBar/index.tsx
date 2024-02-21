@@ -80,7 +80,7 @@ const SearchGlobalBar = ({
   return (
     <div className={styles.SearchGlobalBar_container} onKeyDown={(e) => {
       if (e.key === "Escape") {
-        setIsOpen && setIsOpen(false)
+        handleClose()
       }
     }}>
       <div className={styles.content}>
