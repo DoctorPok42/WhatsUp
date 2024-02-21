@@ -13,16 +13,16 @@ interface ChatsMessageProps {
       isLink: boolean
     }
   }
+  isGroup: boolean
   allMessages: any[]
-  isGroup?: boolean
   userId: string
   index: number
 }
 
 const ChatsMessage = ({
   message,
-  allMessages,
   isGroup,
+  allMessages,
   userId,
   index,
 }: ChatsMessageProps) => {
@@ -54,10 +54,14 @@ const ChatsMessage = ({
         }}
       }>
         <div className={styles.title} style={{
-          marginBottom: isGroup ? "0.3em" : "0"
+          marginBottom: isGroup ? "0.3em" : "0",
+          justifyContent: message.authorId !== userId ? "flex-start" : "flex-end",
         }}>
           <span>
-            {isGroup ? message.phone : ""}
+            {
+              (allMessages[index - 1] && allMessages[index - 1].authorId === message.authorId) ? "" :
+                message.phone
+            }
           </span>
         </div>
 
@@ -68,7 +72,9 @@ const ChatsMessage = ({
                 const link = returnJustLink(e);
                 return (
                   <span key={index}>
-                    {link.link ? <>{" "}<a href={link.link} target="_blank" rel="noreferrer">{link.link}</a></> : link.text}
+                    {link.link ? <>{" "}<a href={link.link} style={{
+                      color: message.authorId !== userId ? "#6b8afd" : "#2b47d4",
+                    }} target="_blank" rel="noreferrer">{link.link}</a>{" "}</> : link.text}
                   </span>
                 )
               }) :

@@ -32,7 +32,7 @@ const Chats = ({
   setIsInfoOpen,
   conversations,
   getConversations,
-  isSearchOpen,
+  isSearchOpen = false,
   setIsSearchOpen,
 }: ChatsProps) => {
   const [files, setFiles] = useState<File[]>([]);
@@ -107,12 +107,22 @@ const Chats = ({
     }
   }
 
+  const conversationType = conversations.find(e => e._id === id)?.conversationType === "group"
+
   return (
     <div className={styles.Chats_container} style={{
       width: isInfoOpen ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
       borderRadius: isInfoOpen ? '20px' : '20px 0 0 20px',
     }}>
-      <SearchGlobalBar isOpen={isSearchOpen} setIsOpen={setIsSearchOpen} onSearch={(e) => console.log(e)} />
+      <SearchGlobalBar
+        isOpen={isSearchOpen}
+        setIsOpen={setIsSearchOpen}
+        token={token}
+        userId={userId}
+        conversationId={id}
+        usersConversation={conversations.find(e => e._id === id)?.membersId}
+        getConversations={getConversations}
+      />
       <Contact token={token} id={id} conversations={conversations} userId={userId} />
 
       {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) && <div className={styles.Chats_content}>
@@ -130,7 +140,7 @@ const Chats = ({
               return (
                 <div key={index} className={styles.Chats_date}>
                   <p>{formatDate(new Date(e.date), true)}</p>
-                  <ChatsMessage key={index} message={e} isGroup={false} userId={userId} allMessages={allMessages} index={index} />
+                  <ChatsMessage key={index} message={e} isGroup={conversationType} userId={userId} allMessages={allMessages} index={index} />
                 </div>
               )
             } else {
