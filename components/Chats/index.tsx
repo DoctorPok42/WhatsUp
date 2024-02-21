@@ -36,11 +36,13 @@ const Chats = ({
   const [messageLoaded, setMessageLoaded] = useState<number>(0)
   const [userTyping, setUserTyping] = useState<string>("")
 
-  const getMessages = async () => {
-    emitEvent("getMessages", { token, conversationId: id, messageLoaded }, (data: any) => {
+  const getMessages = async (nbMessages?: boolean) => {
+    emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
       if (data.status === "success") {
         setAllMessages(data.data)
-        setMessageLoaded(messageLoaded + 10)
+        setMessageLoaded(
+          nbMessages ? 10 : messageLoaded + 10
+        )
       } else {
         alert(data.message)
       }
@@ -61,8 +63,8 @@ const Chats = ({
 
   useEffect(() => {
     getConversations && getConversations()
-    getMessages()
-  }, [])
+    getMessages(true)
+  }, [id])
 
   const conversationName = conversations.find(e => e._id === id)?.name
 
