@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -10,45 +10,30 @@ interface HeaderChatsProps {
   isInfoOpen: boolean;
   setIsInfoOpen: (value: boolean) => void;
   conversationName: string;
-  conversationId: string | undefined;
-  token: string;
+  setIsSearchOpen?: (e: boolean) => void;
+  setSearchState: (e: "message" | "user") => void;
 }
 
 const HeaderChats = ({
   isInfoOpen,
   setIsInfoOpen,
   conversationName,
-  conversationId,
-  token,
+  setIsSearchOpen,
+  setSearchState,
 }: HeaderChatsProps) => {
-  const [showSearch, setShowSearch] = useState(false);
-
-  const handleSearch = (message: string) => {
-    emitEvent('searchMessage', { token, conversationId: conversationId, message: message }, (response) => {
-      if (response.status === 'success') {
-        console.log(response.data.length > 0 ? response.data[0].content : 'No messages found');
-      }
-    });
+  const handleSearchMessage = () => {
+    setSearchState('message');
+    setIsSearchOpen && setIsSearchOpen(true);
   }
 
   return (
-    <div className={styles.header} onMouseLeave={() => setShowSearch(false)}>
+    <div className={styles.header}>
       <div className={styles.title}>
         <h2>{conversationName}</h2>
       </div>
 
       <div className={styles.headerActions}>
-        <div className={styles.searchBar}>
-          {showSearch && (
-            <input
-              type="text"
-              placeholder="Search messages"
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          )}
-        </div>
-
-        <div className={styles.search} onClick={() => setShowSearch(!showSearch)}>
+        <div className={styles.search} onClick={handleSearchMessage}>
           <FontAwesomeIcon icon={faSearch} width={18} height={18} color='#7d7f92' />
         </div>
 

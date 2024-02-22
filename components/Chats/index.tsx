@@ -40,6 +40,7 @@ const Chats = ({
   const [allMessages, setAllMessages] = useState<any[]>([])
   const [messageLoaded, setMessageLoaded] = useState<number>(0)
   const [userTyping, setUserTyping] = useState<string>("")
+  const [searchState, setSearchState] = useState<"message" | "user">("user")
 
   const getMessages = async (nbMessages?: boolean) => {
     emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
@@ -122,11 +123,20 @@ const Chats = ({
         conversationId={id}
         usersConversation={conversations.find(e => e._id === id)?.membersId}
         getConversations={getConversations}
+        state={searchState}
+        setSearchState={setSearchState}
+        setAllMessages={setAllMessages}
       />
       <Contact token={token} id={id} conversations={conversations} userId={userId} />
 
       {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) && <div className={styles.Chats_content}>
-        <HeaderChats isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} conversationName={conversationName} conversationId={id} token={token} />
+        <HeaderChats
+          isInfoOpen={isInfoOpen}
+          setIsInfoOpen={setIsInfoOpen}
+          conversationName={conversationName}
+          setIsSearchOpen={setIsSearchOpen}
+          setSearchState={setSearchState}
+        />
 
         <div className={styles.Chats_messages} onScroll={handleScroll} onLoad={() => {
           const element = document.querySelector(`.${styles.Chats_messages}`)
