@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 import InfoChats from "../../../components/InfoChats";
 import emitEvent from "@/tools/webSocketHandler";
 
-const ChatsPage = ({ id } : { id: string }) => {
+const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
   const [conversations, setConversations] = useState<any>([])
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
@@ -50,7 +50,7 @@ const ChatsPage = ({ id } : { id: string }) => {
         <SideBar path="/chats" phone={phone} />
         <Chats
           token={token}
-          isConversation={true}
+          isConversation={id ? true : false}
           id={id}
           userId={userId}
           isInfoOpen={isInfoOpen}
@@ -60,14 +60,14 @@ const ChatsPage = ({ id } : { id: string }) => {
           isSearchOpen={isSearchOpen}
           setIsSearchOpen={setIsSearchOpen}
         />
-        <InfoChats
+        {id && <InfoChats
           isInfoOpen={isInfoOpen}
           setIsInfoOpen={setIsInfoOpen}
           id={id}
           token={token}
           conversations={conversations}
           setIsSearchOpen={setIsSearchOpen}
-        />
+        />}
       </main>
     </>
   );
@@ -77,6 +77,14 @@ export default ChatsPage;
 
 export async function getServerSideProps(context: any) {
   const { id } = context.query;
+
+  if (!id) {
+    return {
+      props: {
+        id: ""
+      }
+    }
+  }
 
   return {
     props: {
