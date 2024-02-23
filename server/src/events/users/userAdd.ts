@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { verifyAuthToken } from "../../functions";
 import ConversationsModel from "../../schemas/conversations";
 import UserModel from "../../schemas/users"
@@ -27,7 +28,9 @@ const userAdd = async ({ token, conversationId, userId }: { token: string, conve
 
     await conversation.save();
 
-    const addedUserConversation = await UserModel.findByIdAndUpdate(userId, { $push: { conversationsId: conversationId } });
+    const realConversationId = new mongoose.Types.ObjectId(conversationId);
+
+    const addedUserConversation = await UserModel.findByIdAndUpdate(userId, { $push: { conversationsId: realConversationId } });
     if (!addedUserConversation) return { status: "error", message: "An error occurred." };
 
     return { status: "success", message: "User has been added." };

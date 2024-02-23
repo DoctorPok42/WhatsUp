@@ -15,7 +15,7 @@ const conversationsChoose = async ({ token, userId }: { token: string, userId: U
     const userInfos = await ConversationsModel.findOne({ membersId: { $all: [decoded.id, userId] } });
 
     // If not, create it
-    if (!userInfos) {
+    if (!userInfos || userInfos.conversationType !== "private") {
       const newConversation = new ConversationsModel({
         conversationType: 'private',
         membersId: [decoded.id, userId],
