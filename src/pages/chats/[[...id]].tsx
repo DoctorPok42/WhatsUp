@@ -51,7 +51,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
         <Chats
           token={token}
           isConversation={id ? true : false}
-          id={id}
+          id={id && id[0]}
           userId={userId}
           isInfoOpen={isInfoOpen}
           setIsInfoOpen={setIsInfoOpen}
