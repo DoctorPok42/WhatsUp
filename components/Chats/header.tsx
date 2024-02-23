@@ -2,7 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faSearch } from '@fortawesome/free-solid-svg-icons';
-import emitEvent from '@/tools/webSocketHandler';
 
 import styles from './style.module.scss';
 
@@ -27,7 +26,7 @@ const HeaderChats = ({
   }
 
   return (
-    <div className={styles.header}>
+    <div className={styles.header} onContextMenu={(e) => e.preventDefault()}>
       <div className={styles.title}>
         <h2>{conversationName}</h2>
       </div>

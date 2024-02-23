@@ -72,7 +72,7 @@ const Contact = ({
   }
 
   return (
-    <div className={styles.Contact_container}>
+    <div className={styles.Contact_container} onContextMenu={(e) => e.preventDefault()}>
       <SearchBar onSearch={onSearch} />
 
       <div className={styles.userSearched} style={{

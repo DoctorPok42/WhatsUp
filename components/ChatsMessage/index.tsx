@@ -17,6 +17,7 @@ interface ChatsMessageProps {
   allMessages: any[]
   userId: string
   index: number
+  handleContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
 const ChatsMessage = ({
@@ -25,6 +26,7 @@ const ChatsMessage = ({
   allMessages,
   userId,
   index,
+  handleContextMenu,
 }: ChatsMessageProps) => {
   const isOtherMessage = allMessages[index + 1] && allMessages[index + 1].authorId === message.authorId;
 
@@ -36,7 +38,7 @@ const ChatsMessage = ({
   }
 
   return (
-    <div className={styles.ChatsMessage_container} style={{
+    <div className={styles.ChatsMessage_container} onContextMenu={(e) => handleContextMenu(e)} style={{
       justifyContent: message.authorId !== userId ? "flex-start" : "flex-end",
       marginBottom: isOtherMessage ? ".25em" : "1em",
     }}>

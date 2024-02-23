@@ -1,0 +1,40 @@
+.ContextMenu_container {
+  position: absolute;
+  width: 12em;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--black);
+  border-radius: 8px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  gap: 0.2em;
+  z-index: 3;
+
+  .ContextMenu_button {
+    padding: 0.5em;
+    color: var(--white);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+
+    p {
+      margin: 0;
+    }
+
+    &#ContextMenu_button_red {
+      color: var(--red);
+    }
+
+    &:hover:not(#ContextMenu_button_red) {
+      background-color: var(--blue);
+    }
+
+    &:hover#ContextMenu_button_red {
+      color: var(--white);
+      background-color: var(--red);
+    }
+  }
+}

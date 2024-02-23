@@ -9,6 +9,7 @@ import ChatsMessage from '../ChatsMessage';
 import { socket } from '@/pages/_app';
 
 import styles from './style.module.scss';
+import ContextMenu from '../ContextMenu';
 
 interface ChatsProps {
   token: string
@@ -21,6 +22,12 @@ interface ChatsProps {
   getConversations?: () => void
   isSearchOpen?: boolean
   setIsSearchOpen?: (e: boolean) => void
+}
+
+const initialContextMenu = {
+  isOpen: false,
+  x: 0,
+  y: 0,
 }
 
 const Chats = ({
@@ -41,6 +48,7 @@ const Chats = ({
   const [messageLoaded, setMessageLoaded] = useState<number>(0)
   const [userTyping, setUserTyping] = useState<string>("")
   const [searchState, setSearchState] = useState<"message" | "user">("user")
+  const [contextMenu, setContextMenu] = useState(initialContextMenu)
 
   const getMessages = async (nbMessages?: boolean) => {
     emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
@@ -110,11 +118,26 @@ const Chats = ({
 
   const conversationType = conversations.find(e => e._id === id)?.conversationType === "group"
 
+  const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault()
+
+    const { pageX, pageY } = e
+    setContextMenu({
+      isOpen: true,
+      x: pageX,
+      y: pageY,
+    })
+  }
+
+  const closeContextMenu = () => setContextMenu(initialContextMenu)
+
   return (
     <div className={styles.Chats_container} style={{
       width: (isInfoOpen && id) ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
       borderRadius: (isInfoOpen && id) ? '20px' : '20px 0 0 20px',
     }}>
+      {contextMenu.isOpen && <ContextMenu x={contextMenu.x} y={contextMenu.y} closeContextMenu={closeContextMenu} />}
+
       <SearchGlobalBar
         isOpen={isSearchOpen}
         setIsOpen={setIsSearchOpen}
@@ -127,6 +150,7 @@ const Chats = ({
         setSearchState={setSearchState}
         setAllMessages={setAllMessages}
       />
+
       <Contact token={token} id={id} conversations={conversations} userId={userId} />
 
       {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) && <div className={styles.Chats_content}>
@@ -149,12 +173,28 @@ const Chats = ({
             if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
               return (
                 <div key={index} className={styles.Chats_date}>
-                  <p>{formatDate(new Date(e.date), true)}</p>
-                  <ChatsMessage key={index} message={e} isGroup={conversationType} userId={userId} allMessages={allMessages} index={index} />
+                  <p onContextMenu={(e) => {e.preventDefault()}}>{formatDate(new Date(e.date), true)}</p>
+                  <ChatsMessage
+                    key={index}
+                    message={e}
+                    isGroup={conversationType}
+                    userId={userId}
+                    allMessages={allMessages}
+                    index={index}
+                    handleContextMenu={handleContextMenu}
+                  />
                 </div>
               )
             } else {
-              return <ChatsMessage key={index} message={e} isGroup={false} userId={userId} allMessages={allMessages} index={index} />
+              return <ChatsMessage
+                key={index}
+                message={e}
+                isGroup={false}
+                userId={userId}
+                allMessages={allMessages}
+                index={index}
+                handleContextMenu={handleContextMenu}
+              />
             }
           })}
         </div>
