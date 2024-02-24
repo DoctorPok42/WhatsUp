@@ -7,9 +7,10 @@ import SearchGlobalBar from '../SearchGlobalBar';
 import formatDate from '@/tools/formatDate';
 import ChatsMessage from '../ChatsMessage';
 import { socket } from '@/pages/_app';
+import ContextMenu from '../ContextMenu';
+import { useCopyToClipboard } from '@uidotdev/usehooks';
 
 import styles from './style.module.scss';
-import ContextMenu from '../ContextMenu';
 
 interface ChatsProps {
   token: string
@@ -49,6 +50,9 @@ const Chats = ({
   const [userTyping, setUserTyping] = useState<string>("")
   const [searchState, setSearchState] = useState<"message" | "user">("user")
   const [contextMenu, setContextMenu] = useState(initialContextMenu)
+
+  const [messageIdHover, setMessageIdHover] = useState<string | null>(null)
+  const [copiedText, copyToClipboard] = useCopyToClipboard();
 
   const getMessages = async (nbMessages?: boolean) => {
     emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
@@ -131,12 +135,21 @@ const Chats = ({
 
   const closeContextMenu = () => setContextMenu(initialContextMenu)
 
+  const handleContextMenuAction = (action: string) => {
+    switch (action) {
+      case "copy":
+        copyToClipboard(allMessages.find(e => e._id === messageIdHover)?.content)
+      case "delete":
+        break
+    }
+  }
+
   return (
     <div className={styles.Chats_container} style={{
       width: (isInfoOpen && id) ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
       borderRadius: (isInfoOpen && id) ? '20px' : '20px 0 0 20px',
     }}>
-      {contextMenu.isOpen && <ContextMenu x={contextMenu.x} y={contextMenu.y} closeContextMenu={closeContextMenu} />}
+      {contextMenu.isOpen && <ContextMenu x={contextMenu.x} y={contextMenu.y} closeContextMenu={closeContextMenu} handleContextMenuAction={handleContextMenuAction} />}
 
       <SearchGlobalBar
         isOpen={isSearchOpen}
@@ -163,17 +176,18 @@ const Chats = ({
         />
 
         <div className={styles.Chats_messages} onScroll={handleScroll} onLoad={() => {
-          const element = document.querySelector(`.${styles.Chats_messages}`)
-          if (element && allMessages.length === 20) {
-            element.scrollTop = element.scrollHeight
-          }
-        }
-        }>
+            const element = document.querySelector(`.${styles.Chats_messages}`)
+            if (element && allMessages.length === 20) {
+              element.scrollTop = element.scrollHeight
+            }
+          }}
+          onContextMenu={(e) => {e.preventDefault()}}
+        >
           {allMessages.map((e, index) => {
             if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
               return (
                 <div key={index} className={styles.Chats_date}>
-                  <p onContextMenu={(e) => {e.preventDefault()}}>{formatDate(new Date(e.date), true)}</p>
+                  <p>{formatDate(new Date(e.date), true)}</p>
                   <ChatsMessage
                     key={index}
                     message={e}
@@ -182,6 +196,7 @@ const Chats = ({
                     allMessages={allMessages}
                     index={index}
                     handleContextMenu={handleContextMenu}
+                    setMessageIdHover={setMessageIdHover}
                   />
                 </div>
               )
@@ -194,6 +209,7 @@ const Chats = ({
                 allMessages={allMessages}
                 index={index}
                 handleContextMenu={handleContextMenu}
+                setMessageIdHover={setMessageIdHover}
               />
             }
           })}

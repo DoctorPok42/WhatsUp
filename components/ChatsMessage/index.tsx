@@ -5,6 +5,7 @@ import styles from './style.module.scss';
 
 interface ChatsMessageProps {
   message: {
+    _id: string
     content: string
     date: Date
     authorId: string
@@ -18,6 +19,7 @@ interface ChatsMessageProps {
   userId: string
   index: number
   handleContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void
+  setMessageIdHover?: (e: string | null) => void
 }
 
 const ChatsMessage = ({
@@ -27,6 +29,7 @@ const ChatsMessage = ({
   userId,
   index,
   handleContextMenu,
+  setMessageIdHover,
 }: ChatsMessageProps) => {
   const isOtherMessage = allMessages[index + 1] && allMessages[index + 1].authorId === message.authorId;
 
@@ -38,10 +41,15 @@ const ChatsMessage = ({
   }
 
   return (
-    <div className={styles.ChatsMessage_container} onContextMenu={(e) => handleContextMenu(e)} style={{
-      justifyContent: message.authorId !== userId ? "flex-start" : "flex-end",
-      marginBottom: isOtherMessage ? ".25em" : "1em",
-    }}>
+    <div
+      className={styles.ChatsMessage_container}
+      style={{
+        justifyContent: message.authorId !== userId ? "flex-start" : "flex-end",
+        marginBottom: isOtherMessage ? ".25em" : "1em",
+      }}
+      onContextMenu={(e) => handleContextMenu(e)}
+      onMouseEnter={() => setMessageIdHover && setMessageIdHover(message._id)}
+    >
       <div className={styles.ChatsMessage_author}>
         {(message.authorId !== userId && (allMessages[index + 1] && allMessages[index + 1].authorId !== message.authorId || !allMessages[index + 1])) &&
           <Image src={`https://api.dicebear.com/7.x/avataaars/png?seed=${message.phone}&radius=22&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="userCardIcon" width={50} height={50} />

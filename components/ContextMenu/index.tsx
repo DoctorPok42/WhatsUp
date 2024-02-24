@@ -9,20 +9,22 @@ interface ContextMenuProps {
   x: number
   y: number
   closeContextMenu: () => void
+  handleContextMenuAction: (action: string) => void
 }
 
 const ContextMenu = ({
   x,
   y,
   closeContextMenu,
+  handleContextMenuAction,
 }: ContextMenuProps) => {
   const ref = useClickAway(() => {
     closeContextMenu();
   }) as React.MutableRefObject<HTMLDivElement>;
 
   const menuButtons = [
-    { name: "Copy", action: () => console.log("copy"), icon: faCopy },
-    { name: "Delete", action: () => console.log("delete"), icon: faTrash, color: true }
+    { name: "Copy", icon: faCopy },
+    { name: "Delete", icon: faTrash, color: true }
   ]
 
   return (
@@ -30,6 +32,7 @@ const ContextMenu = ({
       ref={ref}
       onClick={() => closeContextMenu()}
       className={styles.ContextMenu_container}
+      onContextMenu={(e) => {e.preventDefault()}}
       style={{
         top: `${y - 1}px`,
         left: `${x - 80}px`,
@@ -42,7 +45,7 @@ const ContextMenu = ({
           key={index}
           className={styles.ContextMenu_button}
           id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
-          onClick={button.action}
+          onClick={() => handleContextMenuAction(button.name.toLowerCase())}
         >
           <p
             id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
@@ -52,6 +55,8 @@ const ContextMenu = ({
           <FontAwesomeIcon
             icon={button.icon}
             id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
+            width={20}
+            height={20}
           />
         </div>
       ))}
