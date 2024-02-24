@@ -139,8 +139,16 @@ const Chats = ({
     switch (action) {
       case "copy":
         copyToClipboard(allMessages.find(e => e._id === messageIdHover)?.content)
+        break;
       case "delete":
-        break
+        emitEvent("deleteMessage", { token, conversationId: id, messageId: messageIdHover }, (data: any) => {
+          if (data.status === "success") {
+            setAllMessages(allMessages.filter(e => e._id !== messageIdHover))
+          } else {
+            alert(data.message)
+          }
+        })
+        break;
     }
   }
 
