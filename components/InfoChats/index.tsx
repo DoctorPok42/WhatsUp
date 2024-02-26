@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import router from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faClose, faSignOutAlt, faUserPlus, faUsers } from '@fortawesome/free-solid-svg-icons';
@@ -13,16 +13,20 @@ interface InfoChatsProps {
   id?: string
   isInfoOpen: boolean
   setIsInfoOpen: (e: boolean) => void
+  conversations: any[]
+  setIsSearchOpen: (e: boolean) => void
 }
 
 const InfoChats = ({
   token,
   id,
   isInfoOpen,
-  setIsInfoOpen
+  setIsInfoOpen,
+  conversations,
+  setIsSearchOpen,
 }: InfoChatsProps) => {
   const leaveChat = () => {
-    emitEvent("leaveChat", { token, conversationId: id }, (data: any) => {
+    emitEvent("leave", { token, conversationId: id }, (data: any) => {
       if (data.status === "success") {
         setIsInfoOpen(false)
         router.push("/chats")
@@ -33,16 +37,24 @@ const InfoChats = ({
   }
 
   const buttons = [
-    { name:"Notifications", icon: faBell, onClick: () => {} },
-    { name:"Add People", icon: faUserPlus, onClick: () => {} },
+    { name: "Notifications", icon: faBell, onClick: () => {} },
+    { name: "Add People", icon: faUserPlus, onClick: () => setIsSearchOpen(true) },
     { name: "All Users", icon: faUsers, onClick: () => router.push(`/chats/${id}/users`) },
-    { name:"Leave Chat", icon: faSignOutAlt, onClick: () => leaveChat(), color: 'var(--red)'},
+    { name: "Leave Chat", icon: faSignOutAlt, onClick: () => leaveChat(), color: 'var(--red)'},
   ]
 
-  const [parts, setParts] = useState([
-    { name: "Photos and Videos", seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false },
-    { name: "Shared Files", seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false },
-    { name: "Shared Links", seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false },
+  const [parts, setParts] = useState<{
+    name: string
+    value: string
+    seeAll: (id: number) => void
+    seeLess: () => void
+    showMinimized: boolean
+    isLarge: boolean
+    elements: any[]
+  }[]>([
+    { name: "Photos and Videos", value: "pictures", seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false, elements: [] },
+    { name: "Shared Files", value: "files" ,seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false, elements: [] },
+    { name: "Shared Links", value: "links", seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false, elements: [] }
   ])
 
   const showLargePart = (id: number) => {
@@ -61,7 +73,16 @@ const InfoChats = ({
     }))
   }
 
-  return (
+  useEffect(() => {
+    const newParts = parts.map((part) => {
+      const newElement = conversations.find(e => e._id === id)?.[part.value] || []
+      return { ...part, elements: newElement.reverse().slice(0, 4)}
+    })
+
+    setParts(newParts)
+  }, [conversations])
+
+  return       (
     <div className={styles.InfoChats_container} style={{
       width: isInfoOpen ? '23em' : '0',
       opacity: isInfoOpen ? 1 : 0,
