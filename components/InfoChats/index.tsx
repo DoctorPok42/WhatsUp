@@ -50,21 +50,19 @@ const InfoChats = ({
     seeLess: () => void
     showMinimized: boolean
     isLarge: boolean
-    elements: any[]
   }[]>([
-    { name: "Photos and Videos", value: "pictures", seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false, elements: [] },
-    { name: "Shared Files", value: "files" ,seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false, elements: [] },
-    { name: "Shared Links", value: "links", seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false, elements: [] }
+    { name: "Photos and Videos", value: "pictures", seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false },
+    { name: "Shared Files", value: "files" ,seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false },
+    { name: "Shared Links", value: "links", seeAll: (id: number) => showLargePart(id), seeLess: () => resetParts(), showMinimized: false, isLarge: false },
   ])
 
-  const showLargePart = (id: number) => {
-    setParts(parts.map((part, index) => {
-      if (index === id) {
-        return { ...part, showMinimized: false, isLarge: true }
-      } else {
-        return { ...part, showMinimized: true, isLarge: false }
-      }
-    }))
+  const showLargePart = async (id: number) => {
+    const newParts = await parts.map((part, index) => {
+      if (index === id) return { ...part, showMinimized: false, isLarge: true }
+      return { ...part, showMinimized: true, isLarge: false }
+    })
+
+    setParts(newParts)
   }
 
   const resetParts = () => {
@@ -73,16 +71,7 @@ const InfoChats = ({
     }))
   }
 
-  useEffect(() => {
-    const newParts = parts.map((part) => {
-      const newElement = conversations.find(e => e._id === id)?.[part.value] || []
-      return { ...part, elements: newElement.reverse().slice(0, 4)}
-    })
-
-    setParts(newParts)
-  }, [conversations])
-
-  return       (
+  return (
     <div className={styles.InfoChats_container} style={{
       width: isInfoOpen ? '23em' : '0',
       opacity: isInfoOpen ? 1 : 0,
@@ -103,7 +92,7 @@ const InfoChats = ({
 
       <div className={styles.parts}>
         {parts.map((part, index) => (
-          <PartChat key={index} {...part} id={index} />
+          <PartChat key={index} id={index} {...part} elements={conversations.find(e => e._id === id)?.[part.value] || []} />
         ))}
       </div>
     </div>
