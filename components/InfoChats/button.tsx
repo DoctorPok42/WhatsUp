@@ -40,7 +40,7 @@ const ButtonChat = ({
         title={name}
         placement="top"
         TransitionComponent={Zoom}
-        TransitionProps={{ timeout: 150 }}
+        TransitionProps={{ timeout: 100 }}
         arrow
       >
       <div className={styles.ButtonChat_container} onClick={onClick}>

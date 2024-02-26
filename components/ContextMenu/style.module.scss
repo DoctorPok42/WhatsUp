@@ -10,6 +10,37 @@
   gap: 0.2em;
   z-index: 3;
 
+  .ContextMenu_reactions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.2em;
+    padding-bottom: 0.5em;
+
+    .ContextMenu_button_reactions {
+      width: 2.8em;
+      padding: 0.5em 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50px;
+      background-color: #1e1f22;
+      cursor: pointer;
+      transition: all 0.1s ease-in-out;
+
+      p {
+        margin: 0;
+        padding: 0;
+        margin-top: -0.1em;
+        font-size: 1.4em;
+      }
+    }
+
+    .ContextMenu_button_reactions:hover {
+      background-color: #2a2b2e;
+    }
+  }
+
   .ContextMenu_button {
     padding: 0.5em;
     color: var(--white);

@@ -1,7 +1,10 @@
 import React from 'react';
 import { useClickAway } from "@uidotdev/usehooks";
-import { faCopy, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowAltCircleDown, faArrowRight, faCopy, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Zoom } from '@mui/material';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@mui/material/styles';
 
 import styles from './style.module.scss';
 
@@ -11,6 +14,24 @@ interface ContextMenuProps {
   closeContextMenu: () => void
   handleContextMenuAction: (action: string) => void
 }
+
+const NameTooltip = styled(({ className, ...props }: any) => (
+      <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+      [`& .${tooltipClasses.tooltip}`]: {
+          backgroundColor: '#1e1f22',
+          color: 'var(--white)',
+          boxShadow: theme.shadows[1],
+          fontSize: 13,
+          fontFamily: 'Nunito, sans-serif',
+          fontWeight: 600,
+          tranform: 'scale(1.2)',
+
+      },
+      [`& .${tooltipClasses.arrow}`]: {
+          color: '#1e1f22',
+      },
+}));
 
 const ContextMenu = ({
   x,
@@ -23,8 +44,16 @@ const ContextMenu = ({
   }) as React.MutableRefObject<HTMLDivElement>;
 
   const menuButtons = [
+    { name: "More reactions", icon: faArrowRight },
     { name: "Copy", icon: faCopy },
-    { name: "Delete", icon: faTrash, color: true }
+    { name: "Delete", icon: faTrash, color: true },
+  ]
+
+  const preSelectedReactions = [
+    { name: "Like", icon: "👍"  },
+    { name: "Love", icon: "❤️"  },
+    { name: "Haha", icon: "😂"  },
+    { name: "Fire", icon: "🔥"  },
   ]
 
   return (
@@ -39,6 +68,26 @@ const ContextMenu = ({
         transform: `translateX(${x > window.innerWidth - 200 ? "-100%" : ""})`
       }}
     >
+
+      <div className={styles.ContextMenu_reactions}>
+        {preSelectedReactions.map((reaction, index) => (
+          <div
+            key={index}
+            className={styles.ContextMenu_button_reactions}
+            onClick={() => handleContextMenuAction(reaction.name.toLowerCase())}
+          >
+            <NameTooltip
+              title={reaction.name}
+              placement="top"
+              TransitionComponent={Zoom}
+              TransitionProps={{ timeout: 100 }}
+              arrow
+            >
+              <p>{reaction.icon}</p>
+            </NameTooltip>
+          </div>
+        ))}
+      </div>
 
       {menuButtons.map((button, index) => (
         <div
