@@ -2,6 +2,7 @@ import { verifyAuthToken } from "../../functions";
 import ConversationsModel from "../../schemas/conversations";
 import UserModel from "../../schemas/users";
 import { Conversations, User } from "../../types";
+import urlMetadata from 'url-metadata';
 
 const getConversations = async ({ token }: any): Promise<{ status: string, message: string, data: Conversations[] | null }> => {
   try {
@@ -23,12 +24,29 @@ const getConversations = async ({ token }: any): Promise<{ status: string, messa
 
     allName = allName.filter((e: any) => e.phone);
 
-    const conversationsWithNames = conversationsList.map((e: any) => {
+    const conversationsWithNames = await conversationsList.map((e: any) => {
       let name = e.membersId.filter((e: any) => e !== decoded.id).map((e: any) => allName.find((n: any) => n._id == e)?.phone);
       return { ...e._doc, name: name[0] || null };
     });
 
-    return { status: "success", message: "Conversations found.", data: conversationsWithNames };
+    // Get the metadata of each link
+    const conversationsWithMetadata = await Promise.all(conversationsWithNames.map(async (conv: any) => {
+      let links = await Promise.all(conv.links.map(async (link: any) => {
+        try {
+          if (!link.content) return { ...link, title: "" };
+          const metaData = await urlMetadata(link.content);
+
+          return { ...link, title: metaData.title };
+        } catch (error) {
+          console.log(error);
+          return { ...link, title: "" };
+        }
+
+      }));
+      return { ...conv, links: links };
+    }));
+
+    return { status: "success", message: "Conversations found.", data: conversationsWithMetadata };
 
   } catch (error) {
     return { status: "error", message: "An error occurred.", data: null };
