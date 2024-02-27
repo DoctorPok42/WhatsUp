@@ -63,7 +63,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
         {id && <InfoChats
           isInfoOpen={isInfoOpen}
           setIsInfoOpen={setIsInfoOpen}
-          id={id}
+          id={id[0]}
           token={token}
           conversations={conversations}
           setIsSearchOpen={setIsSearchOpen}
