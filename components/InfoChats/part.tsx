@@ -10,21 +10,23 @@ interface PartChatProps {
   seeLess: () => void
   showMinimized: boolean
   isLarge: boolean
+  value: string
   elements: any[]
 }
 
 const PartChat = ({
+  id,
   name,
   seeAll,
   seeLess,
   showMinimized,
   isLarge,
-  id,
+  value,
   elements,
 }: PartChatProps) => {
   return (
     <div className={styles.PartChat_container} style={{
-      height: isLarge ? '80%' : showMinimized ? '2em' : '15em',
+      height: isLarge ? '80%' : showMinimized ? '2em' : value === "pictures" ? '9em' : '15em',
     }}>
       <div className={styles.headerPart}>
         <div className={styles.title}>{name} <span>{elements.length}</span></div>
@@ -33,7 +35,7 @@ const PartChat = ({
         </div>
       </div>
 
-      {elements.length > 0 && <div className={styles.content}>
+      {elements.length > 0 && !showMinimized && <div className={styles.content}>
         {elements.map((element, index) => (
           <div key={index} className={styles.element}>
             {name === "Shared Links" && <LinksPart {...element} onClick={() => {}} />}

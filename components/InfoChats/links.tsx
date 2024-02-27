@@ -19,12 +19,14 @@ const LinksPart = ({
   return (
     <div className={styles.LinksPart_container} onClick={onClick}>
       <div className={styles.icon}>
-        <img src="https://www.microsoft.com/favicon.ico" alt="link" />
+        <img src={`${
+          content[content.length - 1] === '/' ? content.slice(0, -1) : content
+        }/favicon.ico`} alt='icon' width='20' height='20' />
       </div>
 
       <div className={styles.links}>
-        <div className={styles.title}>{title.split(' ')[0]}</div>
-        <div className={styles.content}>{content}</div>
+        <div className={styles.title}>{title}</div>
+        <div className={styles.contentLink}>{content}</div>
       </div>
     </div>
   );
