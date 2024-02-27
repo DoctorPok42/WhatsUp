@@ -1,8 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
+import formatDate from '@/tools/formatDate';
 
 import styles from './style.module.scss';
-import formatDate from '@/tools/formatDate';
 
 interface ConversationCardProps {
   id?: string;
@@ -37,7 +37,7 @@ const ConversationCard = ({
             {formatDate(new Date(conversation.lastMessageDate))}
           </span>
         </div>
-        <p>{conversation.lastMessage.length > 20 ? conversation.lastMessage.slice(0, 20) + '...' : conversation.lastMessage}</p>
+        <p>{conversation.lastMessage}</p>
       </div>
     </div>
   );

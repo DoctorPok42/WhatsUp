@@ -20,6 +20,7 @@
     .title {
       display: flex;
       justify-content: space-between;
+
       h3 {
         margin: 0;
         font-size: 1em;
@@ -33,9 +34,13 @@
     }
 
     p {
+      width: 70%;
       margin: 0;
       font-size: 0.9em;
       color: #828387;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 }
