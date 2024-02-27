@@ -1,6 +1,6 @@
 import React from 'react';
 import { useClickAway } from "@uidotdev/usehooks";
-import { faArrowAltCircleDown, faArrowRight, faCopy, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlus, faCopy, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Zoom } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -44,7 +44,7 @@ const ContextMenu = ({
   }) as React.MutableRefObject<HTMLDivElement>;
 
   const menuButtons = [
-    { name: "More reactions", icon: faArrowRight },
+    { name: "More reactions", icon: faCirclePlus },
     { name: "Copy", icon: faCopy },
     { name: "Delete", icon: faTrash, color: true },
   ]
@@ -53,7 +53,7 @@ const ContextMenu = ({
     { name: "Like", icon: "👍"  },
     { name: "Love", icon: "❤️"  },
     { name: "Haha", icon: "😂"  },
-    { name: "Fire", icon: "🔥"  },
+    { name: "Sad", icon: "😢"  }
   ]
 
   return (
