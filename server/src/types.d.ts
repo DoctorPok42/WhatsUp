@@ -59,6 +59,10 @@ export interface Message extends mongoose.Document {
   authorId: string;
   date: Date;
   options: MessageOptions;
+  reactions: {
+    value: string;
+    usersId: string[];
+  }[];
 }
 
 export interface Events {
