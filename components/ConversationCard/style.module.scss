@@ -1,7 +1,7 @@
 .ConversationCard_container {
-  width: calc(100% - 2em);
+  width: calc(100% - 1.4em);
   height: 3em;
-  padding: 1em;
+  padding: 1em 0.7em;
   border-radius: 22px;
   display: flex;
   align-items: center;
@@ -10,7 +10,7 @@
   transition: var(--transition);
 
   .userInfo {
-    width: 100%;
+    width: 75%;
     height: 100%;
     display: flex;
     flex-direction: column;
