@@ -24,13 +24,12 @@ const addReaction = async ({ token, conversationId, messageId, reaction }: { tok
     if (reactionIndex !== -1) {
       const userIndex = messageToUpdate.reactions[reactionIndex].usersId.indexOf(id);
       if (userIndex !== -1) {
-        userHasReacted = true;
         messageToUpdate.reactions[reactionIndex].usersId.splice(userIndex, 1);
 
         if (messageToUpdate.reactions[reactionIndex].usersId.length === 0)
           messageToUpdate.reactions.splice(reactionIndex, 1);
       } else {
-        userHasReacted = false;
+        userHasReacted = true;
         messageToUpdate.reactions[reactionIndex].usersId.push(id);
       }
     } else {
@@ -40,7 +39,7 @@ const addReaction = async ({ token, conversationId, messageId, reaction }: { tok
 
     await mongoose.connection.db.collection(`conversation_${conversationId}`).updateOne({ _id: realId }, { $set: { reactions: messageToUpdate.reactions } });
 
-    return { status: "success", message: "Reaction added.", data: { userHasReacted, reaction } };
+    return { status: "success", message: "Reaction added.", data: { userHasReacted, reaction, messageId } };
 
   } catch (error) {
     return { status: "error", message: "An error occurred." };
