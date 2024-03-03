@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import { Emoji, EmojiStyle } from 'emoji-picker-react';
 
 import styles from './style.module.scss';
 
@@ -13,13 +14,18 @@ interface ChatsMessageProps {
     options?: {
       isLink: boolean
     }
+    reactions?: {
+      value: string
+      usersId: string[]
+    }[]
   }
   isGroup: boolean
   allMessages: any[]
   userId: string
   index: number
   handleContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void
-  setMessageIdHover?: (e: string | null) => void
+  setMessageIdHover: (e: string | null) => void
+  handleAddReaction: (reaction: string) => void
 }
 
 const ChatsMessage = ({
@@ -30,6 +36,7 @@ const ChatsMessage = ({
   index,
   handleContextMenu,
   setMessageIdHover,
+  handleAddReaction,
 }: ChatsMessageProps) => {
   const isOtherMessage = allMessages[index + 1] && allMessages[index + 1].authorId === message.authorId;
 
@@ -45,7 +52,7 @@ const ChatsMessage = ({
       className={styles.ChatsMessage_container}
       style={{
         justifyContent: message.authorId !== userId ? "flex-start" : "flex-end",
-        marginBottom: isOtherMessage ? ".25em" : "1em",
+        marginBottom: isOtherMessage ? ".0em" : "1em",
       }}
       onContextMenu={(e) => handleContextMenu(e)}
       onMouseEnter={() => setMessageIdHover && setMessageIdHover(message._id)}
@@ -56,16 +63,13 @@ const ChatsMessage = ({
         }
       </div>
 
-      <div className={styles.ChatsMessage_content} style={
-        {...message.authorId !== userId ? {
-          backgroundColor: "#2e333d",
-        } : {
-          backgroundColor: "#6b8afd",
+      <div className={styles.ChatsMessage_content} style={{
+          backgroundColor: message.authorId !== userId ? "#2e333d" : "#6b8afd",
+          paddingBottom: message.reactions ? ".5em" : "0.8em",
         }}
-      }>
+      >
         <div className={styles.title} style={{
           marginBottom: isGroup ? "0.3em" : "0",
-          justifyContent: message.authorId !== userId ? "flex-start" : "flex-end",
         }}>
           <span>
             {
@@ -87,11 +91,25 @@ const ChatsMessage = ({
                     }} target="_blank" rel="noreferrer">{link.link}</a>{" "}</> : link.text}
                   </span>
                 )
-              }) :
+              })
+            :
               message.content
-
           }
         </div>
+
+        {message.reactions && <div className={styles.reactions}>
+          {message.reactions?.map((e, index) => (
+            <span
+              key={index}
+              onClick={() => handleAddReaction(e.value)}
+              style={{
+                backgroundColor: e.usersId.includes(userId) ? "#2b47d4" : "transparent",
+              }}
+            >
+              <Emoji unified={e.value} emojiStyle={'twitter' as EmojiStyle} size={20} />
+            </span>
+          ))}
+        </div>}
       </div>
 
       <div className={styles.ChatsMessage_author}>
