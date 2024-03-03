@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useClickAway } from "@uidotdev/usehooks";
 import { faCirclePlus, faCopy, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,11 +9,19 @@ import { styled } from '@mui/material/styles';
 
 import styles from './style.module.scss';
 
+const Picker = dynamic(
+  () => {
+    return import('emoji-picker-react');
+  },
+  { ssr: false }
+);
+
 interface ContextMenuProps {
   x: number
   y: number
   closeContextMenu: () => void
   handleContextMenuAction: (action: string) => void
+  handleAddReaction: (reaction: string) => void
 }
 
 const NameTooltip = styled(({ className, ...props }: any) => (
@@ -38,13 +47,15 @@ const ContextMenu = ({
   y,
   closeContextMenu,
   handleContextMenuAction,
+  handleAddReaction,
 }: ContextMenuProps) => {
   const ref = useClickAway(() => {
     closeContextMenu();
   }) as React.MutableRefObject<HTMLDivElement>;
+  const [showPicker, setShowPicker] = useState(false);
 
   const menuButtons = [
-    { name: "More reactions", icon: faCirclePlus },
+    { name: "More reactions", icon: faCirclePlus, action: () => setShowPicker(true)},
     { name: "Copy", icon: faCopy },
     { name: "Delete", icon: faTrash, color: true },
   ]
@@ -56,10 +67,14 @@ const ContextMenu = ({
     { name: "Sad", icon: "😢"  }
   ]
 
+  const handleAction = (action: string) => {
+    handleContextMenuAction(action);
+    closeContextMenu();
+  }
+
   return (
     <div
       ref={ref}
-      onClick={() => closeContextMenu()}
       className={styles.ContextMenu_container}
       onContextMenu={(e) => {e.preventDefault()}}
       style={{
@@ -74,7 +89,7 @@ const ContextMenu = ({
           <div
             key={index}
             className={styles.ContextMenu_button_reactions}
-            onClick={() => handleContextMenuAction(reaction.name.toLowerCase())}
+            onClick={() => handleAddReaction(reaction.icon)}
           >
             <NameTooltip
               title={reaction.name}
@@ -94,7 +109,11 @@ const ContextMenu = ({
           key={index}
           className={styles.ContextMenu_button}
           id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
-          onClick={() => handleContextMenuAction(button.name.toLowerCase())}
+          onClick={
+            button.action
+              ? button.action
+              : () => handleAction(button.name)
+          }
         >
           <p
             id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
@@ -109,6 +128,21 @@ const ContextMenu = ({
           />
         </div>
       ))}
+
+      <Picker
+        onEmojiClick={(emoji) => handleAddReaction(emoji.unified)}
+        theme={"dark" as any}
+        emojiStyle={"twitter" as any}
+        style={{
+          backgroundColor: "var(--black)",
+          position: "absolute",
+          left: "13.5em",
+          top: "0em",
+          transform: `translateX(${x > window.innerWidth - 200 ? "-163.5%" : ""})`
+        }}
+        open={showPicker}
+        lazyLoadEmojis
+      />
     </div>
   );
 };
