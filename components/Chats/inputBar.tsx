@@ -41,7 +41,7 @@ const InputBar = ({
   };
 
   return (
-    <div className={styles.InputBar_container}>
+    <div className={styles.InputBar_container} onContextMenu={(e) => e.preventDefault()}>
       {files.length > 0 && <div className={styles.Input_files}>
         {files.map((file, index) => {
           const extension = file.name.split('.').pop();
@@ -69,6 +69,7 @@ const InputBar = ({
         <textarea
           ref={inputRef}
           placeholder="Your message"
+          autoFocus
           onChange={(e) => handleChange(e)}
           onKeyUp={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
