@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useClickAway } from "@uidotdev/usehooks";
-import { faCirclePlus, faCopy, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowCircleRight, faCopy, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Zoom } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
+import { Emoji, EmojiStyle } from 'emoji-picker-react';
 
 import styles from './style.module.scss';
 
@@ -55,16 +56,16 @@ const ContextMenu = ({
   const [showPicker, setShowPicker] = useState(false);
 
   const menuButtons = [
-    { name: "More reactions", icon: faCirclePlus, action: () => setShowPicker(true)},
+    { name: "More reactions", icon: faArrowCircleRight, action: () => setShowPicker(!showPicker)},
     { name: "Copy", icon: faCopy },
     { name: "Delete", icon: faTrash, color: true },
   ]
 
   const preSelectedReactions = [
-    { name: "Like", icon: "👍"  },
-    { name: "Love", icon: "❤️"  },
-    { name: "Haha", icon: "😂"  },
-    { name: "Sad", icon: "😢"  }
+    { name: "Like", icon: "1f44d" },
+    { name: "Love", icon: "2764-fe0f"  },
+    { name: "Haha", icon: "1f602"  },
+    { name: "Sad", icon: "1f972"  }
   ]
 
   const handleAction = (action: string) => {
@@ -98,7 +99,13 @@ const ContextMenu = ({
               TransitionProps={{ timeout: 100 }}
               arrow
             >
-              <p>{reaction.icon}</p>
+              <p>
+                <Emoji
+                  unified={reaction.icon}
+                  emojiStyle={"twitter" as EmojiStyle}
+                  size={25}
+                />
+              </p>
             </NameTooltip>
           </div>
         ))}
@@ -130,6 +137,7 @@ const ContextMenu = ({
       ))}
 
       <Picker
+        open={showPicker}
         onEmojiClick={(emoji) => handleAddReaction(emoji.unified)}
         theme={"dark" as any}
         emojiStyle={"twitter" as any}
@@ -140,7 +148,7 @@ const ContextMenu = ({
           top: "0em",
           transform: `translateX(${x > window.innerWidth - 200 ? "-163.5%" : ""})`
         }}
-        open={showPicker}
+        searchPlaceHolder='Find the perfect emoji...'
         lazyLoadEmojis
       />
     </div>

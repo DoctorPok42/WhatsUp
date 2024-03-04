@@ -14,12 +14,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.2em;
+    gap: 0.3em;
     padding-bottom: 0.5em;
 
     .ContextMenu_button_reactions {
-      width: 2.8em;
-      padding: 0.5em 0;
+      padding: 0.6em;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -31,8 +30,6 @@
       p {
         margin: 0;
         padding: 0;
-        margin-top: -0.1em;
-        font-size: 1.4em;
       }
     }
 
