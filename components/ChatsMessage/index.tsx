@@ -106,7 +106,7 @@ const ChatsMessage = ({
                 backgroundColor: e.usersId.includes(userId) ? "#2b47d4" : "transparent",
               }}
             >
-              <Emoji unified={e.value} emojiStyle={'twitter' as EmojiStyle} size={20} />
+              <Emoji unified={e.value} emojiStyle={'google' as EmojiStyle} size={20} />
             </span>
           ))}
         </div>}
