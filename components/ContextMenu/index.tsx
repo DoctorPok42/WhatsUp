@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useClickAway } from "@uidotdev/usehooks";
-import { faArrowCircleRight, faCopy, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowCircleLeft, faArrowCircleRight, faCopy, faLink, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Zoom } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -25,11 +25,13 @@ interface ContextMenuProps {
   handleAddReaction: (reaction: string) => void
 }
 
+const emojiStyleChoose = "google" as EmojiStyle;
+
 const NameTooltip = styled(({ className, ...props }: any) => (
       <Tooltip {...props} classes={{ popper: className }} />
   ))(({ theme }) => ({
       [`& .${tooltipClasses.tooltip}`]: {
-          backgroundColor: '#1e1f22',
+          backgroundColor: 'var(--black)',
           color: 'var(--white)',
           boxShadow: theme.shadows[1],
           fontSize: 13,
@@ -39,7 +41,7 @@ const NameTooltip = styled(({ className, ...props }: any) => (
 
       },
       [`& .${tooltipClasses.arrow}`]: {
-          color: '#1e1f22',
+          color: 'var(--black)',
       },
 }));
 
@@ -56,8 +58,9 @@ const ContextMenu = ({
   const [showPicker, setShowPicker] = useState(false);
 
   const menuButtons = [
-    { name: "More reactions", icon: faArrowCircleRight, action: () => setShowPicker(!showPicker)},
+    { name: "More reactions", icon: (x > window.innerWidth - 200) ? faArrowCircleLeft : faArrowCircleRight, hover: () => setShowPicker(true)},
     { name: "Copy", icon: faCopy },
+    { name: "Copy Message Link", icon: faLink },
     { name: "Delete", icon: faTrash, color: true },
   ]
 
@@ -87,27 +90,28 @@ const ContextMenu = ({
 
       <div className={styles.ContextMenu_reactions}>
         {preSelectedReactions.map((reaction, index) => (
-          <div
+          <NameTooltip
             key={index}
-            className={styles.ContextMenu_button_reactions}
-            onClick={() => handleAddReaction(reaction.icon)}
+            title={reaction.name}
+            placement="top"
+            TransitionComponent={Zoom}
+            TransitionProps={{ timeout: 100 }}
+            arrow
           >
-            <NameTooltip
-              title={reaction.name}
-              placement="top"
-              TransitionComponent={Zoom}
-              TransitionProps={{ timeout: 100 }}
-              arrow
+            <div
+              key={index}
+              className={styles.ContextMenu_button_reactions}
+              onClick={() => handleAddReaction(reaction.icon)}
             >
-              <p>
-                <Emoji
-                  unified={reaction.icon}
-                  emojiStyle={"twitter" as EmojiStyle}
-                  size={25}
-                />
-              </p>
-            </NameTooltip>
-          </div>
+                <p>
+                  <Emoji
+                    unified={reaction.icon}
+                    emojiStyle={emojiStyleChoose}
+                    size={25}
+                  />
+                </p>
+            </div>
+          </NameTooltip>
         ))}
       </div>
 
@@ -116,11 +120,20 @@ const ContextMenu = ({
           key={index}
           className={styles.ContextMenu_button}
           id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
+          onMouseEnter={
+            button.hover
+              ? () => button.hover()
+              : () => setShowPicker(false)
+          }
           onClick={
-            button.action
-              ? button.action
+            button.hover
+              ? button.hover
               : () => handleAction(button.name)
           }
+          style={{
+            backgroundColor: showPicker && button.name === "More reactions" ? "var(--blue)" : "",
+            color: showPicker && button.name === "More reactions" ? "var(--white)" : "",
+          }}
         >
           <p
             id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
@@ -140,7 +153,7 @@ const ContextMenu = ({
         open={showPicker}
         onEmojiClick={(emoji) => handleAddReaction(emoji.unified)}
         theme={"dark" as any}
-        emojiStyle={"twitter" as any}
+        emojiStyle={emojiStyleChoose}
         style={{
           backgroundColor: "var(--black)",
           position: "absolute",

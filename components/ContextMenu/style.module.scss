@@ -40,7 +40,7 @@
 
   .ContextMenu_button {
     padding: 0.5em;
-    color: var(--white);
+    color: var(--white-dark);
     border-radius: 4px;
     display: flex;
     justify-content: space-between;
@@ -57,7 +57,8 @@
     }
 
     &:hover:not(#ContextMenu_button_red) {
-      background-color: var(--blue);
+      color: var(--white);
+      background-color: var(--blue) !important;
     }
 
     &:hover#ContextMenu_button_red {
