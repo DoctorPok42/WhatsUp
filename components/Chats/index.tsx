@@ -157,7 +157,16 @@ const Chats = ({
       width: (isInfoOpen && id) ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
       borderRadius: (isInfoOpen && id) ? '20px' : '20px 0 0 20px',
     }}>
-      {contextMenu.isOpen && <ContextMenu x={contextMenu.x} y={contextMenu.y} closeContextMenu={closeContextMenu} handleContextMenuAction={handleContextMenuAction} />}
+      {contextMenu.isOpen &&
+        <ContextMenu
+          {...contextMenu}
+          closeContextMenu={closeContextMenu}
+          handleContextMenuAction={handleContextMenuAction}
+          handleAddReaction={handleAddReaction}
+          message={allMessages.find(e => e._id === messageIdHover)}
+          userId={userId}
+        />
+      }
 
       <SearchGlobalBar
         isOpen={isSearchOpen}

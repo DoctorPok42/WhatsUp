@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useClickAway } from "@uidotdev/usehooks";
-import { faArrowCircleLeft, faArrowCircleRight, faCopy, faLink, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowCircleLeft, faArrowCircleRight, faCopy, faLink, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Zoom } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -23,6 +23,8 @@ interface ContextMenuProps {
   closeContextMenu: () => void
   handleContextMenuAction: (action: string) => void
   handleAddReaction: (reaction: string) => void
+  message: any
+  userId: string
 }
 
 const emojiStyleChoose = "google" as EmojiStyle;
@@ -51,6 +53,8 @@ const ContextMenu = ({
   closeContextMenu,
   handleContextMenuAction,
   handleAddReaction,
+  message,
+  userId,
 }: ContextMenuProps) => {
   const ref = useClickAway(() => {
     closeContextMenu();
@@ -58,6 +62,7 @@ const ContextMenu = ({
   const [showPicker, setShowPicker] = useState(false);
 
   const menuButtons = [
+    ...message.authorId == userId ? [{ name: "Edit", icon: faPen }] : [],
     { name: "More reactions", icon: (x > window.innerWidth - 200) ? faArrowCircleLeft : faArrowCircleRight, hover: () => setShowPicker(true)},
     { name: "Copy", icon: faCopy },
     { name: "Copy Message Link", icon: faLink },
