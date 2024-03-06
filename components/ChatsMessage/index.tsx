@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Emoji, EmojiStyle } from 'emoji-picker-react';
 
 import styles from './style.module.scss';
+import formatDate from '@/tools/formatDate';
 
 interface ChatsMessageProps {
   message: {
@@ -52,10 +53,14 @@ const ChatsMessage = ({
       className={styles.ChatsMessage_container}
       style={{
         justifyContent: message.authorId !== userId ? "flex-start" : "flex-end",
-        marginBottom: isOtherMessage ? ".0em" : "1em",
+        marginBottom: isOtherMessage ? "0.2em" : "1em",
       }}
       onContextMenu={(e) => handleContextMenu(e)}
       onMouseEnter={() => setMessageIdHover && setMessageIdHover(message._id)}
+      onClick={(e) => {
+        if (e.detail === 2)
+          handleAddReaction("2764-fe0f");
+      }}
     >
       <div className={styles.ChatsMessage_author}>
         {(message.authorId !== userId && (allMessages[index + 1] && allMessages[index + 1].authorId !== message.authorId || !allMessages[index + 1])) &&
@@ -87,7 +92,7 @@ const ChatsMessage = ({
                 return (
                   <span key={index}>
                     {link.link ? <>{" "}<a href={link.link} style={{
-                      color: message.authorId !== userId ? "#6b8afd" : "#2b47d4",
+                      color: message.authorId !== userId ? "#6b8afd" : "var(--dark-blue)",
                     }} target="_blank" rel="noreferrer">{link.link}</a>{" "}</> : link.text}
                   </span>
                 )
@@ -97,19 +102,29 @@ const ChatsMessage = ({
           }
         </div>
 
-        {message.reactions && <div className={styles.reactions}>
-          {message.reactions?.map((e, index) => (
-            <span
-              key={index}
-              onClick={() => handleAddReaction(e.value)}
-              style={{
-                backgroundColor: e.usersId.includes(userId) ? "#2b47d4" : "transparent",
-              }}
-            >
-              <Emoji unified={e.value} emojiStyle={'google' as EmojiStyle} size={20} />
-            </span>
-          ))}
-        </div>}
+        <div className={styles.footer}>
+          <div className={styles.reactions}>
+            {message.reactions?.map((e, index) => (
+                <span
+                  key={index}
+                  onClick={() => handleAddReaction(e.value)}
+                  style={{
+                    backgroundColor: e.usersId.includes(userId) ? "var(--dark-blue)" : "transparent",
+                  }}
+                >
+                  <Emoji unified={e.value} emojiStyle={'google' as EmojiStyle} size={12} />
+
+                  <span>{e.usersId.length}</span>
+                </span>
+              ))}
+          </div>
+
+          <div className={styles.date} style={{
+            color: message.authorId !== userId ? "var(--white-dark)" : "#dadada",
+          }}>
+            {formatDate(new Date(message.date))}
+          </div>
+        </div>
       </div>
 
       <div className={styles.ChatsMessage_author}>
