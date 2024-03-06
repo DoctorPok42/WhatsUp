@@ -17,8 +17,6 @@ const addReaction = async ({ token, conversationId, messageId, reaction }: { tok
 
     if (!messageToUpdate.reactions) messageToUpdate.reactions = [];
 
-    let userHasReacted = false;
-
     // check if the reaction already exists
     const reactionIndex = messageToUpdate.reactions.findIndex(e => e.value === reaction);
     if (reactionIndex !== -1) {
@@ -29,17 +27,15 @@ const addReaction = async ({ token, conversationId, messageId, reaction }: { tok
         if (messageToUpdate.reactions[reactionIndex].usersId.length === 0)
           messageToUpdate.reactions.splice(reactionIndex, 1);
       } else {
-        userHasReacted = true;
         messageToUpdate.reactions[reactionIndex].usersId.push(id);
       }
     } else {
-      userHasReacted = true;
       messageToUpdate.reactions.push({ value: reaction, usersId: [id] });
     }
 
     await mongoose.connection.db.collection(`conversation_${conversationId}`).updateOne({ _id: realId }, { $set: { reactions: messageToUpdate.reactions } });
 
-    return { status: "success", message: "Reaction added.", data: { userHasReacted, reaction, messageId } };
+    return { status: "success", message: "Reaction added.", data: { messageId, messageToUpdate } };
 
   } catch (error) {
     return { status: "error", message: "An error occurred." };
