@@ -63,7 +63,7 @@ const ContextMenu = ({
 
   const menuButtons = [
     ...message.authorId == userId ? [{ name: "Edit", icon: faPen }] : [],
-    { name: "More reactions", icon: (x > window.innerWidth - 200) ? faArrowCircleLeft : faArrowCircleRight, hover: () => setShowPicker(true)},
+    { name: "More reactions", icon: (x > window.innerWidth - 600) ? faArrowCircleLeft : faArrowCircleRight, action: () => setShowPicker(true)},
     { name: "Copy", icon: faCopy },
     { name: "Copy Message Link", icon: faLink },
     { name: "Delete", icon: faTrash, color: true },
@@ -125,14 +125,9 @@ const ContextMenu = ({
           key={index}
           className={styles.ContextMenu_button}
           id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
-          onMouseEnter={
-            button.hover
-              ? () => button.hover()
-              : () => setShowPicker(false)
-          }
           onClick={
-            button.hover
-              ? button.hover
+            button.action
+              ? button.action
               : () => handleAction(button.name)
           }
           style={{
@@ -164,7 +159,7 @@ const ContextMenu = ({
           position: "absolute",
           left: "13.5em",
           top: "0em",
-          transform: `translateX(${x > window.innerWidth - 200 ? "-163.5%" : ""})`
+          transform: `translateX(${x > window.innerWidth - 600 ? "-163.5%" : ""})`
         }}
         searchPlaceHolder='Find the perfect emoji...'
         lazyLoadEmojis
