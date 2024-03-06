@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import router from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faClose, faSignOutAlt, faUserPlus, faUsers } from '@fortawesome/free-solid-svg-icons';
@@ -72,10 +72,14 @@ const InfoChats = ({
   }
 
   return (
-    <div className={styles.InfoChats_container} style={{
-      width: isInfoOpen ? '23em' : '0',
-      opacity: isInfoOpen ? 1 : 0,
-    }}>
+    <div
+      className={styles.InfoChats_container}
+      style={{
+        width: isInfoOpen ? '23em' : '0',
+        opacity: isInfoOpen ? 1 : 0,
+      }}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <div className={styles.header}>
         <div className={styles.title}>Chat Details</div>
 

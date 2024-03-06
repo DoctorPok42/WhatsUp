@@ -44,7 +44,13 @@ const ButtonChat = ({
         arrow
       >
       <div className={styles.ButtonChat_container} onClick={onClick}>
-          <FontAwesomeIcon icon={icon} color='white' width={20} height={20} {...color && { color }} />
+        <FontAwesomeIcon
+          icon={icon}
+          style={{
+            transform: 'scale(1.15)',
+          }}
+          {...color && { color }}
+        />
       </div>
     </NameTooltip>
   );
