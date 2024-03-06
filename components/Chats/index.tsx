@@ -52,6 +52,7 @@ const Chats = ({
   const [contextMenu, setContextMenu] = useState(initialContextMenu)
 
   const [messageIdHover, setMessageIdHover] = useState<string | null>(null)
+  const [messageIdHoverContextMenu, setMessageIdHoverContextMenu] = useState<string | null>(null)
   const [copiedText, copyToClipboard] = useCopyToClipboard();
 
   const getMessages = async (nbMessages?: boolean) => {
@@ -125,6 +126,8 @@ const Chats = ({
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
 
+    setMessageIdHoverContextMenu(messageIdHover)
+
     const { pageX, pageY } = e
     setContextMenu({
       isOpen: true,
@@ -137,19 +140,39 @@ const Chats = ({
 
   const handleContextMenuAction = (action: string) => {
     switch (action) {
-      case "copy":
-        copyToClipboard(allMessages.find(e => e._id === messageIdHover)?.content)
+      case "Copy":
+        copyToClipboard(allMessages.find(e => e._id === messageIdHoverContextMenu)?.content)
         break;
-      case "delete":
-        emitEvent("deleteMessage", { token, conversationId: id, messageId: messageIdHover }, (data: any) => {
+      case "Copy Message Link":
+        copyToClipboard(window.location.href + `/${messageIdHoverContextMenu}`)
+        break;
+      case "Delete":
+        emitEvent("deleteMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
           if (data.status === "success") {
-            setAllMessages(allMessages.filter(e => e._id !== messageIdHover))
+            setAllMessages(allMessages.filter(e => e._id !== messageIdHoverContextMenu))
           } else {
             alert(data.message)
           }
         })
         break;
     }
+  }
+
+  const handleAddReaction = (reaction: string) => {
+    emitEvent("addReaction", { token, conversationId: id, messageId: messageIdHover, reaction }, (data: any) => {
+      if (data.status === "success") {
+        const messageIndex = allMessages.findIndex(e => e._id === data.data.messageId)
+
+        const newAllMessages = [...allMessages]
+        if (!newAllMessages[messageIndex].reactions)
+          newAllMessages[messageIndex].reactions = []
+        newAllMessages[messageIndex].reactions = data.data.messageToUpdate.reactions
+
+        setAllMessages([...allMessages])
+      } else {
+        alert(data.message)
+      }
+    })
   }
 
   return (
@@ -163,7 +186,7 @@ const Chats = ({
           closeContextMenu={closeContextMenu}
           handleContextMenuAction={handleContextMenuAction}
           handleAddReaction={handleAddReaction}
-          message={allMessages.find(e => e._id === messageIdHover)}
+          message={allMessages.find(e => e._id === messageIdHoverContextMenu)}
           userId={userId}
         />
       }
@@ -214,6 +237,7 @@ const Chats = ({
                     index={index}
                     handleContextMenu={handleContextMenu}
                     setMessageIdHover={setMessageIdHover}
+                    handleAddReaction={handleAddReaction}
                   />
                 </div>
               )
@@ -227,6 +251,7 @@ const Chats = ({
                 index={index}
                 handleContextMenu={handleContextMenu}
                 setMessageIdHover={setMessageIdHover}
+                handleAddReaction={handleAddReaction}
               />
             }
           })}
