@@ -63,7 +63,7 @@ const ContextMenu = ({
 
   const menuButtons = [
     ...message.authorId == userId ? [{ name: "Edit", icon: faPen }] : [],
-    { name: "More reactions", icon: (x > window.innerWidth - 600) ? faArrowCircleLeft : faArrowCircleRight, action: () => setShowPicker(true)},
+    { name: "More reactions", icon: (x > window.innerWidth - 600) ? faArrowCircleLeft : faArrowCircleRight, action: () => setShowPicker(!showPicker)},
     { name: "Copy", icon: faCopy },
     { name: "Copy Message Link", icon: faLink },
     { name: "Delete", icon: faTrash, color: true },

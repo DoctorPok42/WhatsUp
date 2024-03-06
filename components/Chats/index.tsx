@@ -54,6 +54,8 @@ const Chats = ({
   const [messageIdHover, setMessageIdHover] = useState<string | null>(null)
   const [messageIdHoverContextMenu, setMessageIdHoverContextMenu] = useState<string | null>(null)
   const [copiedText, copyToClipboard] = useCopyToClipboard();
+  const [inputBarMode, setInputBarMode] = useState<"chat" | "edit">("chat")
+  const [inputBarValue, setInputBarValue] = useState<string>("")
 
   const getMessages = async (nbMessages?: boolean) => {
     emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
@@ -91,6 +93,21 @@ const Chats = ({
     emitEvent("sendMessage", { token, conversationId: id, content: message }, (data: any) => {
       if (data.status === "success") {
         setAllMessages([...allMessages, data.data])
+      } else {
+        alert(data.message)
+      }
+    })
+  }
+
+  const onEdit = (message: string) => {
+    emitEvent("editMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu, content: message }, (data: any) => {
+      if (data.status === "success") {
+        const messageIndex = allMessages.findIndex(e => e._id === messageIdHoverContextMenu)
+
+        const newAllMessages = [...allMessages]
+        newAllMessages[messageIndex].content = message
+        setAllMessages([...allMessages])
+        setInputBarMode("chat")
       } else {
         alert(data.message)
       }
@@ -144,6 +161,10 @@ const Chats = ({
         break;
       case "Copy Message Link":
         copyToClipboard(window.location.href + `/${messageIdHoverContextMenu}`)
+        break;
+      case "Edit":
+        setInputBarMode("edit")
+        setInputBarValue(allMessages.find(e => e._id === messageIdHoverContextMenu)?.content)
         break;
       case "Delete":
         emitEvent("deleteMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
@@ -260,7 +281,16 @@ const Chats = ({
           <p>{userTyping} is typing...</p>
         </div>}
 
-        <InputBar files={files} onSend={onSend} onAttach={onAttach} onTyping={onTyping} setFiles={setFiles} />
+        <InputBar
+          files={files}
+          onSend={onSend}
+          onEdit={onEdit}
+          onAttach={onAttach}
+          onTyping={onTyping}
+          setFiles={setFiles}
+          mode={inputBarMode}
+          value={inputBarValue}
+        />
       </div>}
     </div>
   );
