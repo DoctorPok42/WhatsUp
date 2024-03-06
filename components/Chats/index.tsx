@@ -91,7 +91,6 @@ const Chats = ({
     emitEvent("sendMessage", { token, conversationId: id, content: message }, (data: any) => {
       if (data.status === "success") {
         setAllMessages([...allMessages, data.data])
-        getConversations && getConversations()
       } else {
         alert(data.message)
       }
