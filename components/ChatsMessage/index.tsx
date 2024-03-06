@@ -1,9 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
 import { Emoji, EmojiStyle } from 'emoji-picker-react';
+import formatDate from '@/tools/formatDate';
 
 import styles from './style.module.scss';
-import formatDate from '@/tools/formatDate';
 
 interface ChatsMessageProps {
   message: {
