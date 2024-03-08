@@ -62,11 +62,11 @@ const ContextMenu = ({
   const [showPicker, setShowPicker] = useState(false);
 
   const menuButtons = [
-    ...message.authorId == userId ? [{ name: "Edit", icon: faPen }] : [],
+    ...message.authorId === userId ? [{ name: "Edit", icon: faPen }] : [],
     { name: "More reactions", icon: (x > window.innerWidth - 600) ? faArrowCircleLeft : faArrowCircleRight, action: () => setShowPicker(!showPicker)},
     { name: "Copy", icon: faCopy },
     { name: "Copy Message Link", icon: faLink },
-    { name: "Delete", icon: faTrash, color: true },
+    ...message.authorId === userId ? [{ name: "Delete", icon: faTrash, color: true }] : [],
   ]
 
   const preSelectedReactions = [
