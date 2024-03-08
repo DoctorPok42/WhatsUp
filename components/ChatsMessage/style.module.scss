@@ -68,6 +68,7 @@
           cursor: pointer;
           gap: 0.2em;
           transition: var(--transition);
+          animation: opacity 0.5s ease forwards;
         }
       }
 
@@ -82,6 +83,15 @@
     width: 3.125em;
     height: 3.125em;
     user-select: none;
+  }
+}
+
+@keyframes opacity {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
