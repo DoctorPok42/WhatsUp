@@ -156,17 +156,29 @@ const Chats = ({
 
   const handleContextMenuAction = (action: string) => {
     switch (action) {
-      case "Copy":
+      case "copy":
         copyToClipboard(allMessages.find(e => e._id === messageIdHoverContextMenu)?.content)
         break;
-      case "Copy Message Link":
+      case "clink":
         copyToClipboard(window.location.href + `/${messageIdHoverContextMenu}`)
         break;
-      case "Edit":
+      case "edit":
         setInputBarMode("edit")
         setInputBarValue(allMessages.find(e => e._id === messageIdHoverContextMenu)?.content)
         break;
-      case "Delete":
+      case "pin":
+        emitEvent("pinMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
+          if (data.status === "success") {
+            const conversationIndex = conversations.findIndex(e => e._id === id)
+            const newConversations = [...conversations]
+            newConversations[conversationIndex].pinnedMessages = data.data
+            setConversation(newConversations)
+          } else {
+            alert(data.message)
+          }
+        })
+        break;
+      case "delete":
         emitEvent("deleteMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
           if (data.status === "success") {
             setAllMessages(allMessages.filter(e => e._id !== messageIdHoverContextMenu))
@@ -208,6 +220,7 @@ const Chats = ({
           handleAddReaction={handleAddReaction}
           message={allMessages.find(e => e._id === messageIdHoverContextMenu)}
           userId={userId}
+          isMessagePin={conversations.find(e => e._id === id)?.pinnedMessages.includes(messageIdHoverContextMenu)}
         />
       }
 

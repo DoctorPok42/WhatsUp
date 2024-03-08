@@ -36,6 +36,7 @@ export interface Conversations extends mongoose.Document {
   name?: string;
   links: ConversationsLinks[];
   files: ConversationsFiles[];
+  pinnedMessages: string[];
   membersId: string[];
   membersPublicKey: {
     key: string,

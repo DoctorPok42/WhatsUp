@@ -5,6 +5,7 @@ const conversationsSchema = new Schema<Conversations>({
   conversationType: { type: String, required: true },
   links: { type: Array<ConversationsLinks>(), default: [] },
   files: { type: Array<ConversationsLinks>(), default: [] },
+  pinnedMessages: { type: [], default: [] },
   membersId: { type: [], required: true },
   membersPublicKey: { type: Array<Object>(), required: true },
   createdAt: { type: Date, required: true, default: Date.now },

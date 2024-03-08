@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useClickAway } from "@uidotdev/usehooks";
-import { faArrowCircleLeft, faArrowCircleRight, faCopy, faLink, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowCircleLeft, faArrowCircleRight, faCopy, faLink, faPen, faThumbTack, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Zoom } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -25,6 +25,7 @@ interface ContextMenuProps {
   handleAddReaction: (reaction: string) => void
   message: any
   userId: string
+  isMessagePin: boolean
 }
 
 const emojiStyleChoose = "google" as EmojiStyle;
@@ -55,6 +56,7 @@ const ContextMenu = ({
   handleAddReaction,
   message,
   userId,
+  isMessagePin,
 }: ContextMenuProps) => {
   const ref = useClickAway(() => {
     closeContextMenu();
@@ -62,11 +64,12 @@ const ContextMenu = ({
   const [showPicker, setShowPicker] = useState(false);
 
   const menuButtons = [
-    ...message.authorId === userId ? [{ name: "Edit", icon: faPen }] : [],
+    ...message.authorId === userId ? [{ name: "Edit", value: "edit", icon: faPen }] : [],
     { name: "More reactions", icon: (x > window.innerWidth - 600) ? faArrowCircleLeft : faArrowCircleRight, action: () => setShowPicker(!showPicker)},
-    { name: "Copy", icon: faCopy },
-    { name: "Copy Message Link", icon: faLink },
-    ...message.authorId === userId ? [{ name: "Delete", icon: faTrash, color: true }] : [],
+    { name: isMessagePin ? "Unpin Message" : "Pin Message", value: "pin", icon: faThumbTack, angle: 45 },
+    { name: "Copy", value: "copy", icon: faCopy },
+    { name: "Copy Message Link", value: "clink", icon: faLink },
+    ...message.authorId === userId ? [{ name: "Delete", value: "delete", icon: faTrash, color: true }] : [],
   ]
 
   const preSelectedReactions = [
@@ -128,7 +131,7 @@ const ContextMenu = ({
           onClick={
             button.action
               ? button.action
-              : () => handleAction(button.name)
+              : () => handleAction(button.value as string)
           }
           style={{
             backgroundColor: showPicker && button.name === "More reactions" ? "var(--blue)" : "",
@@ -145,6 +148,11 @@ const ContextMenu = ({
             id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
             width={20}
             height={20}
+            style={
+              button.angle
+                ? { transform: `rotate(${button.angle}deg)` }
+                : {}
+            }
           />
         </div>
       ))}
