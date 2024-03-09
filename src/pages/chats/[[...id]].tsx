@@ -24,12 +24,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
 
   const getConversations = async () => {
     emitEvent("getConversations", { token }, (data: any) => {
-      if (data.status === "success") {
-        setConversations(data.data)
-      } else {
-        alert(data.message)
-        return []
-      }
+      setConversations(data.data)
     })
   }
 
