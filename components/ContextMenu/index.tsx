@@ -73,10 +73,10 @@ const ContextMenu = ({
   ]
 
   const preSelectedReactions = [
-    { name: "Like", icon: "1f44d" },
-    { name: "Love", icon: "2764-fe0f"  },
-    { name: "Haha", icon: "1f602"  },
-    { name: "Sad", icon: "1f972"  }
+    { name: ":+1:", icon: "1f44d" },
+    { name: ":heart:", icon: "2764-fe0f"  },
+    { name: ":joy:", icon: "1f602"  },
+    { name: ":cry:", icon: "1f622"  }
   ]
 
   const handleAction = (action: string) => {
@@ -87,12 +87,12 @@ const ContextMenu = ({
   return (
     <div
       ref={ref}
+      id="contextMenuChat"
       className={styles.ContextMenu_container}
       onContextMenu={(e) => {e.preventDefault()}}
       style={{
         top: `${y - 1}px`,
         left: `${x - 80}px`,
-        transform: `translateX(${x > window.innerWidth - 200 ? "-100%" : ""})`
       }}
     >
 

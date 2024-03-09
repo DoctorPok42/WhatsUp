@@ -145,10 +145,17 @@ const Chats = ({
     setMessageIdHoverContextMenu(messageIdHover)
 
     const { pageX, pageY } = e
+
+    let x = pageX
+    let y = pageY
+
+    if (window.innerWidth - pageX < 200) x = pageX - 200
+    if (window.innerHeight - pageY < 270) y = pageY - 220
+
     setContextMenu({
       isOpen: true,
-      x: pageX,
-      y: pageY,
+      x,
+      y,
     })
   }
 
