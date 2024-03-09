@@ -91,26 +91,18 @@ const Chats = ({
 
   const onSend = (message: string) => {
     emitEvent("sendMessage", { token, conversationId: id, content: message }, (data: any) => {
-      if (data.status === "success") {
-        setAllMessages([...allMessages, data.data])
-      } else {
-        alert(data.message)
-      }
+      setAllMessages([...allMessages, data.data])
     })
   }
 
   const onEdit = (message: string) => {
     emitEvent("editMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu, content: message }, (data: any) => {
-      if (data.status === "success") {
         const messageIndex = allMessages.findIndex(e => e._id === messageIdHoverContextMenu)
 
         const newAllMessages = [...allMessages]
         newAllMessages[messageIndex].content = message
         setAllMessages([...allMessages])
         setInputBarMode("chat")
-      } else {
-        alert(data.message)
-      }
     })
   }
 
@@ -119,11 +111,7 @@ const Chats = ({
   }
 
   const onTyping = () => {
-    emitEvent("isTyping", { token, conversationId: id }, (data: any) => {
-      if (data.status === "error") {
-        alert(data.message)
-      }
-    })
+    emitEvent("isTyping", { token, conversationId: id })
   }
 
   const isSameDay = (date1: Date, date2: Date) => {
@@ -143,7 +131,6 @@ const Chats = ({
     e.preventDefault()
 
     setMessageIdHoverContextMenu(messageIdHover)
-
     const { pageX, pageY } = e
 
     let x = pageX
@@ -175,23 +162,15 @@ const Chats = ({
         break;
       case "pin":
         emitEvent("pinMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
-          if (data.status === "success") {
-            const conversationIndex = conversations.findIndex(e => e._id === id)
-            const newConversations = [...conversations]
-            newConversations[conversationIndex].pinnedMessages = data.data
-            setConversation(newConversations)
-          } else {
-            alert(data.message)
-          }
+          const conversationIndex = conversations.findIndex(e => e._id === id)
+          const newConversations = [...conversations]
+          newConversations[conversationIndex].pinnedMessages = data.data
+          setConversation(newConversations)
         })
         break;
       case "delete":
         emitEvent("deleteMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
-          if (data.status === "success") {
-            setAllMessages(allMessages.filter(e => e._id !== messageIdHoverContextMenu))
-          } else {
-            alert(data.message)
-          }
+          setAllMessages(allMessages.filter(e => e._id !== messageIdHoverContextMenu))
         })
         break;
     }
@@ -199,18 +178,14 @@ const Chats = ({
 
   const handleAddReaction = (reaction: string) => {
     emitEvent("addReaction", { token, conversationId: id, messageId: messageIdHover, reaction }, (data: any) => {
-      if (data.status === "success") {
-        const messageIndex = allMessages.findIndex(e => e._id === data.data.messageId)
+      const messageIndex = allMessages.findIndex(e => e._id === data.data.messageId)
 
-        const newAllMessages = [...allMessages]
-        if (!newAllMessages[messageIndex].reactions)
-          newAllMessages[messageIndex].reactions = []
-        newAllMessages[messageIndex].reactions = data.data.messageToUpdate.reactions
+      const newAllMessages = [...allMessages]
+      if (!newAllMessages[messageIndex].reactions)
+        newAllMessages[messageIndex].reactions = []
+      newAllMessages[messageIndex].reactions = data.data.messageToUpdate.reactions
 
-        setAllMessages([...allMessages])
-      } else {
-        alert(data.message)
-      }
+      setAllMessages([...allMessages])
     })
   }
 

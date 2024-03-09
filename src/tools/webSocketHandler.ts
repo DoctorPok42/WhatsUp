@@ -1,9 +1,13 @@
 import { socket } from '../pages/_app';
 
-const emitEvent = (eventName: string, data: any, callback: (data: any) => void) => {
+const emitEvent = (eventName: string, data: any, callback?: (data: any) => void) => {
   try {
     socket.on(eventName, (data: any) => {
-      callback(data);
+      if (data.status === "success") {
+        callback && callback(data);
+      } else {
+        console.error(data);
+      }
     });
 
     socket.emit(eventName, data, callback);
