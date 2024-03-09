@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisVertical, faSearch, faThumbTack } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './style.module.scss';
 
@@ -32,8 +32,14 @@ const HeaderChats = ({
       </div>
 
       <div className={styles.headerActions}>
-        <div className={styles.search} onClick={handleSearchMessage}>
+        <div className={styles.icon} onClick={handleSearchMessage}>
           <FontAwesomeIcon icon={faSearch} width={18} height={18} color='#7d7f92' />
+        </div>
+
+        <div className={styles.icon}>
+          <FontAwesomeIcon icon={faThumbTack} width={18} height={18} color='#7d7f92' style={{
+            transform: 'rotate(45deg)',
+          }} />
         </div>
 
         <div className={styles.info} onClick={() => setIsInfoOpen(!isInfoOpen)}>
@@ -42,7 +48,7 @@ const HeaderChats = ({
           }} />
         </div>
 
-        <div className={styles.buttonParams}>
+        <div className={styles.icon}>
           <FontAwesomeIcon icon={faEllipsisVertical} width={18} height={18} color='#7d7f92' />
         </div>
       </div>
