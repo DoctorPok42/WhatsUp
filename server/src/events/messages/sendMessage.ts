@@ -67,6 +67,7 @@ const sendMessage = async ({ token, conversationId, content }: any): Promise<{ s
       if (!user.options.online) return;
 
       io.to(user.socketId).emit("message", {
+        conversationsId: conversationId,
         _id: message._id,
         content: message.content,
         date: message.date,
