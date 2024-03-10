@@ -1,28 +1,38 @@
-import { verifyAuthToken } from "../../functions";
-import { User } from "../../types";
+import { DecodedToken } from "../../types";
 import mongoose from "mongoose";
 
-const editMessage = async ({ token, conversationId, messageId, content }: { token: string; conversationId: string; messageId: string; content: string }): Promise<{ status: string; message: string }> => {
-  try {
-    if (!token) return { status: "error", message: "Data not found." };
+const editMessage = async (
+  {
+    conversationId,
+    messageId,
+    content,
+  }: {
+    conversationId: string;
+    messageId: string;
+    content: string;
+  },
+  decoded: DecodedToken
+): Promise<{ status: string; message: string }> => {
+  const realId = new mongoose.Types.ObjectId(messageId);
 
-    const { id } = verifyAuthToken(token) as User["id"] | null;
-    if (!id) return { status: "error", message: "Invalid token." };
+  // find and update the message
+  const messageToEdit = await mongoose.connection.db
+    .collection(`conversation_${conversationId}`)
+    .findOne({ _id: realId });
+  if (!messageToEdit) return { status: "error", message: "Message not found." };
 
-    const realId = new mongoose.Types.ObjectId(messageId);
+  if (messageToEdit.authorId !== decoded.id)
+    return { status: "error", message: "You can't edit this message." };
 
-    // find and update the message
-    const messageToDelete = await mongoose.connection.db.collection(`conversation_${conversationId}`).findOneAndUpdate(
-      { _id: realId },
-      { $set: { content: content, edited: true } }
-    )
-    if (!messageToDelete) return { status: "error", message: "Message not found." };
+  await mongoose.connection.db
+    .collection(`conversation_${conversationId}`)
+    .updateOne({ _id: realId }, { $set: { content: content, edited: true } });
 
-    return { status: "success", message: "Message edited." };
+  return { status: "success", message: "Message edited." };
+};
 
-  } catch (error) {
-    return { status: "error", message: "An error occurred." };
-  }
+module.exports.params = {
+  authRequired: true,
 };
 
 export default editMessage;

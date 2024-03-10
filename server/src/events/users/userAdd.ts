@@ -1,42 +1,44 @@
 import mongoose from "mongoose";
-import { verifyAuthToken } from "../../functions";
 import ConversationsModel from "../../schemas/conversations";
-import UserModel from "../../schemas/users"
-import { User } from "../../types";
+import UserModel from "../../schemas/users";
+import { DecodedToken } from "../../types";
 
-const userAdd = async ({ token, conversationId, userId }: { token: string, conversationId: string, userId: string }) => {
-  try {
-    if (!token) return { status: "error", message: "Data not found." };
+const userAdd = async (
+  { conversationId, userId }: { conversationId: string; userId: string },
+  decoded: DecodedToken
+) => {
+  const user = await UserModel.findById(decoded.id);
+  if (!user) return { status: "error", message: "User not found." };
 
-    const decoded = verifyAuthToken(token) as User | null;
+  const conversation = await ConversationsModel.findById(conversationId);
+  if (!conversation)
+    return { status: "error", message: "Conversation not found." };
 
-    if (!decoded || !decoded.id) return { status: "error", message: "Invalid token." };
+  const userAlreadyIn = conversation.membersId.find(
+    (e: string) => e === userId
+  );
+  if (userAlreadyIn) return { status: "error", message: "User already in." };
 
-    const user = await UserModel.findById(decoded.id);
-    if (!user) return { status: "error", message: "User not found." };
+  conversation.membersId.push(userId);
 
-    const conversation = await ConversationsModel.findById(conversationId);
-    if (!conversation) return { status: "error", message: "Conversation not found." };
+  if (conversation.conversationType === "private")
+    conversation.conversationType = "group";
 
-    const userAlreadyIn = conversation.membersId.find((e: string) => e === userId);
-    if (userAlreadyIn) return { status: "error", message: "User already in." };
+  await conversation.save();
 
-    conversation.membersId.push(userId);
+  const realConversationId = new mongoose.Types.ObjectId(conversationId);
 
-    if (conversation.conversationType === "private")
-      conversation.conversationType = "group";
-
-    await conversation.save();
-
-    const realConversationId = new mongoose.Types.ObjectId(conversationId);
-
-    const addedUserConversation = await UserModel.findByIdAndUpdate(userId, { $push: { conversationsId: realConversationId } });
-    if (!addedUserConversation) return { status: "error", message: "An error occurred." };
-
-    return { status: "success", message: "User has been added." };
-  } catch (error) {
+  const addedUserConversation = await UserModel.findByIdAndUpdate(userId, {
+    $push: { conversationsId: realConversationId },
+  });
+  if (!addedUserConversation)
     return { status: "error", message: "An error occurred." };
-  }
-}
 
-export default userAdd
+  return { status: "success", message: "User has been added." };
+};
+
+module.exports.params = {
+  authRequired: true,
+};
+
+export default userAdd;

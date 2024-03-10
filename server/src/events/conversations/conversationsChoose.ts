@@ -1,54 +1,69 @@
-import { verifyAuthToken } from "../../functions";
 import ConversationsModel from "../../schemas/conversations";
 import UserModel from "../../schemas/users";
-import { Conversations, User } from "../../types";
+import { Conversations, DecodedToken, User } from "../../types";
 import mongoose from "mongoose";
 
-const conversationsChoose = async ({ token, userId }: { token: string, userId: User["id"] }): Promise<{ status: string, message: string, data: Conversations | null }> => {
-  try {
-    if (!token) return { status: "error", message: "Data not found.", data: null };
+const conversationsChoose = async (
+  { userId }: User["id"],
+  decoded: DecodedToken
+): Promise<{ status: string; message: string; data: Conversations | null }> => {
+  // Check if the conversation already exists (check in both ways, to avoid duplicates)
+  const userInfos = await ConversationsModel.findOne({
+    membersId: { $all: [decoded.id, userId] },
+  });
 
-    const decoded = verifyAuthToken(token) as any;
-    if (!decoded || !decoded.id) return { status: "error", message: "Invalid token.", data: null };
+  // If not, create it
+  if (!userInfos || userInfos.conversationType !== "private") {
+    const newConversation = new ConversationsModel({
+      conversationType: "private",
+      membersId: [decoded.id, userId],
+      membersPublicKey: [],
+      links: [],
+      files: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastMessage: "",
+      lastMessageDate: new Date(),
+      lastMessageAuthorId: "",
+    });
 
-    // Check if the conversation already exists (check in both ways, to avoid duplicates)
-    const userInfos = await ConversationsModel.findOne({ membersId: { $all: [decoded.id, userId] } });
+    const response = await newConversation.save();
+    if (!response)
+      return { status: "error", message: "An error occurred.", data: null };
 
-    // If not, create it
-    if (!userInfos || userInfos.conversationType !== "private") {
-      const newConversation = new ConversationsModel({
-        conversationType: 'private',
-        membersId: [decoded.id, userId],
-        membersPublicKey: [],
-        links: [],
-        files: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        lastMessage: '',
-        lastMessageDate: new Date(),
-        lastMessageAuthorId: ''
-      });
+    // Create the collection for the conversation's messages
+    const responses = await mongoose.connection.db.createCollection(
+      `conversation_${response._id}`
+    );
+    if (!responses)
+      return { status: "error", message: "An error occurred.", data: null };
 
-      const response = await newConversation.save();
-      if (!response) return { status: "error", message: "An error occurred.", data: null };
+    // Add the conversation id to the user's conversations list
+    const firstUser = await UserModel.findByIdAndUpdate(decoded.id, {
+      $push: { conversationsId: response._id },
+    });
+    const Seconduser2 = await UserModel.findByIdAndUpdate(userId, {
+      $push: { conversationsId: response._id },
+    });
 
-      // Create the collection for the conversation's messages
-      const responses = await mongoose.connection.db.createCollection(`conversation_${response._id}`);
-      if (!responses) return { status: "error", message: "An error occurred.", data: null };
+    if (!firstUser || !Seconduser2)
+      return { status: "error", message: "An error occurred.", data: null };
 
-      // Add the conversation id to the user's conversations list
-      const firstUser = await UserModel.findByIdAndUpdate(decoded.id, { $push: { conversationsId: response._id } });
-      const Seconduser2 = await UserModel.findByIdAndUpdate(userId, { $push: { conversationsId: response._id } });
-
-      if (!firstUser || !Seconduser2) return { status: "error", message: "An error occurred.", data: null };
-
-      return { status: "success", message: "Conversation has been created.", data: response };
-    }
-    return { status: "success", message: "Conversation has been found.", data: userInfos };
-
-  } catch (error) {
-    return { status: "error", message: "An error occurred.", data: null };
+    return {
+      status: "success",
+      message: "Conversation has been created.",
+      data: response,
+    };
   }
-}
+  return {
+    status: "success",
+    message: "Conversation has been found.",
+    data: userInfos,
+  };
+};
+
+module.exports.params = {
+  authRequired: true,
+};
 
 export default conversationsChoose;
