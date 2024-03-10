@@ -4,6 +4,7 @@ import emitEvent from '../../src/tools/webSocketHandler';
 import UserCard from '../UserCard';
 import ConversationCard from '../ConversationCard';
 import router from 'next/router';
+import { Skeleton } from '@mui/material';
 
 import styles from './style.module.scss';
 
@@ -12,6 +13,7 @@ interface ContactProps {
   id?: string
   conversations?: any[]
   userId: string
+  isLoading: boolean
 }
 
 const Contact = ({
@@ -19,6 +21,7 @@ const Contact = ({
   id,
   conversations = [],
   userId,
+  isLoading,
 }: ContactProps) => {
   const [userSearched, setUserSearched] = useState<{
     id: string
@@ -90,9 +93,21 @@ const Contact = ({
       </div>
 
       <div className={styles.conversations}>
-        {conversations.map((conversation, index) => (
+        {!isLoading ? conversations.map((conversation, index) => (
           <ConversationCard key={index} id={id} conversation={conversation} onClick={() => router.push(`/chats/${conversation._id}`)} />
-        ))}
+        )) :
+          Array(6).fill(0).map((_, index) => (
+            <Skeleton
+              key={index}
+              variant="rectangular"
+              width="100%"
+              height="100px"
+              animation="wave"
+              style={{
+                borderRadius: '22px',
+              }}
+            />
+          ))}
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import ContextMenu from '../ContextMenu';
 import { useCopyToClipboard } from '@uidotdev/usehooks';
 
 import styles from './style.module.scss';
+import { Skeleton } from '@mui/material';
 
 interface ChatsProps {
   token: string
@@ -23,6 +24,8 @@ interface ChatsProps {
   getConversations?: () => void
   isSearchOpen?: boolean
   setIsSearchOpen?: (e: boolean) => void
+  isLoading: boolean
+  setIsLoading: (e: boolean) => void
 }
 
 const initialContextMenu = {
@@ -42,6 +45,8 @@ const Chats = ({
   getConversations,
   isSearchOpen = false,
   setIsSearchOpen,
+  isLoading,
+  setIsLoading,
 }: ChatsProps) => {
   const [files, setFiles] = useState<File[]>([]);
 
@@ -219,7 +224,7 @@ const Chats = ({
         setAllMessages={setAllMessages}
       />
 
-      <Contact token={token} id={id} conversations={conversations} userId={userId} />
+      <Contact token={token} id={id} conversations={conversations} userId={userId} isLoading={isLoading} />
 
       {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) && <div className={styles.Chats_content}>
         <HeaderChats
@@ -238,7 +243,7 @@ const Chats = ({
           }}
           onContextMenu={(e) => {e.preventDefault()}}
         >
-          {allMessages.map((e, index) => {
+          {!isLoading ? allMessages.map((e, index) => {
             if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
               return (
                 <div key={index} className={styles.Chats_date}>
@@ -269,7 +274,20 @@ const Chats = ({
                 handleAddReaction={handleAddReaction}
               />
             }
-          })}
+          }
+          ) : Array.from({ length: 10 }, (_, i) => i).map((e, index) => (
+            <Skeleton
+              key={index}
+              variant="circular"
+              width={Math.floor(Math.random() * 80) + 1 + '%'}
+              height={50}
+              animation="wave"
+              style={{
+                marginBottom: 12,
+                borderRadius: 20,
+              }}
+            />
+          ))}
         </div>
 
         {userTyping && <div className={styles.Chats_typing}>

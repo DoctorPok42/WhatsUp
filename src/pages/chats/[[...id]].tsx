@@ -10,6 +10,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
   const [conversations, setConversations] = useState<any>([])
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const cookies = new Cookies();
   const token = cookies.get("token");
@@ -24,6 +25,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
 
   const getConversations = async () => {
     emitEvent("getConversations", { token }, (data: any) => {
+      setIsLoading(false)
       setConversations(data.data)
     })
   }
@@ -54,6 +56,8 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
           conversations={conversations}
           isSearchOpen={isSearchOpen}
           setIsSearchOpen={setIsSearchOpen}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
         {id && <InfoChats
           isInfoOpen={isInfoOpen}
@@ -74,16 +78,8 @@ export async function getServerSideProps(context: any) {
   const { id } = context.query;
 
   if (!id) {
-    return {
-      props: {
-        id: ""
-      }
-    }
+    return { props: { id: "" }}
+  } else {
+    return { props: { id }};
   }
-
-  return {
-    props: {
-      id
-    },
-  };
 }
