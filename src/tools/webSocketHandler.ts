@@ -1,12 +1,16 @@
-import { socket } from '../pages/_app';
+import { socket } from "../pages/_app";
 
-const emitEvent = (eventName: string, data: any, callback?: (data: any) => void) => {
+const emitEvent = (
+  eventName: string,
+  data: any,
+  callback?: (data: any) => void
+) => {
   try {
     socket.on(eventName, (data: any) => {
       if (data.status === "success") {
         callback && callback(data);
       } else {
-        console.error(data);
+        console.log(data);
       }
     });
 
@@ -14,6 +18,6 @@ const emitEvent = (eventName: string, data: any, callback?: (data: any) => void)
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 export default emitEvent;
