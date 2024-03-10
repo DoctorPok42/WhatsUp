@@ -1,7 +1,6 @@
 import { readdirSync } from "fs";
 import { join } from "path";
 import { color } from "../functions";
-import { Events } from "../types";
 
 module.exports = async (events: any) => {
   let eventsDir = join(__dirname, "../events");
