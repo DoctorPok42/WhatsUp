@@ -64,14 +64,10 @@ const Chats = ({
 
   const getMessages = async (nbMessages?: boolean) => {
     emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
-      if (data.status === "success") {
-        setAllMessages(data.data)
-        setMessageLoaded(
-          nbMessages ? 10 : messageLoaded + 10
-        )
-      } else {
-        alert(data.message)
-      }
+      setAllMessages(data.data)
+      setMessageLoaded(
+        nbMessages ? 10 : messageLoaded + 10
+      )
     })
   }
 
