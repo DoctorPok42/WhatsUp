@@ -2,6 +2,7 @@ import UserModel from "../../schemas/users";
 import { DecodedToken, User } from "../../types";
 
 const userGet = async (
+  {},
   decoded: DecodedToken
 ): Promise<{ status: string; message: string; data: User | null }> => {
   const userInfos = await UserModel.findOne({ _id: decoded.id });

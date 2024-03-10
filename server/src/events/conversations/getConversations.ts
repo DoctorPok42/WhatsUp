@@ -4,6 +4,7 @@ import { Conversations, DecodedToken } from "../../types";
 import urlMetadata from "url-metadata";
 
 const getConversations = async (
+  {},
   decoded: DecodedToken
 ): Promise<{
   status: string;
