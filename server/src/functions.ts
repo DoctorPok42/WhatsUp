@@ -25,6 +25,15 @@ export const verifyAuthToken = (token: string) => {
   return jwt.verify(token, process.env.JWT_SECRET as string);
 }
 
+export const checkAuthToken = (token: string) => {
+  if (!token) return null
+
+  const decoded = verifyAuthToken(token) as any
+  if (!decoded || !decoded.id) return null
+
+  return decoded
+}
+
 export const checkCollections = () => {
   UserModel.find({}, (err: any, res: any) => {
     if (err) console.error(err)

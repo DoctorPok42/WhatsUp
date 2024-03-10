@@ -3,7 +3,7 @@ import { join } from "path";
 import { color } from "../functions";
 import { Events } from "../types";
 
-module.exports = async (events: Events) => {
+module.exports = async (events: any) => {
   let eventsDir = join(__dirname, "../events");
 
   await readdirSync(eventsDir).forEach((folder) => {
@@ -11,7 +11,9 @@ module.exports = async (events: Events) => {
       if (!file.endsWith(".js")) return;
 
       let event = require(`${eventsDir}/${folder}/${file}`).default;
-      let eventName = file.split(".")[0] as keyof Events;
+      let eventName = file.split(".")[0];
+
+      event.params = require(`${eventsDir}/${folder}/${file}`).params;
 
       events[eventName] = event;
     });

@@ -74,3 +74,9 @@ export interface Events {
   userGet: ({ token }: string) => Promise<{ success: boolean, message: string, data: User | null }>;
   usersGet: (phone: string[]) => Promise<{ success: boolean, message: string, data: User[] | null }>;
 }
+
+export interface DecodedToken {
+  id: string;
+  iat: number;
+  exp: number;
+}
