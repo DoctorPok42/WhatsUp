@@ -1,5 +1,4 @@
 import ConversationsModel from "../../schemas/conversations";
-import MessageModel from "../../schemas/message";
 import UserModel from "../../schemas/users";
 import { DecodedToken, Message, User } from "../../types";
 import { Socket } from "socket.io";
@@ -24,14 +23,15 @@ const sendMessage = async (
 
   const messageDate = new Date();
 
-  const message = new MessageModel({
+  const message = {
+    _id: new mongoose.Types.ObjectId(),
     content,
     authorId: decoded.id,
     date: messageDate,
     options: {
       ...(isLink && { isLink: true }),
     },
-  });
+  };
 
   // Put the message in the lastMessage field of the conversation
   const conversation = await ConversationsModel.findOne({
