@@ -33,7 +33,7 @@ const SideBar = ({
             <div key={index} className={styles.button} onClick={() => router.push(button.path)} style={{
               color: path === button.path ? '#5ad27d' : '#8393a3',
             }}>
-              <FontAwesomeIcon className={styles.icon} icon={button.icon} width={50} height={50} />
+              <FontAwesomeIcon className={styles.icon} icon={button.icon} width={20} height={20} />
               <a href={button.path}>{button.name}</a>
             </div>
           ))}
