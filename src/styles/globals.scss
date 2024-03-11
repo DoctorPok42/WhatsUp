@@ -203,4 +203,31 @@ h6 {
       }
     }
   }
+
+  .containerDash {
+    width: calc(95% - 2em);
+    height: calc(98vh - 2em);
+    display: flex;
+    align-items: flex-start;
+    margin: auto 0;
+    border-radius: 22px;
+    padding: 1em;
+    background-color: #202329;
+
+    .contentDash {
+      width: 95%;
+      height: 98%;
+      margin: auto;
+
+      .header {
+        margin-top: 1em;
+
+        .title {
+          font-size: 2.5em;
+          font-weight: 800;
+          margin: 0;
+        }
+      }
+    }
+  }
 }
