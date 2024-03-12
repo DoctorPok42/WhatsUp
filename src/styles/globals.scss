@@ -218,9 +218,14 @@ h6 {
       width: 95%;
       height: 98%;
       margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
 
       .header {
+        width: 100%;
         margin-top: 1em;
+        margin-bottom: 3em;
 
         .title {
           font-size: 2.5em;

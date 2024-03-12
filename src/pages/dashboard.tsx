@@ -3,6 +3,7 @@ import Head from "next/head";
 import Cookies from "universal-cookie";
 import { SideBar } from "../../components";
 import router from "next/router";
+import DashBox from "../../components/DashBox";
 
 export default function Dashboard() {
   const cookies = new Cookies();
@@ -31,6 +32,16 @@ export default function Dashboard() {
             <div className="header">
               <h1>Dashboard</h1>
             </div>
+
+            <DashBox
+              subtitle="This month messages"
+              text="87 000"
+              style={{
+                width: "15em",
+                background: "linear-gradient(90deg, #a15bf1 0%, #8b34f1 100%)",
+                border: "none"
+              }}
+            />
           </div>
         </div>
       </main>
