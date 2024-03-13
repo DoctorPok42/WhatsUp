@@ -1,14 +1,31 @@
 import UserModel from "../../schemas/users";
-import { Message, User } from "../../types";
+import { DecodedToken, Message, PrivateKey, User } from "../../types";
 import mongoose from "mongoose";
 
-const getMessages = async ({
-  conversationId,
-  messageLoaded,
-}: {
-  conversationId: string;
-  messageLoaded: number;
-}): Promise<{ status: string; message: string; data: Message[] | null }> => {
+const getPrivateKey = async (id: string): Promise<string | null> => {
+  const realId = new mongoose.Types.ObjectId(id);
+
+  const userPrivateKey = await mongoose.connection.db
+    .collection("privateKeys")
+    .findOne({ userId: realId });
+  return userPrivateKey ? userPrivateKey.privateKey : null;
+};
+
+const getMessages = async (
+  {
+    conversationId,
+    messageLoaded,
+  }: {
+    conversationId: string;
+    messageLoaded: number;
+  },
+  decoded: DecodedToken
+): Promise<{
+  status: string;
+  message: string;
+  data: Message[] | null;
+  key: string | null;
+}> => {
   // Get the last 20 messages from the conversation
   const messages = (await mongoose.connection.db
     .collection(`conversation_${conversationId}`)
@@ -17,7 +34,12 @@ const getMessages = async ({
     .limit(messageLoaded + 20)
     .toArray()) as any;
   if (!messages)
-    return { status: "error", message: "Messages not found.", data: null };
+    return {
+      status: "error",
+      message: "Messages not found.",
+      data: null,
+      key: null,
+    };
 
   // Get the phone of the author of each message
   const messagesWithPhone = await Promise.all(
@@ -27,12 +49,18 @@ const getMessages = async ({
     })
   );
   if (!messagesWithPhone)
-    return { status: "error", message: "Messages not found.", data: null };
+    return {
+      status: "error",
+      message: "Messages not found.",
+      data: null,
+      key: null,
+    };
 
   return {
     status: "success",
     message: "Messages found.",
     data: messagesWithPhone.reverse(),
+    key: await getPrivateKey(decoded.id),
   };
 };
 

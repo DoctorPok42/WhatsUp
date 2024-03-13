@@ -12,20 +12,27 @@ const conversationsChoose = async (
     membersId: { $all: [decoded.id, userId] },
   });
 
+  const firstUser = await UserModel.findById(decoded.id);
+  const secondUser = await UserModel.findById(userId);
+  if (!firstUser || !secondUser)
+    return { status: "error", message: "An error occurred.", data: null };
+
   // If not, create it
   if (!userInfos || userInfos.conversationType !== "private") {
+    const creationDate = new Date();
     const newConversation = new ConversationsModel({
+      _id: new mongoose.Types.ObjectId(),
       conversationType: "private",
       membersId: [decoded.id, userId],
-      membersPublicKey: [],
+      membersPublicKey: [firstUser.publicKey, secondUser.publicKey],
       links: [],
       files: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: creationDate,
+      updatedAt: creationDate,
       lastMessage: "",
-      lastMessageDate: new Date(),
+      lastMessageDate: creationDate,
       lastMessageAuthorId: "",
-    });
+    }) as Conversations;
 
     const response = await newConversation.save();
     if (!response)
@@ -39,15 +46,12 @@ const conversationsChoose = async (
       return { status: "error", message: "An error occurred.", data: null };
 
     // Add the conversation id to the user's conversations list
-    const firstUser = await UserModel.findByIdAndUpdate(decoded.id, {
-      $push: { conversationsId: response._id },
-    });
-    const Seconduser2 = await UserModel.findByIdAndUpdate(userId, {
-      $push: { conversationsId: response._id },
-    });
+    const conversationId = response._id as never;
+    firstUser.conversationsId.push(conversationId);
+    secondUser.conversationsId.push(conversationId);
 
-    if (!firstUser || !Seconduser2)
-      return { status: "error", message: "An error occurred.", data: null };
+    await firstUser.save();
+    await secondUser.save();
 
     return {
       status: "success",

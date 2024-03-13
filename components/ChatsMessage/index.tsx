@@ -27,6 +27,7 @@ interface ChatsMessageProps {
   handleContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void
   setMessageIdHover: (e: string | null) => void
   handleAddReaction: (reaction: string) => void
+  privateKey: string
 }
 
 const ChatsMessage = ({
@@ -38,6 +39,7 @@ const ChatsMessage = ({
   handleContextMenu,
   setMessageIdHover,
   handleAddReaction,
+  privateKey,
 }: ChatsMessageProps) => {
   const isOtherMessage = allMessages[index + 1] && allMessages[index + 1].authorId === message.authorId;
 
