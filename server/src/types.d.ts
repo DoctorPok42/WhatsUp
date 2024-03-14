@@ -15,6 +15,7 @@ export interface User extends mongoose.Document {
   joinedAt: Date;
   publicKey: string;
   socketId: string;
+  verifCode: string;
 }
 
 interface ConversationsLinks {

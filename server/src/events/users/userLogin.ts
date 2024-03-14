@@ -1,41 +1,60 @@
-import { createAuthToken } from "../../functions";
+import { createAuthToken, sendMessage } from "../../functions";
 import UserModel from "../../schemas/users";
 import { User } from "../../types";
-import bcrypt from "bcrypt";
 
 const userLogin = async ({
   phone,
+  verifCode,
 }: User): Promise<{
   status: string;
   message: string;
   token: string | null;
   userId?: string;
 }> => {
-  try {
-    if (!phone)
-      return { status: "error", message: "Data not found.", token: null };
+  if (!phone)
+    return { status: "error", message: "Data not found.", token: null };
 
-    const user = await UserModel.findOne({ phone });
+  const user = await UserModel.findOne({ phone });
 
-    if (!user)
-      return { status: "error", message: "User not found.", token: null };
+  if (!user)
+    return { status: "error", message: "User not found.", token: null };
 
-    // const isMatch = await bcrypt.compare(password, user.password);
-    // if (!isMatch) return { status: "error", message: "Password is incorrect.", token: null };
+  let validCode = "";
 
-    const token = createAuthToken(user._id);
+  if (!verifCode) {
+    validCode = Math.floor(1000 + Math.random() * 9000).toString();
 
-    if (token)
+    user.verifCode = validCode;
+    await user.save();
+
+    sendMessage(`${validCode} is your WhatsUp verification code.`, phone);
+    return {
+      status: "success",
+      message: "Verification code sent.",
+      token: null,
+    };
+  } else {
+    if (verifCode !== user.verifCode)
       return {
-        status: "success",
-        message: "User logged in.",
-        token,
-        userId: user._id,
+        status: "error",
+        message: "Invalid verification code.",
+        token: null,
       };
-    else return { status: "error", message: "An error occurred.", token: null };
-  } catch (error) {
-    return { status: "error", message: "An error occurred.", token: null };
+
+    user.verifCode = "";
+    await user.save();
   }
+
+  const token = createAuthToken(user._id);
+
+  if (token)
+    return {
+      status: "success",
+      message: "User logged in.",
+      token,
+      userId: user._id,
+    };
+  else return { status: "error", message: "An error occurred.", token: null };
 };
 
 export default userLogin;

@@ -1,6 +1,6 @@
 import UserModel from "../../schemas/users";
 import { User } from "../../types";
-import { createAuthToken } from "../../functions";
+import { createAuthToken, sendMessage } from "../../functions";
 import crypto from "crypto";
 import mongoose from "mongoose";
 
@@ -28,12 +28,15 @@ const userCreate = async (
 ): Promise<{ status: string; message: string; token: string | null }> => {
   const { publicKey, privateKey } = await genereateKey();
 
+  const verifCode = Math.floor(1000 + Math.random() * 9000).toString();
+
   const newUser = new UserModel({
     phone: user.phone,
     username: user.username || user.phone,
     options: user.options,
     joinedAt: user.joinedAt,
     publicKey,
+    verifCode,
   });
 
   const userKeys = {
@@ -49,6 +52,8 @@ const userCreate = async (
       .insertOne(userKeys);
     if (!userKeysResponse)
       return { status: "error", message: "An error occurred.", token: null };
+
+    sendMessage(`${verifCode} is your WhatsUp verification code.`, user.phone);
 
     console.log(`👤 User ${response.phone} has been registered.`);
 
