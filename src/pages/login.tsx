@@ -10,8 +10,11 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [isValide, setIsValide] = useState(false);
   const [loginType, setLoginType] = useState<"signin" | "signup">("signin");
+  const [loginStep, setLoginStep] = useState<"phone" | "code">("phone");
+  const [verifCode, setVerifCode] = useState<string>("");
 
   useEffect(() => {
+    if (loginStep === "code") return;
       const phoneRegex = new RegExp(/^(\d{2}\s){4}\d{2}$/);
 
       const phoneValue = document.querySelector("input[name=phone]") as HTMLInputElement;
@@ -22,20 +25,21 @@ export default function Login() {
       } else {
         setIsValide(false);
       }
-  }, [phone]);
+  }, [phone, loginStep]);
 
   const handleSubmit = async () => {
     const userPhone = phone.replace(/\s/g, "");
-    emitEvent(loginType === "signin" ? "userLogin" : "userCreate", { phone: userPhone, ...username ? { username } : {}}, (data: any) => {
-      if (data.status === "success") {
-        const cookies = new Cookies();
-        cookies.set("token", data.token, { path: "/", maxAge: 60 * 60 * 24 });
-        cookies.set("phone", userPhone, { path: "/", maxAge: 60 * 60 * 24 });
-        cookies.set("userId", data.userId, { path: "/", maxAge: 60 * 60 * 24 });
-        router.push("/chats");
-      } else {
-        alert(data.message);
-      }
+    emitEvent(loginType === "signin" ? "userLogin" : "userCreate", { phone: userPhone, ...username ? { username } : {}}, () => setLoginStep("code"));
+  }
+
+  const handleSubmitCode = async () => {
+    const userPhone = phone.replace(/\s/g, "");
+    emitEvent("userLogin", { phone: userPhone, verifCode }, (data: any) => {
+      const cookies = new Cookies();
+      cookies.set("token", data.token, { path: "/", maxAge: 60 * 60 * 24 });
+      cookies.set("phone", userPhone, { path: "/", maxAge: 60 * 60 * 24 });
+      cookies.set("userId", data.userId, { path: "/", maxAge: 60 * 60 * 24 });
+      router.push("/chats");
     });
   }
 
@@ -64,27 +68,73 @@ export default function Login() {
 
           <div className="loginBox">
             <form>
-              <div className="inputBox">
-                <label>Phone number <span>*</span></label>
-                <input type="text" name="phone" required onChange={(e) => setPhone(e.target.value)} />
-              </div>
-              {loginType === "signup" && <div className="inputBox">
-                <label>Username <p>(we strongly recommend to fill this field)</p></label>
-                <input type="text" name="phone" required onChange={(e) => setUsername(e.target.value)} />
-              </div>}
-              <div className="inputBox">
-                <input type="button" value="Get my code" style={{
-                  backgroundColor: isValide ? "var(--green)" : "var(--white-dark)",
-                  cursor: isValide ? "pointer" : "not-allowed"
-                }} disabled={!isValide} onClick={handleSubmit} />
-              </div>
+
+              {loginStep === "phone" ?
+                <>
+                  <div className="inputBox">
+                    <label>Phone number <span>*</span></label>
+                    <input type="text" name="phone" required onChange={(e) => setPhone(e.target.value)} />
+                  </div>
+
+                  {loginType === "signup" && <div className="inputBox">
+                    <label>Username <p>(we strongly recommend to fill this field)</p></label>
+                    <input type="text" name="phone" required onChange={(e) => setUsername(e.target.value)} />
+                  </div>}
+
+                  <div className="inputBox">
+                    <input type="button" value="Get my code" style={{
+                      backgroundColor: isValide ? "var(--green)" : "var(--white-dark)",
+                      cursor: isValide ? "pointer" : "not-allowed"
+                    }} disabled={!isValide} onClick={handleSubmit} />
+                  </div>
+                </>
+                :
+                <div className="secondLoginPart">
+                  <div className="title">
+                    Secret code received by SMS
+                  </div>
+
+                  <div className="inputCode">
+                    {
+                      Array.from({ length: 4 }, (_, i) => (
+                        <input key={i} type="number" maxLength={1}
+                        onInput={(e: any) => {
+                          const nextInput = e.target.nextElementSibling;
+                          if (e.target.value.length === 1 && nextInput) nextInput.focus();
+                        }}
+                        onChange={(e: any) => {
+                          const inputs = document.querySelectorAll(".inputCode input") as NodeListOf<HTMLInputElement>;
+                          let code = "";
+                          inputs.forEach((input) => {
+                            code += input.value;
+                          });
+                          if (code.length === 4) {
+                            setIsValide(true);
+                          } else {
+                            setIsValide(false);
+                          }
+                          setVerifCode(verifCode + e.target.value);
+                        }}
+                        />
+                      ))
+                    }
+                  </div>
+
+                  <div className="inputBox">
+                    <input type="button" value="Validate code" style={{
+                      backgroundColor: isValide ? "var(--green)" : "var(--white-dark)",
+                      cursor: isValide ? "pointer" : "not-allowed"
+                    }} disabled={!isValide} onClick={handleSubmitCode} />
+                  </div>
+                </div>
+              }
             </form>
-            <div className="register">
+            {loginStep === "phone" && <div className="register">
               <p>
                 {loginType === "signin" ? "Don't have an account? " : "Already have an account? "}
                 <button onClick={() => setLoginType(loginType === "signin" ? "signup" : "signin")}>{loginType === "signin" ? "Sign up" : "Sign in"}</button>
               </p>
-            </div>
+            </div>}
           </div>
         </div>
       </main>
