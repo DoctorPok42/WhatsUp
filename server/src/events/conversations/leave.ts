@@ -34,7 +34,8 @@ const leave = async (
   if (conversation.membersId.length <= 2)
     conversation.conversationType = "private";
 
-  conversation.save();
+  if (conversation.membersId.length === 0) await conversation.deleteOne();
+  else await conversation.save();
 
   return { status: "success", message: "User left conversation." };
 };
