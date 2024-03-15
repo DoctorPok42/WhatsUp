@@ -94,6 +94,7 @@ const Chats = ({
   const conversationName = conversations.find(e => e._id === id)?.name
 
   const onSend = (message: string) => {
+    message = message.trim()
     emitEvent("sendMessage", { token, conversationId: id, content: message }, (data: any) => {
       setAllMessages([...allMessages, data.data])
     })
@@ -101,6 +102,7 @@ const Chats = ({
 
   const onEdit = (message: string) => {
     emitEvent("editMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu, content: message }, (data: any) => {
+    message = message.trim()
         const messageIndex = allMessages.findIndex(e => e._id === messageIdHoverContextMenu)
 
         const newAllMessages = [...allMessages]
@@ -303,6 +305,7 @@ const Chats = ({
           onTyping={onTyping}
           setFiles={setFiles}
           mode={inputBarMode}
+          setMode={setInputBarMode}
           value={inputBarValue}
         />
       </div>}
