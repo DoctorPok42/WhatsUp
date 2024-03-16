@@ -25,7 +25,7 @@ const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
+io.on("connection", (socket: any) => {
   console.log(
     color(
       "text",
@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
   );
 
   for (const [eventName, event] of Object.entries(events)) {
-    socket.on(eventName, async (data) => {
+    socket.on(eventName, async (data: any) => {
       if (!data || Object.keys(data).length === 0)
         return socket.emit(eventName, {
           status: "error",

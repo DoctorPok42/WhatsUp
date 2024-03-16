@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SearchBar } from '..';
-import emitEvent from '../../src/tools/webSocketHandler';
+import emitEvent from '@/tools/webSocketHandler';
 import UserCard from '../UserCard';
 import ConversationCard from '../ConversationCard';
 import router from 'next/router';
