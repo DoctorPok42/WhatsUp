@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  frontend:
+    build:
+      context: ./
+      dockerfile: frontend/Dockerfile
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app/frontend
+    depends_on:
+      - backend
+    networks:
+      - mynetwork
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: backend/Dockerfile
+    container_name: backend
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app/backend
+    depends_on:
+      - mongodb
+    networks:
+      - mynetwork
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    restart: always
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
