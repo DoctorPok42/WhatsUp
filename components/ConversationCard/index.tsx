@@ -1,5 +1,4 @@
-import React from 'react';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
 import formatDate from '@/tools/formatDate';
 
