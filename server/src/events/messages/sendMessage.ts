@@ -44,6 +44,7 @@ const sendMessage = async (
   conversation.lastMessageDate = messageDate;
   conversation.lastMessageAuthorId = decoded.id;
   conversation.updatedAt = messageDate;
+  conversation.lastMessageId = message._id as unknown as string;
   if (isLink) {
     link?.forEach((element: string) => {
       conversation.links.push({

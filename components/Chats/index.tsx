@@ -3,6 +3,7 @@ import { Contact } from '..';
 import HeaderChats from './header';
 import InputBar from './inputBar';
 import emitEvent from '../../src/tools/webSocketHandler';
+import emitEvent from '@/tools/webSocketHandler';
 import SearchGlobalBar from '../SearchGlobalBar';
 import formatDate from '@/tools/formatDate';
 import ChatsMessage from '../ChatsMessage';
@@ -42,6 +43,7 @@ const Chats = ({
   isInfoOpen,
   setIsInfoOpen,
   conversations,
+  setConversation,
   getConversations,
   isSearchOpen = false,
   setIsSearchOpen,
@@ -71,11 +73,28 @@ const Chats = ({
       setMessageLoaded(
         nbMessages ? 10 : messageLoaded + 10
       )
+      setConversation(conversations.map(e => {
+        if (e._id === id) {
+          e.unreadMessages = 0
+        }
+        return e
+      }))
     })
   }
 
   socket.on("message", (data: any) => {
-    setAllMessages([...allMessages, data])
+    if (data.conversationId === id) {
+      setAllMessages([...allMessages, data])
+    }
+
+    setConversation(conversations.map(e => {
+      if (e._id === data.conversationId) {
+        e.lastMessage = data.content
+        e.lastMessageDate = data.date
+        e.lastMessageAuthorId = data.authorId
+      }
+      return e
+    }))
   })
 
   socket.on("isTypingUser", (data: any) => {

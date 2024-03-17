@@ -33,14 +33,41 @@
       }
     }
 
-    p {
-      width: 70%;
-      margin: 0;
-      font-size: 0.9em;
-      color: #828387;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
+    .details {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      p {
+        width: 70%;
+        margin: 0;
+        font-size: 0.9em;
+        color: #828387;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .notif {
+        width: 30%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5em;
+
+        span {
+          width: 0.9em;
+          height: 0.8em;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: var(--blue);
+          padding: 0.5em;
+          border-radius: 50%;
+          font-size: 0.9em;
+        }
+      }
     }
   }
 }

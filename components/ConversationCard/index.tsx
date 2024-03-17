@@ -1,4 +1,5 @@
 import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import formatDate from '@/tools/formatDate';
 
@@ -14,6 +15,7 @@ interface ConversationCardProps {
     lastMessageDate: Date;
     lastMessageAuthorId: string;
     name: string;
+    unreadMessages: number;
   },
   onClick: () => void
 }
@@ -23,6 +25,8 @@ const ConversationCard = ({
   conversation,
   onClick,
 }: ConversationCardProps) => {
+  const formattedDate = useMemo(() => formatDate(new Date(conversation.lastMessageDate)), [conversation.lastMessageDate]);
+
   return (
     <div className={styles.ConversationCard_container} onClick={onClick} style={{
       backgroundColor: id === conversation._id ? '#3e4453' : 'transparent'
@@ -34,10 +38,21 @@ const ConversationCard = ({
             {conversation.name}
           </h3>
           <span>
-            {formatDate(new Date(conversation.lastMessageDate))}
+            {formattedDate}
           </span>
         </div>
-        <p>{conversation.lastMessage}</p>
+
+        <div className={styles.details}>
+          <p>
+            {conversation.lastMessage}
+          </p>
+
+          <div className={styles.notif}>
+            {conversation.unreadMessages > 0 && <span>{
+              conversation.unreadMessages > 99 ? '99+' : conversation.unreadMessages
+              }</span>}
+          </div>
+        </div>
       </div>
     </div>
   );

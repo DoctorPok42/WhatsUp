@@ -12,7 +12,8 @@ const conversationsSchema = new Schema<Conversations>({
   updatedAt: { type: Date, required: true, default: Date.now },
   lastMessage: { type: String, default: "" },
   lastMessageDate: { type: Date, default: Date.now },
-  lastMessageAuthorId: { type: String, default: "" }
+  lastMessageAuthorId: { type: String, default: "" },
+  lastMessageId: { type: String, default: "" },
 });
 
 const ConversationsModel = model<Conversations>("conversations", conversationsSchema);

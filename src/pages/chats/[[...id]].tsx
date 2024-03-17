@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import router from "next/router";
-import { Chats, SideBar } from "../../../components";
+import { Chats, SideBar } from "../../../components/";
 import Cookies from "universal-cookie";
-import InfoChats from "../../../components/InfoChats";
+import InfoChats from "@/../components/InfoChats";
 import emitEvent from "@/tools/webSocketHandler";
 
 const ChatsPage = ({ id } : { id: string | undefined }) => {
@@ -54,6 +54,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
           setIsInfoOpen={setIsInfoOpen}
           getConversations={getConversations}
           conversations={conversations}
+          setConversation={setConversations}
           isSearchOpen={isSearchOpen}
           setIsSearchOpen={setIsSearchOpen}
           isLoading={isLoading}

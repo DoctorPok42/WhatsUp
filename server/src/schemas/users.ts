@@ -5,7 +5,15 @@ const userSchema = new Schema<User>({
   phone: { type: String, required: true, unique: true },
   password: { type: String },
   username: { type: String },
-  conversationsId: { type: [], default: [] },
+  conversationsId: {
+    type: [
+      {
+        conversationId: { type: String },
+        lastMessageSeen: { type: String },
+      },
+    ],
+    default: [],
+  },
   options: {
     darkMode: { type: Boolean, default: false },
     online: { type: Boolean, default: true },

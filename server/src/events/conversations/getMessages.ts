@@ -56,6 +56,25 @@ const getMessages = async (
       key: null,
     };
 
+  const user = (await UserModel.findOne({ _id: decoded.id })) as User;
+
+  // update the last message seen for this conversation
+  const rightConversation = user.conversationsId.find((e: any) => {
+    if (typeof e === "string") return false;
+    if (e.conversationId.toString() === conversationId.toString()) return e;
+  });
+
+  if (rightConversation) {
+    await UserModel.updateOne(
+      { _id: decoded.id, "conversationsId.conversationId": conversationId },
+      {
+        $set: {
+          "conversationsId.$.lastMessageSeen": messages[0]._id,
+        },
+      }
+    );
+  }
+
   return {
     status: "success",
     message: "Messages found.",

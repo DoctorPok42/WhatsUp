@@ -10,7 +10,10 @@ export interface User extends mongoose.Document {
   phone: string;
   password: string;
   username?: string;
-  conversationsId: [];
+  conversationsId: {
+    conversationId: string;
+    lastMessageSeen: string;
+  }[];
   options: UserOptions;
   joinedAt: Date;
   publicKey: string;
@@ -48,6 +51,7 @@ export interface Conversations extends mongoose.Document {
   lastMessage: string;
   lastMessageDate: Date;
   lastMessageAuthorId: string;
+  lastMessageId: string;
 }
 
 interface MessageOptions {
