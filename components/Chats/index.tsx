@@ -12,6 +12,7 @@ import { useCopyToClipboard } from '@uidotdev/usehooks';
 import { Skeleton } from '@mui/material';
 
 import styles from './style.module.scss';
+import { cryptMessage } from '@/tools/cryptMessage';
 
 interface ChatsProps {
   token: string
@@ -115,14 +116,19 @@ const Chats = ({
 
   const onSend = (message: string) => {
     message = message.trim()
-    emitEvent("sendMessage", { token, conversationId: id, content: message }, (data: any) => {
+    if (!message && !files.length) return
+    const encryptedMessage = cryptMessage(message, conversations.find(e => e._id === id)?.publicKey)
+    console.log(encryptedMessage);
+    emitEvent("sendMessage", { token, conversationId: id, content: encryptedMessage }, (data: any) => {
       setAllMessages([...allMessages, data.data])
     })
   }
 
   const onEdit = (message: string) => {
     message = message.trim()
-    emitEvent("editMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu, content: message }, () => {
+    if (!message) return
+    const encryptedMessage = cryptMessage(message, conversations.find(e => e._id === id)?.publicKey)
+    emitEvent("editMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu, content: encryptedMessage }, () => {
         const messageIndex = allMessages.findIndex(e => e._id === messageIdHoverContextMenu)
 
         const newAllMessages = [...allMessages]

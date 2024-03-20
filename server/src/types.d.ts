@@ -42,10 +42,7 @@ export interface Conversations extends mongoose.Document {
   files: ConversationsFiles[];
   pinnedMessages: string[];
   membersId: string[];
-  membersPublicKey: {
-    key: string;
-    userId: string;
-  }[];
+  publicKey: string;
   createdAt: Date;
   updatedAt: Date;
   lastMessage: string;
@@ -72,7 +69,7 @@ export interface Message extends mongoose.Document {
 }
 
 export interface PrivateKey extends mongoose.Document {
-  userId: string;
+  conversationId: string;
   key: string;
   createdAt: Date;
 }

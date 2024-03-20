@@ -1,5 +1,5 @@
 import UserModel from "../../schemas/users";
-import { DecodedToken, Message, PrivateKey, User } from "../../types";
+import { DecodedToken, Message, User } from "../../types";
 import mongoose from "mongoose";
 
 const getPrivateKey = async (id: string): Promise<string | null> => {
@@ -7,8 +7,8 @@ const getPrivateKey = async (id: string): Promise<string | null> => {
 
   const userPrivateKey = await mongoose.connection.db
     .collection("privateKeys")
-    .findOne({ userId: realId });
-  return userPrivateKey ? userPrivateKey.privateKey : null;
+    .findOne({ conversationId: realId });
+  return userPrivateKey ? userPrivateKey.key : null;
 };
 
 const getMessages = async (
@@ -79,7 +79,7 @@ const getMessages = async (
     status: "success",
     message: "Messages found.",
     data: messagesWithPhone.reverse(),
-    key: await getPrivateKey(decoded.id),
+    key: await getPrivateKey(conversationId),
   };
 };
 

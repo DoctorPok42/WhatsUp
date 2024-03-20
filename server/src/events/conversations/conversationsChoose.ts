@@ -2,6 +2,26 @@ import ConversationsModel from "../../schemas/conversations";
 import UserModel from "../../schemas/users";
 import { Conversations, DecodedToken, User } from "../../types";
 import mongoose from "mongoose";
+import crypto from "crypto";
+
+export const genereateKey = async (): Promise<{
+  publicKey: string;
+  privateKey: string;
+}> => {
+  const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    publicKeyEncoding: {
+      type: "spki",
+      format: "pem",
+    },
+    privateKeyEncoding: {
+      type: "pkcs8",
+      format: "pem",
+    },
+  });
+
+  return Promise.resolve({ publicKey, privateKey });
+};
 
 const conversationsChoose = async (
   { userId }: User["id"],
@@ -19,6 +39,8 @@ const conversationsChoose = async (
 
   // If not, create it
   if (!userInfos || userInfos.conversationType !== "private") {
+    const { publicKey, privateKey } = await genereateKey();
+
     const creationDate = new Date();
     const newConversation = new ConversationsModel({
       _id: new mongoose.Types.ObjectId(),
@@ -32,10 +54,22 @@ const conversationsChoose = async (
       lastMessage: "",
       lastMessageDate: creationDate,
       lastMessageAuthorId: "",
+      publicKey,
     }) as Conversations;
+
+    const conversationKeys = {
+      conversationId: newConversation._id,
+      privateKey,
+    };
 
     const response = await newConversation.save();
     if (!response)
+      return { status: "error", message: "An error occurred.", data: null };
+
+    const conversationKeysResponse = await mongoose.connection.db
+      .collection("privateKeys")
+      .insertOne(conversationKeys);
+    if (!conversationKeysResponse)
       return { status: "error", message: "An error occurred.", data: null };
 
     // Create the collection for the conversation's messages

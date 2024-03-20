@@ -4,6 +4,7 @@ import { Emoji, EmojiStyle } from 'emoji-picker-react';
 import formatDate from '@/tools/formatDate';
 
 import styles from './style.module.scss';
+import { decryptMessage } from '@/tools/cryptMessage';
 
 interface ChatsMessageProps {
   message: {
@@ -49,6 +50,9 @@ const ChatsMessage = ({
 
     return { link: link[0], text: content.replace(link[0], "") };
   }
+
+  const decryptedMessage = decryptMessage(message.content, privateKey);
+  if (decryptedMessage) message.content = decryptedMessage;
 
   return (
     <div
