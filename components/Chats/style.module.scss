@@ -15,6 +15,20 @@
     flex-direction: column;
     align-items: center;
     position: relative;
+    transition: var(--transition);
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      right: -0.5em;
+      transform: translateY(-50%);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .arrow:hover {
+      transform: scale(1.1);
+    }
 
     .userSearched,
     .conversations {
@@ -52,12 +66,13 @@
       display: flex;
       flex-direction: column;
       gap: 0.5em;
+      overflow: hidden;
     }
   }
 
   .Chats_content {
     position: relative;
-    width: calc(100% - 23em);
+    width: calc(100% - 6em);
     height: 100%;
     display: flex;
     flex-direction: column;

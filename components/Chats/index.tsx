@@ -9,9 +9,9 @@ import ChatsMessage from '../ChatsMessage';
 import { socket } from '@/pages/_app';
 import ContextMenu from '../ContextMenu';
 import { useCopyToClipboard } from '@uidotdev/usehooks';
+import { Skeleton } from '@mui/material';
 
 import styles from './style.module.scss';
-import { Skeleton } from '@mui/material';
 
 interface ChatsProps {
   token: string
@@ -21,6 +21,7 @@ interface ChatsProps {
   isInfoOpen?: boolean
   setIsInfoOpen?: (e: boolean) => void
   conversations: any[]
+  setConversation: (e: any[]) => void
   getConversations?: () => void
   isSearchOpen?: boolean
   setIsSearchOpen?: (e: boolean) => void
@@ -56,6 +57,7 @@ const Chats = ({
   const [userTyping, setUserTyping] = useState<string>("")
   const [searchState, setSearchState] = useState<"message" | "user">("user")
   const [contextMenu, setContextMenu] = useState(initialContextMenu)
+  const [showContact, setShowContact] = useState<boolean>(true)
 
   const [messageIdHover, setMessageIdHover] = useState<string | null>(null)
   const [messageIdHoverContextMenu, setMessageIdHoverContextMenu] = useState<string | null>(null)
@@ -119,8 +121,8 @@ const Chats = ({
   }
 
   const onEdit = (message: string) => {
-    emitEvent("editMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu, content: message }, (data: any) => {
     message = message.trim()
+    emitEvent("editMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu, content: message }, () => {
         const messageIndex = allMessages.findIndex(e => e._id === messageIdHoverContextMenu)
 
         const newAllMessages = [...allMessages]
@@ -243,7 +245,15 @@ const Chats = ({
         setAllMessages={setAllMessages}
       />
 
-      <Contact token={token} id={id} conversations={conversations} userId={userId} isLoading={isLoading} />
+      <Contact
+        token={token}
+        id={id}
+        conversations={conversations}
+        userId={userId}
+        isLoading={isLoading}
+        showContact={showContact}
+        setShowContact={setShowContact}
+      />
 
       {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) && <div className={styles.Chats_content}>
         <HeaderChats

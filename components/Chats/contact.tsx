@@ -5,6 +5,8 @@ import UserCard from '../UserCard';
 import ConversationCard from '../ConversationCard';
 import router from 'next/router';
 import { Skeleton } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './style.module.scss';
 
@@ -14,6 +16,8 @@ interface ContactProps {
   conversations?: any[]
   userId: string
   isLoading: boolean
+  showContact: boolean
+  setShowContact: (show: boolean) => void
 }
 
 const Contact = ({
@@ -22,6 +26,8 @@ const Contact = ({
   conversations = [],
   userId,
   isLoading,
+  showContact,
+  setShowContact,
 }: ContactProps) => {
   const [userSearched, setUserSearched] = useState<{
     id: string
@@ -75,8 +81,22 @@ const Contact = ({
   }
 
   return (
-    <div className={styles.Contact_container} onContextMenu={(e) => e.preventDefault()}>
-      <SearchBar onSearch={onSearch} />
+    <div className={styles.Contact_container} onContextMenu={(e) => e.preventDefault()} style={{
+      width: showContact ? '22em' : '5em',
+    }}>
+      <div className={styles.arrow} style={{
+        transform: showContact ? 'rotate(0)' : 'rotate(180deg)',
+        opacity: (!isLoading && id) ? 1 : 0,
+      }}>
+        <FontAwesomeIcon
+          icon={faCircleChevronLeft}
+          onClick={() => setShowContact(!showContact)}
+          color='#7d7f92'
+          size='lg'
+        />
+      </div>
+
+      <SearchBar onSearch={onSearch} showContact={showContact} setShowContact={setShowContact} />
 
       <div className={styles.userSearched} style={{
         padding: isPopupOpen ? '0.6em 0.5em' : '0 0.5em',
@@ -100,7 +120,7 @@ const Contact = ({
             <Skeleton
               key={index}
               variant="rectangular"
-              width="100%"
+              width="22em"
               height="100px"
               animation="wave"
               style={{

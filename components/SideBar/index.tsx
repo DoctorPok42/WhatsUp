@@ -4,6 +4,7 @@ import Link from 'next/link';
 import router from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartSimple, faComments, faGear } from '@fortawesome/free-solid-svg-icons';
+import TooltipComponent from '../Tooltip';
 
 import styles from './style.module.scss';
 
@@ -30,12 +31,23 @@ const SideBar = ({
 
         <div className={styles.list}>
           {listButtons.map((button, index) => (
-            <div key={index} className={styles.button} onClick={() => router.push(button.path)} style={{
-              color: path === button.path ? '#5ad27d' : '#8393a3',
-            }}>
-              <FontAwesomeIcon className={styles.icon} icon={button.icon} width={20} height={20} />
-              <a href={button.path}>{button.name}</a>
-            </div>
+            <TooltipComponent
+              key={index}
+              title={button.name}
+              position="right"
+              style={{
+                position: 'absolute',
+                top: "10em",
+                left: "10em",
+              }}
+            >
+              <div key={index} className={styles.button} onClick={() => router.push(button.path)} style={{
+                color: path === button.path ? '#5ad27d' : '#8393a3',
+              }}>
+                <FontAwesomeIcon className={styles.icon} icon={button.icon} width={20} height={20} />
+                {/* <a href={button.path}>{button.name}</a> */}
+              </div>
+            </TooltipComponent>
           ))}
         </div>
 
