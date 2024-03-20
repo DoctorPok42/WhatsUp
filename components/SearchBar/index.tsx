@@ -30,6 +30,7 @@ const SearchBar = ({
       if (e.key === 'Escape') {
         onSearch('')
         ref.current!.value = ''
+        ref.current!.blur()
       }}}
       style={{
         padding: showContact ? '0 1em' : '0',

@@ -62,17 +62,27 @@ const InputBar = ({
     setNewValue(e.target.value);
   }
 
-  useEffect(() => {
-    setNewValue(value.trim());
-    if (inputRef.current) inputRef.current.focus();
-  }, [value]);
-
   const adjustInputHeight = () => {
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
       inputRef.current.style.height = inputRef.current.scrollHeight + 'px';
     }
   };
+
+  useEffect(() => {
+    adjustInputHeight();
+    setNewValue(value.trim());
+    if (inputRef.current) inputRef.current.focus();
+  }, [value]);
+
+  useEffect(() => {
+    if (mode === "edit") {
+      setTimeout(() => {
+        if (inputRef.current) inputRef.current.focus();
+        adjustInputHeight();
+      }, 1);
+    }
+  }, [mode]);
 
   const handleSend = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
