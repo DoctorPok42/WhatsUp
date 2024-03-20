@@ -22,7 +22,7 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker-compose -f docker-compose.yml build
+          docker-compose -f docker-compose.yml build --parallel
 
   push-docker-image:
     runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: SSH into VPS and deploy
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} ${{ secrets.DOCKER_PASSWORD }}
+          echo ${{ secrets.DOCKER_PASSWORD }} | login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
           docker-compose -f docker-compose.yml push
 
   deploy:
