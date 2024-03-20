@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: SSH into VPS and deploy
         run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
           docker-compose -f docker-compose.yml push
 
   deploy:
