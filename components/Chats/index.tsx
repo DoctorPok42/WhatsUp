@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Contact } from '..';
 import HeaderChats from './header';
 import InputBar from './inputBar';
-import emitEvent from '../../src/tools/webSocketHandler';
 import emitEvent from '@/tools/webSocketHandler';
 import SearchGlobalBar from '../SearchGlobalBar';
 import formatDate from '@/tools/formatDate';
