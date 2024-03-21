@@ -24,6 +24,7 @@ jobs:
         run: |
           docker-compose -f docker-compose.yml build --parallel
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker images
           docker tag whatsup-frontend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
           docker tag whatsup-backend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
           docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
