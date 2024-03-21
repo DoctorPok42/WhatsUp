@@ -29,8 +29,23 @@ export default function Login() {
 
   const handleSubmit = async () => {
     const userPhone = phone.replace(/\s/g, "");
-    emitEvent(loginType === "signin" ? "userLogin" : "userCreate", { phone: userPhone, ...username ? { username } : {}}, () => setLoginStep("code"));
+    emitEvent(loginType === "signin" ? "userLogin" : "userCreate", { phone: userPhone, ...username ? { username } : {}}, () => {
+      setLoginStep("code")
+      setIsValide(false);
+    });
   }
+
+  useEffect(() => {
+    if (verifCode.length === 4) {
+      setIsValide(true);
+      setTimeout(() => {
+        const validateBtn = document.getElementById("validateBtn") as HTMLInputElement;
+      if (validateBtn) validateBtn.click();
+      }, 1);
+    } else {
+      setIsValide(false);
+    }
+  }, [verifCode]);
 
   const handleSubmitCode = async () => {
     const userPhone = phone.replace(/\s/g, "");
@@ -108,11 +123,6 @@ export default function Login() {
                           inputs.forEach((input) => {
                             code += input.value;
                           });
-                          if (code.length === 4) {
-                            setIsValide(true);
-                          } else {
-                            setIsValide(false);
-                          }
                           setVerifCode(verifCode + e.target.value);
                         }}
                         />
@@ -121,7 +131,7 @@ export default function Login() {
                   </div>
 
                   <div className="inputBox">
-                    <input type="button" value="Validate code" style={{
+                    <input type="button" id="validateBtn" value="Validate code" style={{
                       backgroundColor: isValide ? "var(--green)" : "var(--white-dark)",
                       cursor: isValide ? "pointer" : "not-allowed"
                     }} disabled={!isValide} onClick={handleSubmitCode} />
