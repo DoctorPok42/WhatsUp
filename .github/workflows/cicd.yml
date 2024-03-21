@@ -32,10 +32,10 @@ jobs:
       - name: SSH into VPS and deploy
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker tag whatsup-frontend:latest $DOCKER_USERNAME/whatsup:frontend
-          docker tag whatsup-backend:latest $DOCKER_USERNAME/whatsup:backend
-          docker push $DOCKER_USERNAME/whatsup:frontend
-          docker push $DOCKER_USERNAME/whatsup:backend
+          docker tag whatsup-frontend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+          docker tag whatsup-backend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
 
   # setup-ssh:
   #   runs-on: ubuntu-latest
