@@ -63,5 +63,6 @@ jobs:
           script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
             sudo cp docker-compose.yml ./ -f
-            sudo docker compose -f docker-compose.yml pull
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
             sudo docker compose -f docker-compose.yml up -d
