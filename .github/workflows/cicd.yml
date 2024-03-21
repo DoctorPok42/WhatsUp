@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: SSH into VPS and deploy
         run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u $DOCKER_USERNAME --password-stdin
+          docker login -u $DOCKER_USERNAME -p ${{ secrets.DOCKER_PASSWORD }}
           # docker-compose -f docker-compose.yml push
           docker tag whatsup-frontend:latest $DOCKER_USERNAME/whatsup:frontend
           docker tag whatsup-backend:latest $DOCKER_USERNAME/whatsup:backend
