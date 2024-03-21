@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: docker:25.0.3
     if: github.event_name == 'pull_request'
 
     steps:
@@ -23,10 +23,13 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker-compose -f docker-compose.yml build --parallel
+          # docker-compose -f docker-compose.yml build --parallel
+          docker build -t whatsup_frontend:latest .
+          docker build -t whatsup_backend:latest ./server
+
 
   build_and_push_docker_images:
-    runs-on: ubuntu-latest
+    runs-on: docker:25.0.3
     if: github.event_name == 'push'
 
     steps:

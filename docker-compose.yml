@@ -2,7 +2,7 @@ version: "3"
 
 services:
   frontend:
-    build: .
+    image: doctorpok/whatsup:frontend
     container_name: frontend
     restart: always
     ports:
@@ -13,7 +13,7 @@ services:
       - mynetwork
 
   backend:
-    build: ./server/.
+    image: doctorpok/whatsup:backend
     container_name: backend
     restart: always
     ports:
