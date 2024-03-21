@@ -39,6 +39,9 @@ jobs:
       - name: Build Docker images
         run: |
           docker-compose -f docker-compose.yml build --parallel
+
+      - name: Push Docker images to Docker Hub
+        run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker tag whatsup_frontend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
           docker tag whatsup_backend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
@@ -59,6 +62,6 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
-            sudo cp docker-compose.yml ./
-            sudo docker-compose -f docker-compose.yml pull
-            sudo docker-compose -f docker-compose.yml up -d
+            sudo cp docker-compose.yml ./ -f
+            sudo docker compose -f docker-compose.yml pull
+            sudo docker compose -f docker-compose.yml up -d
