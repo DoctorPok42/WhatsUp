@@ -23,7 +23,7 @@ jobs:
 
       - name: Build Docker images
         run: |
-          # docker-compose -f docker-compose.yml build --parallel
+          # docker compose -f docker-compose.yml build --parallel
           docker build -t whatsup_frontend:latest .
           docker build -t whatsup_backend:latest ./server
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker-compose -f docker-compose.yml build --parallel
+          docker compose -f docker-compose.yml build --parallel
 
       - name: Push Docker images to Docker Hub
         run: |
