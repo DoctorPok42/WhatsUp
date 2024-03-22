@@ -6,7 +6,7 @@ services:
     container_name: frontend
     restart: always
     ports:
-      - "3000:3000"
+      - "4000:4000"
     depends_on:
       - backend
     networks:
