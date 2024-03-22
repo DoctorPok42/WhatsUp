@@ -83,7 +83,7 @@ io.on("connection", (socket: any) => {
   });
 });
 
-server.listen(process.env.PORT, () => {
+server.listen(Number(process.env.PORT), () => {
   console.log(
     color(
       "text",
