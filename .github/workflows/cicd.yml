@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: rasb
     if: github.event_name == 'pull_request'
 
     steps:
@@ -29,7 +29,7 @@ jobs:
 
 
   build_and_push_docker_images:
-    runs-on: self-hosted
+    runs-on: rasb
     if: github.event_name == 'push'
 
     steps:
@@ -53,7 +53,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
 
   deploy:
-    runs-on: self-hosted
+    runs-on: rasb
     needs: build_and_push_docker_images
     if: github.event_name == 'push'
 

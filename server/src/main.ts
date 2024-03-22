@@ -87,7 +87,7 @@ server.listen(Number(process.env.PORT), () => {
   console.log(
     color(
       "text",
-      `🚀 Server is running on ${color("variable", process.env.PORT)}`
+      `🚀 Server is running on ${color("variable", Number(process.env.PORT))}`
     )
   );
 });
