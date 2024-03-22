@@ -6,7 +6,4 @@ const nextConfig = {
   },
 };
 
-module.exports = {
-  ...nextConfig,
-  output: "standalone",
-}
+module.exports = nextConfig;
