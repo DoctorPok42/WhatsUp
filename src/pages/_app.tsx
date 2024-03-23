@@ -7,7 +7,7 @@ dotenv.config()
 
 import io from 'socket.io-client';
 
-export const socket = io(process.env.SERVER_URL as string, { transports: ["websocket"] });
+export const socket = io(process.env.SERVER_URL as string, { transports: ["websocket"], secure: true });
 
 const cookies = new Cookies();
 export const token = cookies.get("token");
