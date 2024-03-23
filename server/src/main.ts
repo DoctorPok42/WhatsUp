@@ -21,9 +21,11 @@ checkCollections();
 const server = createServer();
 const io = new Server(server, {
   cors: {
-    origin: process.env.SERVER_URL,
+    origin: "http://localhost:8080",
   },
 });
+
+console.log(process.env.SERVER_URL);
 
 io.on("connection", (socket: any) => {
   console.log(
@@ -35,8 +37,6 @@ io.on("connection", (socket: any) => {
       )}`
     )
   );
-
-  console.log(process.env.SERVER_URL);
 
   for (const [eventName, event] of Object.entries(events)) {
     socket.on(eventName, async (data: any) => {
