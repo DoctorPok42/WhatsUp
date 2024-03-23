@@ -36,6 +36,8 @@ io.on("connection", (socket: any) => {
     )
   );
 
+  console.log(process.env.SERVER_URL);
+
   for (const [eventName, event] of Object.entries(events)) {
     socket.on(eventName, async (data: any) => {
       if (!data || Object.keys(data).length === 0)
@@ -83,12 +85,9 @@ io.on("connection", (socket: any) => {
   });
 });
 
-server.listen(Number(process.env.PORT), () => {
+server.listen(8080, () => {
   console.log(
-    color(
-      "text",
-      `🚀 Server is running on ${color("variable", Number(process.env.PORT))}`
-    )
+    color("text", `🚀 Server is running on ${color("variable", 8080)}`)
   );
 });
 
