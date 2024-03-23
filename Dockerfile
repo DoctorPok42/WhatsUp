@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:alpine
+FROM node:alpine
 ENV NODE_ENV=production
 
 WORKDIR /app
