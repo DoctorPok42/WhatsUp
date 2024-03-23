@@ -25,8 +25,6 @@ const io = new Server(server, {
   },
 });
 
-console.log(process.env.SERVER_URL);
-
 io.on("connection", (socket: any) => {
   console.log(
     color(
