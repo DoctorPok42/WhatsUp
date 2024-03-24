@@ -92,7 +92,7 @@ const Contact = ({
           icon={faCircleChevronLeft}
           onClick={() => setShowContact(!showContact)}
           color='#7d7f92'
-          size='lg'
+          size='xl'
         />
       </div>
 
