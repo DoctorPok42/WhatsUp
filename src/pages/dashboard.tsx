@@ -15,6 +15,7 @@ export default function Dashboard() {
       router.push("/login");
     }
   }, [token, phone]);
+
   return (
     <>
       <Head>

@@ -3,6 +3,7 @@ import UserModel from "../../schemas/users";
 import { DecodedToken, Message, User } from "../../types";
 import { Socket } from "socket.io";
 import mongoose from "mongoose";
+import dashboardActions from "../../userDashboard";
 
 const detectLink = (text: string) => {
   const links = text.match(/(https?:\/\/[^\s]+)/g);
@@ -44,7 +45,7 @@ const sendMessage = async (
   conversation.lastMessageDate = messageDate;
   conversation.lastMessageAuthorId = decoded.id;
   conversation.updatedAt = messageDate;
-  conversation.lastMessageId = message._id as unknown as string;
+  conversation.lastMessageId = (message._id as unknown) as string;
   if (isLink) {
     link?.forEach((element: string) => {
       conversation.links.push({
@@ -62,6 +63,8 @@ const sendMessage = async (
     .insertOne(message);
   if (!response)
     return { status: "error", message: "An error occurred.", data: null };
+
+  if (author.options.hasDashboard) dashboardActions("addMessage", author);
 
   // Send the message to the members of the conversation
   const io = require("../../main").io as Socket;

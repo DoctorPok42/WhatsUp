@@ -4,6 +4,7 @@ interface UserOptions {
   darkMode: boolean;
   online: boolean;
   lastSeen: Date;
+  hasDashboard: boolean;
 }
 
 export interface User extends mongoose.Document {
@@ -76,6 +77,11 @@ export interface PrivateKey extends mongoose.Document {
 
 export interface Dashboard extends mongoose.Document {
   userId: string;
+  messagesSendMonth: number;
+  conversationNumber: number;
+  lastMessageSend: Date;
+  contactsNumber: number;
+  newContactsNumber: number;
 }
 
 export interface Events {

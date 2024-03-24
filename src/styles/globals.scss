@@ -247,12 +247,12 @@ h6 {
   }
 
   .containerDash {
-    width: calc(95% - 2em);
-    height: calc(98vh - 2em);
+    width: calc(95% - 0.8em);
+    height: calc(100vh - 2em);
     display: flex;
     align-items: flex-start;
     margin: auto 0;
-    border-radius: 22px;
+    border-radius: 22px 0 0 22px;
     padding: 1em;
     background-color: #202329;
 

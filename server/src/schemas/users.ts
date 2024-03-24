@@ -18,6 +18,7 @@ const userSchema = new Schema<User>({
     darkMode: { type: Boolean, default: false },
     online: { type: Boolean, default: true },
     lastSeen: { type: Date, default: Date.now },
+    hasDashboard: { type: Boolean, default: false },
   },
   joinedAt: { type: Date, default: Date.now },
   publicKey: { type: String },

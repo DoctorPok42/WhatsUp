@@ -2,6 +2,9 @@ import chalk from "chalk";
 import jwt from "jsonwebtoken";
 import UserModel from "./schemas/users";
 import ConversationsModel from "./schemas/conversations";
+import DashboardModel from "./schemas/dashboard";
+import { User } from "./types";
+import { createDashboard, deleteDashboard } from "./userDashboard";
 
 const themeColors = {
   text: "#2B2",
@@ -52,6 +55,35 @@ export const checkCollections = () => {
           "text",
           `📦 ${color("variable", res.length)} conversations found.`
         )
+      );
+  });
+
+  // if user has dashboard but no dashboard document is found, create one
+  UserModel.find({ "options.hasDashboard": true }, (err: any, res: any) => {
+    if (err) console.error(err);
+    if (res) {
+      res.forEach((user: User) => {
+        DashboardModel.findOne({ userId: user._id }, (err: any, res: any) => {
+          if (err) console.error(err);
+          if (!res) createDashboard(user._id);
+        });
+      });
+    }
+  });
+
+  // and if user has no dashboard but a dashboard document is found, delete it
+  UserModel.find({ "options.hasDashboard": false }, (err: any, res: any) => {
+    if (err) console.error(err);
+    if (res) {
+      res.forEach((user: User) => deleteDashboard(user._id));
+    }
+  });
+
+  DashboardModel.find({}, (err: any, res: any) => {
+    if (err) console.error(err);
+    if (res)
+      console.log(
+        color("text", `📦 ${color("variable", res.length)} dashboards found.`)
       );
   });
 };
