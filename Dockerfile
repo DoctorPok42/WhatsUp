@@ -2,8 +2,8 @@ FROM node:alpine
 
 ARG SERVER_URL
 
-ENV NODE_ENV=production
 ENV SERVER_URL=$SERVER_URL
+ENV NODE_ENV=production
 
 WORKDIR /app
 
