@@ -89,7 +89,8 @@ export default function Dashboard() {
             :
               <div className="noDash">
                 <DashBox
-                  title="No dashboard found"
+                  title="No dashboard found!"
+                  titleEmoji="1f625"
                   style={{
                     width: "100%",
                     backgroundColor: "#2e333d",
@@ -97,6 +98,7 @@ export default function Dashboard() {
                   }}
                 >
                   <span>It seems that you don&#39;t have any dashboard yet.</span>
+                  <p>Warning: When you create a dashboard, more data about you will be stored, you can delete it at any time.</p>
 
                   <button
                     className="button"

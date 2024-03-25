@@ -2,9 +2,9 @@ import React from 'react';
 import Image from 'next/image';
 import { Emoji, EmojiStyle } from 'emoji-picker-react';
 import formatDate from '@/tools/formatDate';
+import { decryptMessage } from '@/tools/cryptMessage';
 
 import styles from './style.module.scss';
-import { decryptMessage } from '@/tools/cryptMessage';
 
 interface ChatsMessageProps {
   message: {
