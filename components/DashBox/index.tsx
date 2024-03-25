@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './style.module.scss';
 
 interface DashBoxProps {
-  title?: boolean;
+  title?: string;
   subtitle?: string;
   text?: string;
   children?: React.ReactNode;
