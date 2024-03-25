@@ -16,10 +16,9 @@ export const addConversationToDashboard = async (dashboard: Dashboard) => {
 };
 
 export const addContactToDashboard = async (
-  user: User,
+  dashboard: Dashboard,
   numberOfNewContacts: number = 1
 ) => {
-  const dashboard = await DashboardModel.findOne({ userId: user._id });
   if (dashboard) {
     dashboard.contactsNumber += 1;
     dashboard.newContactsNumber += numberOfNewContacts;
@@ -28,10 +27,9 @@ export const addContactToDashboard = async (
 };
 
 export const removeContactFromDashboard = async (
-  user: User,
+  dashboard: Dashboard,
   numberOfNewContacts: number = 1
 ) => {
-  const dashboard = await DashboardModel.findOne({ userId: user._id });
   if (dashboard) {
     dashboard.contactsNumber -= 1;
     dashboard.newContactsNumber -= numberOfNewContacts;
@@ -54,6 +52,8 @@ export const createDashboard = async (userId: string) => {
     conversationNumber: conversationLength,
   });
   dashboard.save();
+
+  return dashboard;
 };
 
 export const deleteDashboard = async (userId: string) => {
@@ -66,17 +66,21 @@ const actionsFunctions = {
   addConversation: addConversationToDashboard,
   addContact: addContactToDashboard,
   removeContact: removeContactFromDashboard,
-} as any;
+} as const;
 
 const dashboardActions = async (
   actionName: keyof typeof actionsFunctions,
-  user: User,
+  user: User["id"],
   ...args: any[]
 ) => {
-  const dashboard = await DashboardModel.findOne({ userId: user._id });
-  if (dashboard) {
-    actionsFunctions[actionName](dashboard, ...args);
-    dashboard.save();
+  try {
+    const dashboard = await DashboardModel.findOne({ userId: user._id });
+    if (dashboard) {
+      actionsFunctions[actionName](dashboard, ...args);
+      dashboard.save();
+    }
+  } catch (error) {
+    return null;
   }
 };
 

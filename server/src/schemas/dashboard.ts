@@ -10,6 +10,6 @@ const dashboardSchema = new Schema<Dashboard>({
   newContactsNumber: { type: Number, default: 0 },
 });
 
-const DashboardModel = model<Dashboard>("dashboard", dashboardSchema);
+const DashboardModel = model<Dashboard>("dashboards", dashboardSchema);
 
 export default DashboardModel;

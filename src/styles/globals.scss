@@ -260,9 +260,6 @@ h6 {
       width: 95%;
       height: 98%;
       margin: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
 
       .header {
         width: 100%;
@@ -273,6 +270,44 @@ h6 {
           font-size: 2.5em;
           font-weight: 800;
           margin: 0;
+        }
+      }
+
+      .dashBoxs {
+        width: 80%;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-evenly;
+        gap: 1em;
+      }
+
+      .noDash {
+        span {
+          width: 100%;
+          text-align: center;
+          font-size: 1.5em;
+          font-weight: 800;
+          color: var(--light-grey);
+        }
+
+        button {
+          width: 100%;
+          margin-top: 1em;
+          padding: 0.5em 1em;
+          border: none;
+          border-radius: 8px;
+          background-color: var(--cyan);
+          color: var(--white);
+          font-size: 1.2em;
+          font-style: italic;
+          text-transform: uppercase;
+          font-weight: bold;
+          transition: var(--transition);
+          cursor: pointer;
+
+          &:hover {
+            filter: brightness(0.9);
+          }
         }
       }
     }
