@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Cookies from "universal-cookie";
-import { SideBar } from "../../components";
+import { ConfirmPopup, SideBar } from "../../components";
 import router from "next/router";
 import DashBox from "../../components/DashBox";
 import emitEvent from "@/tools/webSocketHandler";
@@ -12,6 +12,7 @@ export default function Dashboard() {
   const token = cookies.get("token");
   const [dashboard, setDashboard] = useState<any>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
 
   useEffect(() => {
     if (!token || !phone) {
@@ -28,6 +29,13 @@ export default function Dashboard() {
   const createDashboard = async () => {
     emitEvent("createUserDashboard", { token }, (data: any) => {
       setDashboard(data.data);
+    });
+  }
+
+  const handleDeleteDashboard = async () => {
+    emitEvent("deleteUserDashboard", { token }, () => {
+      setDashboard(null);
+      setConfirmPopup(false);
     });
   }
 
@@ -49,6 +57,20 @@ export default function Dashboard() {
         <SideBar path="/dashboard" phone={phone} />
 
         <div className="containerDash">
+          <ConfirmPopup
+            open={confirmPopup}
+            actionOnConfirm={() => {
+              emitEvent("deleteUserDashboard", { token }, (data: any) => {
+                setDashboard(null);
+              });
+              setConfirmPopup(false);
+            }}
+            actionOnCancel={() => setConfirmPopup(false)}
+            title="Delete dashboard"
+            description="Are you sure you want to delete your dashboard? This action is irreversible."
+            type="danger"
+          />
+
           <div className="contentDash">
             <div className="header">
               <h1>Dashboard</h1>
@@ -56,6 +78,18 @@ export default function Dashboard() {
 
             {dashboard && !loading ?
               <div className="dashBoxs">
+                <div className="deleteDash" onClick={() => setConfirmPopup(true)} onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleDeleteDashboard();
+                  } else if (e.key === "Escape") {
+                    setConfirmPopup(false);
+                  }
+                }}>
+                  <button>
+                    Delete dashboard
+                  </button>
+                </div>
+
                 <DashBox
                   subtitle="This month messages"
                   text={dashboard?.messagesSendMonth}
