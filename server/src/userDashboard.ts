@@ -57,7 +57,12 @@ export const createDashboard = async (userId: string) => {
 };
 
 export const deleteDashboard = async (userId: string) => {
-  await DashboardModel.findOneAndDelete({ userId });
+  try {
+    await DashboardModel.findOneAndDelete({ userId });
+    return true;
+  } catch (error) {
+    return null;
+  }
 };
 
 const actionsFunctions = {
