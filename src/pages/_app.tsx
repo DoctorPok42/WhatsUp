@@ -7,7 +7,6 @@ dotenv.config()
 
 import io from 'socket.io-client';
 
-console.log(process.env.SERVER_URL)
 
 export const socket = io(
   process.env.SERVER_URL as string,
