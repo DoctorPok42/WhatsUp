@@ -81,8 +81,8 @@ const conversationsChoose = async (
 
     // Add the conversation id to the user's conversations list
     const conversationId = response._id.toString();
-    firstUser.conversationsId.push(conversationId);
-    secondUser.conversationsId.push(conversationId);
+    firstUser.conversationsId.push({ conversationId, lastMessageSeen: "" });
+    secondUser.conversationsId.push({ conversationId, lastMessageSeen: "" });
 
     await firstUser.save();
     await secondUser.save();
