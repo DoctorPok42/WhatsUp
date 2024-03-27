@@ -10,9 +10,9 @@ import { socket } from '@/pages/_app';
 import ContextMenu from '../ContextMenu';
 import { useCopyToClipboard } from '@uidotdev/usehooks';
 import { Skeleton } from '@mui/material';
+import { cryptMessage } from '@/tools/cryptMessage';
 
 import styles from './style.module.scss';
-import { cryptMessage } from '@/tools/cryptMessage';
 
 interface ChatsProps {
   token: string
@@ -27,7 +27,7 @@ interface ChatsProps {
   isSearchOpen?: boolean
   setIsSearchOpen?: (e: boolean) => void
   isLoading: boolean
-  setIsLoading: (e: boolean) => void
+  phone: string
 }
 
 const initialContextMenu = {
@@ -49,7 +49,7 @@ const Chats = ({
   isSearchOpen = false,
   setIsSearchOpen,
   isLoading,
-  setIsLoading,
+  phone,
 }: ChatsProps) => {
   const [files, setFiles] = useState<File[]>([]);
 
@@ -117,8 +117,13 @@ const Chats = ({
   const onSend = (message: string) => {
     message = message.trim()
     if (!message && !files.length) return
+    const tempId = Math.random().toString(36).substring(7)
+    setAllMessages([...allMessages, { content: message, authorId: userId, phone, date: new Date().toISOString(), _id: `temp-${tempId}`, files, isTemp: true }])
     const encryptedMessage = cryptMessage(message, conversations.find(e => e._id === id)?.publicKey)
-    console.log(encryptedMessage);
+    if (!encryptedMessage) {
+      setAllMessages(allMessages.filter(e => e._id !== `temp-${tempId}`))
+      return
+    }
     emitEvent("sendMessage", { token, conversationId: id, content: encryptedMessage }, (data: any) => {
       setAllMessages([...allMessages, data.data])
     })
