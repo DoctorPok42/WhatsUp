@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
 import { Emoji, EmojiStyle } from 'emoji-picker-react';
 import formatDate from '@/tools/formatDate';
@@ -20,6 +20,7 @@ interface ChatsMessageProps {
       value: string
       usersId: string[]
     }[]
+    isTemp?: boolean
   }
   isGroup: boolean
   allMessages: any[]
@@ -51,7 +52,7 @@ const ChatsMessage = ({
     return { link: link[0], text: content.replace(link[0], "") };
   }
 
-  const decryptedMessage = decryptMessage(message.content, privateKey);
+  const decryptedMessage = useMemo(() => decryptMessage(message.content, privateKey), [message.content, privateKey]);
   if (decryptedMessage) message.content = decryptedMessage;
 
   return (
@@ -77,6 +78,7 @@ const ChatsMessage = ({
       <div className={styles.ChatsMessage_content} style={{
           backgroundColor: message.authorId !== userId ? "#2e333d" : "#6b8afd",
           paddingBottom: message.reactions ? ".5em" : "0.8em",
+          ...message.isTemp && { filter: "brightness(0.5)" },
         }}
       >
         <div className={styles.title} style={{

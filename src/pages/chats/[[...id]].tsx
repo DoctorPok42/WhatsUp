@@ -58,7 +58,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
           isSearchOpen={isSearchOpen}
           setIsSearchOpen={setIsSearchOpen}
           isLoading={isLoading}
-          setIsLoading={setIsLoading}
+          phone={phone}
         />
         {id && <InfoChats
           isInfoOpen={isInfoOpen}
