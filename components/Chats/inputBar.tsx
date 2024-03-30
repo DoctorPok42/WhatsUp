@@ -144,7 +144,7 @@ const InputBar = ({
 
         <div {...getRootProps()} className={styles.Input_icon}>
           <input {...getInputProps()} />
-          <FontAwesomeIcon icon={faPaperclip} width={20} height={20} color='#7d7f92' />
+          <FontAwesomeIcon icon={faPaperclip} width={16} height={16} color='#7d7f92' />
         </div>
 
         <div className={styles.Input}>

@@ -4,7 +4,9 @@ import Link from 'next/link';
 import router from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartSimple, faComments, faGear } from '@fortawesome/free-solid-svg-icons';
-import TooltipComponent from '../Tooltip';
+import { Zoom } from '@mui/material';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@mui/material/styles';
 
 import styles from './style.module.scss';
 
@@ -12,6 +14,24 @@ interface SideBarProps {
   path: string;
   phone?: string;
 }
+
+const NameTooltip = styled(({ className, ...props }: any) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: 'var(--black)',
+      color: 'var(--white)',
+      boxShadow: theme.shadows[1],
+      fontSize: 13,
+      fontFamily: 'Nunito, sans-serif',
+      fontWeight: 600,
+      tranform: 'scale(1.2)',
+  },
+
+  [`& .${tooltipClasses.arrow}`]: {
+      color: 'var(--black)',
+  },
+}));
 
 const SideBar = ({
   path,
@@ -31,23 +51,20 @@ const SideBar = ({
 
         <div className={styles.list}>
           {listButtons.map((button, index) => (
-            <TooltipComponent
+            <NameTooltip
               key={index}
               title={button.name}
-              position="right"
-              style={{
-                position: 'absolute',
-                top: "10em",
-                left: "10em",
-              }}
+              placement="right"
+              TransitionComponent={Zoom}
+              TransitionProps={{ timeout: 100 }}
+              arrow
             >
               <div key={index} className={styles.button} onClick={() => router.push(button.path)} style={{
                 color: path === button.path ? '#5ad27d' : '#8393a3',
               }}>
-                <FontAwesomeIcon className={styles.icon} icon={button.icon} width={20} height={20} />
-                {/* <a href={button.path}>{button.name}</a> */}
+                <FontAwesomeIcon className={styles.icon} icon={button.icon} width={18} height={18} />
               </div>
-            </TooltipComponent>
+            </NameTooltip>
           ))}
         </div>
 

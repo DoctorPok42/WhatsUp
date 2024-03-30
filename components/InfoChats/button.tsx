@@ -46,7 +46,8 @@ const ButtonChat = ({
       <div className={styles.ButtonChat_container} onClick={onClick}>
         <FontAwesomeIcon
           icon={icon}
-          size="lg"
+          width={21}
+          height={21}
           {...color && { color }}
         />
       </div>
