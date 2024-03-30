@@ -76,6 +76,12 @@ const getConversations = async (
       if (rightConversation.lastMessageSeen === lastMessageId) {
         return { ...conv, unreadMessages: 0 };
       } else {
+        if (
+          !rightConversation.lastMessageSeen ||
+          rightConversation.lastMessageSeen === ""
+        ) {
+          return { ...conv, unreadMessages: 0 };
+        }
         const realId = new mongoose.Types.ObjectId(
           rightConversation.lastMessageSeen
         );
