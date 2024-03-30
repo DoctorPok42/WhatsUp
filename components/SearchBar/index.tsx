@@ -40,7 +40,7 @@ const SearchBar = ({
         <div className={styles.image} onClick={handleClicked} style={{
           width: showContact ? '2em' : '3em'
         }}>
-          <FontAwesomeIcon icon={faSearch} width={23} height={23} color='#a6a3a3' />
+          <FontAwesomeIcon icon={faSearch} width={18} height={18} color='#a6a3a3' />
         </div>
 
         <div className={styles.input} style={{

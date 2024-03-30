@@ -33,11 +33,11 @@ const HeaderChats = ({
 
       <div className={styles.headerActions}>
         <div className={styles.icon} onClick={handleSearchMessage}>
-          <FontAwesomeIcon icon={faSearch} width={18} height={18} color='#7d7f92' />
+          <FontAwesomeIcon icon={faSearch} width={16} height={16} color='#7d7f92' />
         </div>
 
         <div className={styles.icon}>
-          <FontAwesomeIcon icon={faThumbTack} width={18} height={18} color='#7d7f92' style={{
+          <FontAwesomeIcon icon={faThumbTack} width={16} height={16} color='#7d7f92' style={{
             transform: 'rotate(45deg)',
           }} />
         </div>
@@ -46,10 +46,6 @@ const HeaderChats = ({
           <Image src="/sidebar.svg" alt="settings" width={5} height={5} style={{
             transform: isInfoOpen ? 'rotate(180deg)' : 'rotate(0deg)',
           }} />
-        </div>
-
-        <div className={styles.icon}>
-          <FontAwesomeIcon icon={faEllipsisVertical} width={18} height={18} color='#7d7f92' />
         </div>
       </div>
     </div>

@@ -30,7 +30,7 @@ const userCreate = async (
       return { status: "success", message: "User has been registered.", token };
     else
       return { status: "success", message: "An error occurred.", token: null };
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
 
     if (error.code === 11000) {
