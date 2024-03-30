@@ -146,8 +146,8 @@ const ContextMenu = ({
           <FontAwesomeIcon
             icon={button.icon}
             id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
-            width={20}
-            height={20}
+            width={16}
+            height={16}
             style={
               button.angle
                 ? { transform: `rotate(${button.angle}deg)` }
