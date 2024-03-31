@@ -5,6 +5,7 @@ import { Chats, SideBar } from "../../../components/";
 import Cookies from "universal-cookie";
 import InfoChats from "@/../components/InfoChats";
 import emitEvent from "@/tools/webSocketHandler";
+import { decryptMessage } from "@/tools/cryptMessage";
 
 const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
@@ -26,12 +27,21 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
   const getConversations = async () => {
     emitEvent("getConversations", { token }, (data: any) => {
       setIsLoading(false)
-      setConversations(data.data)
+      const conversations = data.data.map((conversation: any) => {
+        const lastMessageDecrypted = decryptMessage(conversation.lastMessage, conversation.key)
+        return {
+          ...conversation,
+          lastMessage: lastMessageDecrypted,
+        }
+      })
+      setConversations(conversations)
     })
   }
 
   useEffect(() => {
-    getConversations()
+    if (!id) {
+      getConversations()
+    }
   }, [])
 
   return (
