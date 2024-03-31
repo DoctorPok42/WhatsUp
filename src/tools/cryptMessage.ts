@@ -7,6 +7,7 @@ export const cryptMessage = (message: string, publicKey: any): string => {
 };
 
 export const decryptMessage = (message: string, privateKey: string) => {
+  if (!message || !privateKey) return null;
   try {
     const bufferEncryptedMessage = message && Buffer.from(message, "base64");
     if (!bufferEncryptedMessage) return null;
