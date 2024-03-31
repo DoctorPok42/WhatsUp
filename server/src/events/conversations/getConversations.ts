@@ -4,6 +4,15 @@ import UserModel from "../../schemas/users";
 import { Conversations, DecodedToken, User } from "../../types";
 import urlMetadata from "url-metadata";
 
+const getPrivateKey = async (id: string): Promise<string | null> => {
+  const realId = new mongoose.Types.ObjectId(id);
+
+  const userPrivateKey = await mongoose.connection.db
+    .collection("privateKeys")
+    .findOne({ conversationId: realId });
+  return userPrivateKey ? userPrivateKey.key : null;
+};
+
 const getConversations = async (
   {},
   decoded: DecodedToken
@@ -46,22 +55,31 @@ const getConversations = async (
   // Get the name of each member
   let allName = (await UserModel.find(
     { _id: { $in: memberId } },
-    { phone: 1 }
+    { username: 1 }
   )) as any;
 
   if (!allName)
     return { status: "error", message: "Users not found.", data: null };
 
-  allName = allName.filter((e: any) => e.phone);
+  allName = allName.filter((e: any) => e.username);
 
   // Get the name of each conversation
   let conversationsWithNames = await conversationsList.map((e: any) => {
     if (!e || !e.membersId) return e;
     let name = e.membersId
       .filter((e: any) => e !== decoded.id)
-      .map((e: any) => allName.find((n: any) => n._id == e)?.phone);
+      .map((e: any) => allName.find((n: any) => n._id == e)?.username);
     return { ...e._doc, name: name[0] || null };
   });
+
+  // Get the PriaKey of each conversation
+  conversationsWithNames = await Promise.all(
+    conversationsWithNames.map(async (e: any) => {
+      if (!e) return e;
+      const key = await getPrivateKey(e._id);
+      return { ...e, key: key };
+    })
+  );
 
   // Get the unread messages
   conversationsWithNames = (await Promise.all(

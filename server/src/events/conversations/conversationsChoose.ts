@@ -59,7 +59,7 @@ const conversationsChoose = async (
 
     const conversationKeys = {
       conversationId: newConversation._id,
-      privateKey,
+      key: privateKey,
     };
 
     const response = await newConversation.save();
