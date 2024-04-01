@@ -1,11 +1,11 @@
 .SearchBar_container {
-  width: 80%;
+  width: 75%;
   height: 4em;
   background-color: #2e333d;
   border-radius: 18px;
+  margin-left: -0.5em;
   display: flex;
   align-items: center;
-  padding: 0 1em;
   z-index: 2;
   transition: var(--transition);
   overflow: hidden;
@@ -14,9 +14,9 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
+    position: relative;
 
     .image {
-      width: 3em;
       height: 3em;
       border-radius: 12px;
       margin-left: 0.5em;
