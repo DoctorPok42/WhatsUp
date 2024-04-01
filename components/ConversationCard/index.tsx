@@ -17,12 +17,14 @@ interface ConversationCardProps {
     unreadMessages: number;
   },
   onClick: () => void
+  showContact: boolean
 }
 
 const ConversationCard = ({
   id,
   conversation,
   onClick,
+  showContact,
 }: ConversationCardProps) => {
   const formattedDate = useMemo(() => formatDate(new Date(conversation.lastMessageDate)), [conversation.lastMessageDate]);
 
@@ -32,16 +34,16 @@ const ConversationCard = ({
     }}>
       <Image src={`https://api.dicebear.com/7.x/avataaars/png?seed=${conversation.name}&radius=22&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="ConversationCardIcon" width={60} height={60} />
       <div className={styles.userInfo}>
-        <div className={styles.title}>
+        {showContact && <div className={styles.title}>
           <h3>
             {conversation.name}
           </h3>
           <span>
             {formattedDate}
           </span>
-        </div>
+        </div>}
 
-        <div className={styles.details}>
+        {showContact && <div className={styles.details}>
           <p>
             {conversation.lastMessage}
           </p>
@@ -51,7 +53,7 @@ const ConversationCard = ({
               conversation.unreadMessages > 99 ? '99+' : conversation.unreadMessages
               }</span>}
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );

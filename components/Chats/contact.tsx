@@ -82,7 +82,7 @@ const Contact = ({
 
   return (
     <div className={styles.Contact_container} onContextMenu={(e) => e.preventDefault()} style={{
-      width: showContact ? '22em' : '5em',
+      ...id && { width: showContact ? '28em' : '5.65em' },
     }}>
       <div className={styles.arrow} style={{
         transform: showContact ? 'rotate(0)' : 'rotate(180deg)',
@@ -115,9 +115,9 @@ const Contact = ({
 
       <div className={styles.conversations}>
         {!isLoading ? conversations.map((conversation, index) => (
-          <ConversationCard key={index} id={id} conversation={conversation} onClick={() => router.push(`/chats/${conversation._id}`)} />
+          <ConversationCard key={index} id={id} conversation={conversation} onClick={() => router.push(`/chats/${conversation._id}`)} showContact={showContact} />
         )) :
-          Array(6).fill(0).map((_, index) => (
+          Array(7).fill(0).map((_, index) => (
             <Skeleton
               key={index}
               variant="rectangular"

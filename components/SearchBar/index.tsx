@@ -38,7 +38,8 @@ const SearchBar = ({
     >
       <div className={styles.content}>
         <div className={styles.image} onClick={handleClicked} style={{
-          width: showContact ? '2em' : '3em'
+          width: showContact ? '2em' : '4.5em',
+          marginLeft: showContact ? '0.5em' : '0em',
         }}>
           <FontAwesomeIcon icon={faSearch} width={18} height={18} color='#a6a3a3' />
         </div>
