@@ -69,24 +69,24 @@ const sendMessage = async (
   // Send the message to the members of the conversation
   const io = require("../../main").io as Socket;
 
-  await Promise.all(
+  const sendMessage = await Promise.all(
     conversation.membersId.map(async (memberId: string) => {
       const user = (await UserModel.findOne({ _id: memberId })) as User;
-
       if (!user.options.online) return;
 
       io.to(user.socketId).emit("message", {
+        status: "success",
         conversationsId: conversationId,
         _id: message._id,
         content: message.content,
         date: message.date,
         authorId: message.authorId,
         phone: author.phone,
-      } as Message & User);
-
-      return user;
+      } as Message & User & { status: string });
     })
   );
+
+  await Promise.all(sendMessage);
 
   return {
     status: "success",
