@@ -10,13 +10,13 @@ const emitEvent = (
       if (data.status === "success") {
         callback && callback(data);
       } else {
-        console.log(data);
+        console.error(data.message);
       }
     });
 
     socket.emit(eventName, data, callback);
   } catch (error) {
-    console.error(error);
+    return null;
   }
 };
 
