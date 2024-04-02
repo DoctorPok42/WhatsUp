@@ -66,11 +66,15 @@ const getMessages = async (
 
   if (rightConversation) {
     await UserModel.updateOne(
-      { _id: decoded.id, "conversationsId.conversationId": conversationId },
+      { _id: decoded.id
+      },
       {
         $set: {
-          "conversationsId.$.lastMessageSeen": messages[0]._id,
+          "conversationsId.$[elem].lastMessageSeen": messagesWithPhone[0]._id,
         },
+      },
+      {
+        arrayFilters: [{ "elem.conversationId": conversationId }],
       }
     );
   }
