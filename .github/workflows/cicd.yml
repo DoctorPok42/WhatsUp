@@ -11,6 +11,7 @@ on:
 
 jobs:
   build:
+    name: 🛠️ Build
     runs-on: self-hosted
     if: github.event_name == 'pull_request'
 
@@ -35,7 +36,8 @@ jobs:
           docker build -t whatsup_frontend:latest .
 
 
-  build_and_push_docker_images:
+  build_docker_images:
+    name: 🛠️ Build Docker images
     runs-on: self-hosted
     if: github.event_name == 'push'
 
@@ -58,6 +60,12 @@ jobs:
           docker build -t whatsup_backend:latest ./server --build-arg SERVER_URL=${{ secrets.SERVER_URL }} --build-arg SERVER_PORT=${{ secrets.SERVER_PORT }} --build-arg MONGO_URI=${{ secrets.MONGO_URI }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg TOKEN_EXPIRATION=${{ secrets.TOKEN_EXPIRATION }} --build-arg TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} --build-arg TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }}
           docker build -t whatsup_frontend:latest . --build-arg SERVER_URL=${{ secrets.SERVER_URL }}
 
+  push_docker_images:
+    name: 📡 Push Docker images
+    runs-on: self-hosted
+    if: github.event_name == 'push'
+
+    steps:
       - name: 📡 Push Docker images to Docker Hub
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -67,8 +75,9 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
 
   deploy:
+    name: 🚀 Deploy to VPS
     runs-on: self-hosted
-    needs: build_and_push_docker_images
+    needs: push_docker_images
     if: github.event_name == 'push'
 
     steps:
