@@ -85,7 +85,7 @@ const Chats = ({
   }
 
   socket.on("message", (data: any) => {
-    if (data.conversationId === id) {
+    if (data.conversationsId === id) {
       setAllMessages([...allMessages, data])
     }
 

@@ -20,7 +20,6 @@ export const decryptMessage = (message: string, privateKey: string) => {
     );
     return decryptedMessage.toString("utf-8");
   } catch (error) {
-    console.log(error);
     return null;
   }
 };
