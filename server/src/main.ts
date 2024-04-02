@@ -11,6 +11,13 @@ config();
 
 let events = {} as Events;
 
+const server = createServer();
+const io = new Server(server, {
+  cors: {
+    origin: process.env.SERVER_URL,
+  },
+});
+
 const initServer = async () => {
   try {
     const handlersDir = join(__dirname, "./handlers");
@@ -20,13 +27,6 @@ const initServer = async () => {
     });
 
     await checkCollections();
-
-    const server = await createServer();
-    const io = await new Server(server, {
-      cors: {
-        origin: process.env.SERVER_URL,
-      },
-    });
 
     startComunication(io, events);
 
@@ -41,14 +41,12 @@ const initServer = async () => {
         )
       );
     });
-
-    return io;
   } catch (error) {
     console.error(error);
     return null;
   }
 };
 
-const io = initServer();
+initServer();
 
 export { io };
