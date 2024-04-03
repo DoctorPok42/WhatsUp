@@ -11,12 +11,12 @@ on:
 
 jobs:
   build:
+    name: 🛠️ Build
     runs-on: self-hosted
     if: github.event_name == 'pull_request'
 
     steps:
-      - name: 💾 Cache dependencies
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -36,12 +36,12 @@ jobs:
 
 
   build_docker_images:
+    name: 🛠️ Build Docker images
     runs-on: self-hosted
     if: github.event_name == 'push'
 
     steps:
-      - name: 💾 Cache dependencies
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -61,6 +61,7 @@ jobs:
   push_docker_images:
     name: 📡 Push Docker images to Docker Hub
     runs-on: self-hosted
+    needs: build_docker_images
     if: github.event_name == 'push'
 
     steps:
