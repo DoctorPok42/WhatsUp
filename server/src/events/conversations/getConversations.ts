@@ -64,7 +64,7 @@ const getConversations = async (
   allName = allName.filter((e: any) => e.username);
 
   // Get the name of each conversation
-  let conversationsWithNames = await conversationsList.map((e: any) => {
+  let conversationsWithNames = conversationsList.map((e: any) => {
     if (!e || !e.membersId) return e;
     let name = e.membersId
       .filter((e: any) => e !== decoded.id)
