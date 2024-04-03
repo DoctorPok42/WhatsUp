@@ -16,7 +16,8 @@ jobs:
     if: github.event_name == 'pull_request'
 
     steps:
-      - uses: actions/setup-node@v4
+      - name: 💾 Cache Dependencies
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -41,7 +42,8 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
-      - uses: actions/setup-node@v4
+      - name: 💾 Cache Dependencies
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
