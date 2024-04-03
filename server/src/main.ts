@@ -26,9 +26,11 @@ const initServer = async () => {
       require(`${handlersDir}/${handler}`)(events);
     });
 
-    await checkCollections();
-
-    startComunication(io, events);
+    const check = Promise.all([
+      checkCollections(),
+      startComunication(io, events),
+    ]);
+    await check;
 
     server.listen(Number(process.env.PORT), () => {
       console.log(

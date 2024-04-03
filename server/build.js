@@ -1,4 +1,5 @@
 const { exec } = require("child_process");
+const chalk = require("chalk");
 
 const themeColors = {
   text: "#2B2",
@@ -20,7 +21,6 @@ const main = () => {
 }
 
 try {
-  var chalk = require("chalk");
   main()
 } catch (e) {
   console.log(chalk.hex(themeColors.error)("Error: Something went wrong while trying to start the build process.", e))
