@@ -63,10 +63,8 @@ const getConversations = async (
 
   allName = allName.filter((e: any) => e.username);
 
-  // Get the name of each conversation (Refactor this redundant 'await' on a non-promise.)
-  let conversationsWithNames = Promise.all([]) as any;
-
-  conversationsWithNames = await conversationsList.map((e: any) => {
+  // Get the name of each conversation
+  let conversationsWithNames = conversationsList.map((e: any) => {
     if (!e || !e.membersId) return e;
     let name = e.membersId
       .filter((e: any) => e !== decoded.id)

@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import Image from 'next/image';
 import FooterMessage from './footer';
 import { decryptMessage } from '@/tools/cryptMessage';
 

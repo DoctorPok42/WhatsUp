@@ -26,7 +26,7 @@ const ContentMessage = ({
           message.content.split(" ").map((e, index) => {
             const link = returnJustLink(e);
             return (
-              <span key={index}>
+              <span key={e + index }>
                 {link.link ? <>{" "}<a href={link.link} style={{
                   color: message.authorId !== userId ? "#6b8afd" : "var(--dark-blue)",
                 }} target="_blank" rel="noreferrer">{link.link}</a>{" "}</> : link.text}

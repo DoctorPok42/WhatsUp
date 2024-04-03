@@ -27,7 +27,9 @@ const FooterMessage = ({
       <div className={styles.reactions}>
         {message.reactions?.map((e, index) => (
             <span
-              key={index}
+              role="button"
+              aria-hidden="true"
+              key={e.value + index}
               onClick={() => handleAddReaction(e.value)}
               style={{
                 backgroundColor: e.usersId.includes(userId) ? "var(--dark-blue)" : "transparent",
