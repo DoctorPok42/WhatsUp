@@ -27,7 +27,7 @@ const FooterMessage = ({
       <div className={styles.reactions}>
         {message.reactions?.map((e, index) => (
             <span
-              role="button"
+              role="contentinfo"
               aria-hidden="true"
               key={e.value + index}
               onClick={() => handleAddReaction(e.value)}
