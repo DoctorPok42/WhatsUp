@@ -25,18 +25,23 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
   }, [token, phone, userId]);
 
   const getConversations = async () => {
-    emitEvent("getConversations", { token }, (data: any) => {
-      setIsLoading(false)
-      const conversations = data.data.map((conversation: any) => {
-        const lastMessageDecrypted = decryptMessage(conversation.lastMessage, conversation.key)
-        return {
-          ...conversation,
-          lastMessage: lastMessageDecrypted,
-        }
+    try {
+      emitEvent("getConversations", { token }, (data: any) => {
+        const conversations = data.data.map((conversation: any) => {
+          const lastMessageDecrypted = decryptMessage(conversation.lastMessage, conversation.key)
+          return {
+            ...conversation,
+            lastMessage: lastMessageDecrypted,
+          }
+        })
+        setConversations(conversations)
       })
-      setConversations(conversations)
-    })
+    } finally {
+      setIsLoading(false)
+    }
   }
+
+  const getAllMessages = async () => emitEvent("getAllMessages", { token, })
 
   useEffect(() => {
     if (!id) {
@@ -53,7 +58,9 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
         <meta name="theme-color" content="#5ad27d" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container">
+      <main className="container" onLoad={() => {
+        getAllMessages()
+      }}>
         <SideBar path="/chats" phone={phone} />
         <Chats
           token={token}
@@ -88,9 +95,5 @@ export default ChatsPage;
 export async function getServerSideProps(context: any) {
   const { id } = context.query;
 
-  if (!id) {
-    return { props: { id: "" }}
-  } else {
-    return { props: { id }};
-  }
+  return { props: { id: id || "" } };
 }

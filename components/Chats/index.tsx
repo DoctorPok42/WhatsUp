@@ -9,10 +9,11 @@ import ChatsMessage from '../ChatsMessage';
 import { socket } from '@/pages/_app';
 import ContextMenu from '../ContextMenu';
 import { useCopyToClipboard } from '@uidotdev/usehooks';
-import { Skeleton } from '@mui/material';
+import { Box, LinearProgress, Skeleton } from '@mui/material';
 import { cryptMessage } from '@/tools/cryptMessage';
 
 import styles from './style.module.scss';
+import unCrypt from './decryptMessage';
 
 interface ChatsProps {
   token: string
@@ -51,6 +52,8 @@ const Chats = ({
   isLoading,
   phone,
 }: ChatsProps) => {
+  const [loadingMessages, setLoadingMessages] = useState<boolean>(true)
+
   const [files, setFiles] = useState<File[]>([]);
 
   const [allMessages, setAllMessages] = useState<any[]>([])
@@ -107,10 +110,10 @@ const Chats = ({
     setUserTyping(data)
   })
 
-  useEffect(() => {
-    getConversations && getConversations()
-    getMessages(true)
-  }, [id])
+  // useEffect(() => {
+  //   getConversations && getConversations()
+  //   getMessages(true)
+  // }, [id])
 
   const conversationName = conversations.find(e => e._id === id)?.name
 
@@ -225,6 +228,46 @@ const Chats = ({
       setAllMessages([...allMessages])
     })
   }
+
+  const recieveMessage = (data: any) => {
+    try {
+      if (!data.messages) return
+      const newMessages = unCrypt(data.messages, data.privateKey);
+      setAllMessages([...allMessages, {
+        ...newMessages,
+        conversationId: data.conversationsId,
+      }])
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  socket.on("getAllMessages", (data: any) => {
+    if (!data || !data.message) return
+    if (data.message === "All messages sent.") {
+      setInterval(() => {
+        if (!isLoading) setLoadingMessages(false)
+      }, 2000)
+    }
+    recieveMessage(data)
+  })
+
+  if (loadingMessages) return (
+    <div className={styles.Chats_container} style={{
+      width: (isInfoOpen && id) ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
+      borderRadius: (isInfoOpen && id) ? '20px' : '20px 0 0 20px',
+    }}>
+      <div className={styles.Chats_loading}>
+        <Box sx={{ width: '30%' }}>
+          <LinearProgress color='success' style={{
+            borderRadius: 20,
+            height: 5,
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+          }}/>
+        </Box>
+      </div>
+    </div>
+  )
 
   return (
     <div className={styles.Chats_container} style={{
