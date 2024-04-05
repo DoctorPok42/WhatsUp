@@ -52,9 +52,6 @@ const ChatsMessage = ({
     return { link: link[0], text: content.replace(link[0], "") };
   }
 
-  const decryptedMessage = useMemo(() => decryptMessage(message.content, privateKey), [message.content, privateKey]);
-  if (decryptedMessage) message.content = decryptedMessage;
-
   return (
     <div
       className={styles.ChatsMessage_container}

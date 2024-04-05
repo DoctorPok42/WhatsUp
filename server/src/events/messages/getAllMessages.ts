@@ -1,29 +1,38 @@
 import UserModel from "../../schemas/users";
-import { DecodedToken, Message } from "../../types";
-import { Socket } from "socket.io";
+import { DecodedToken } from "../../types";
 import mongoose from "mongoose";
 
 const getAllMessages = async (
   {},
   decoded: DecodedToken,
   socketId: string
-): Promise<{ status: string; message: string; data?: Message | null }> => {
+): Promise<{ status: string; messages: string; data: any }> => {
   const author = await UserModel.findOne({ _id: decoded.id });
   if (!author)
-    return { status: "error", message: "Author not found.", data: null };
+    return { status: "error", messages: "Author not found.", data: null };
 
   const firstUserConversations = author.conversationsId.slice(0, 10);
 
-  const io = require("../../main").io as Socket;
-
-  await Promise.all(
+  const allConversation = await Promise.all(
     firstUserConversations.map(async (conversation: any, index: number) => {
-      console.log("conversation", conversation.conversationId);
-      const findConv = await mongoose.connection.db
+      let userList = [] as string[];
+      let findConv = (await mongoose.connection.db
         .collection(`conversation_${conversation.conversationId}`)
         .find()
-        .toArray();
+        .limit(20)
+        .sort({ date: -1 })
+        .toArray()) as any;
       if (!findConv) return;
+
+      await findConv.forEach(async (message: any) => {
+        if (!userList.includes(message.authorId))
+          userList.push(message.authorId);
+
+        const user = await UserModel.findOne({ _id: message.authorId });
+        if (!user) return;
+
+        message.phone = user.phone;
+      });
 
       const realPrivateKeysId = new mongoose.Types.ObjectId(
         conversation.conversationId
@@ -34,20 +43,20 @@ const getAllMessages = async (
         .findOne({ conversationId: realPrivateKeysId });
       if (!conversationKey) return;
 
-      io.to(socketId).emit("getAllMessages", {
-        status: "success",
-        conversationsId: conversation.conversationId,
+      return {
+        conversationId: conversation.conversationId,
         messages: findConv,
         nbConversations: author.conversationsId.length,
         index,
         privateKey: conversationKey.key,
-      });
+      };
     })
   );
 
   return {
     status: "success",
-    message: "All messages sent.",
+    messages: "All messages sent.",
+    data: allConversation,
   };
 };
 

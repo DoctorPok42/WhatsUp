@@ -18,7 +18,7 @@ import unCrypt from './decryptMessage';
 interface ChatsProps {
   token: string
   isConversation: boolean
-  id?: string
+  id?: any
   userId: string
   isInfoOpen?: boolean
   setIsInfoOpen?: (e: boolean) => void
@@ -29,6 +29,8 @@ interface ChatsProps {
   setIsSearchOpen?: (e: boolean) => void
   isLoading: boolean
   phone: string
+  allMessages: any[]
+  setAllMessages: (e: any[]) => void
 }
 
 const initialContextMenu = {
@@ -51,12 +53,11 @@ const Chats = ({
   setIsSearchOpen,
   isLoading,
   phone,
+  allMessages,
+  setAllMessages,
 }: ChatsProps) => {
-  const [loadingMessages, setLoadingMessages] = useState<boolean>(true)
-
   const [files, setFiles] = useState<File[]>([]);
 
-  const [allMessages, setAllMessages] = useState<any[]>([])
   const [messageLoaded, setMessageLoaded] = useState<number>(0)
   const [userTyping, setUserTyping] = useState<string>("")
   const [searchState, setSearchState] = useState<"message" | "user">("user")
@@ -109,11 +110,6 @@ const Chats = ({
 
     setUserTyping(data)
   })
-
-  // useEffect(() => {
-  //   getConversations && getConversations()
-  //   getMessages(true)
-  // }, [id])
 
   const conversationName = conversations.find(e => e._id === id)?.name
 
@@ -229,30 +225,7 @@ const Chats = ({
     })
   }
 
-  const recieveMessage = (data: any) => {
-    try {
-      if (!data.messages) return
-      const newMessages = unCrypt(data.messages, data.privateKey);
-      setAllMessages([...allMessages, {
-        ...newMessages,
-        conversationId: data.conversationsId,
-      }])
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  socket.on("getAllMessages", (data: any) => {
-    if (!data || !data.message) return
-    if (data.message === "All messages sent.") {
-      setInterval(() => {
-        if (!isLoading) setLoadingMessages(false)
-      }, 2000)
-    }
-    recieveMessage(data)
-  })
-
-  if (loadingMessages) return (
+  if (isLoading) return (
     <div className={styles.Chats_container} style={{
       width: (isInfoOpen && id) ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
       borderRadius: (isInfoOpen && id) ? '20px' : '20px 0 0 20px',
@@ -326,7 +299,8 @@ const Chats = ({
           }}
           onContextMenu={(e) => {e.preventDefault()}}
         >
-          {!isLoading ? allMessages.map((e, index) => {
+          {id && allMessages[id].map((e: any, index: number) => {
+            if (e === null) return
             if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
               return (
                 <div key={index} className={styles.Chats_date}>
@@ -359,20 +333,7 @@ const Chats = ({
                 privateKey={privateKey}
               />
             }
-          }
-          ) : Array.from({ length: 10 }, (_, i) => i).map((e, index) => (
-            <Skeleton
-              key={index}
-              variant="circular"
-              width={Math.floor(Math.random() * 80) + 1 + '%'}
-              height={50}
-              animation="wave"
-              style={{
-                marginBottom: 12,
-                borderRadius: 20,
-              }}
-            />
-          ))}
+          })}
         </div>
 
         {userTyping && <div className={styles.Chats_typing}>

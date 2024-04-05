@@ -6,12 +6,14 @@ import Cookies from "universal-cookie";
 import InfoChats from "@/../components/InfoChats";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
+import unCrypt from "../../../components/Chats/decryptMessage";
 
 const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
   const [conversations, setConversations] = useState<any>([])
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [allMessages, setAllMessages] = useState<any>([])
 
   const cookies = new Cookies();
   const token = cookies.get("token");
@@ -25,28 +27,34 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
   }, [token, phone, userId]);
 
   const getConversations = async () => {
-    try {
-      emitEvent("getConversations", { token }, (data: any) => {
-        const conversations = data.data.map((conversation: any) => {
-          const lastMessageDecrypted = decryptMessage(conversation.lastMessage, conversation.key)
-          return {
-            ...conversation,
-            lastMessage: lastMessageDecrypted,
-          }
-        })
-        setConversations(conversations)
+    emitEvent("getConversations", { token }, (data: any) => {
+      const conversations = data.data.map((conversation: any) => {
+        const lastMessageDecrypted = decryptMessage(conversation.lastMessage, conversation.key)
+        return {
+          ...conversation,
+          lastMessage: lastMessageDecrypted,
+        }
       })
-    } finally {
-      setIsLoading(false)
-    }
+      setConversations(conversations)
+    })
   }
 
-  const getAllMessages = async () => emitEvent("getAllMessages", { token, })
+  const getAllMessages = async () => emitEvent("getAllMessages", { token }, async (data: any) => {
+    let messagesLoaded = [] as any
+    if (data.messages === "All messages sent.") {
+      await data.data.forEach((conversation: any) => {
+        const newMessages = unCrypt(conversation.messages, conversation.privateKey);
+        messagesLoaded[conversation.conversationId] = newMessages
+      })
+      setAllMessages(messagesLoaded)
+      setIsLoading(false)
+    }
+  })
 
   useEffect(() => {
-    if (!id) {
-      getConversations()
-    }
+    setIsLoading(true)
+    getConversations()
+    getAllMessages()
   }, [])
 
   return (
@@ -58,9 +66,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
         <meta name="theme-color" content="#5ad27d" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container" onLoad={() => {
-        getAllMessages()
-      }}>
+      <main className="container">
         <SideBar path="/chats" phone={phone} />
         <Chats
           token={token}
@@ -76,6 +82,8 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
           setIsSearchOpen={setIsSearchOpen}
           isLoading={isLoading}
           phone={phone}
+          allMessages={allMessages}
+          setAllMessages={setAllMessages}
         />
         {id && <InfoChats
           isInfoOpen={isInfoOpen}
