@@ -68,13 +68,11 @@ const Chats = ({
   const [copiedText, copyToClipboard] = useCopyToClipboard();
   const [inputBarMode, setInputBarMode] = useState<"chat" | "edit">("chat")
   const [inputBarValue, setInputBarValue] = useState<string>("")
-  const [privateKey, setPrivateKey] = useState<string>("")
 
   const getMessages = async (nbMessages?: boolean) => {
     if (!id) return
     emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
       setAllMessages(data.data)
-      setPrivateKey(data.key)
       setMessageLoaded(
         nbMessages ? 10 : messageLoaded + 10
       )
