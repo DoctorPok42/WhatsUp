@@ -16,7 +16,7 @@ const main = () => {
       console.log(chalk.hex(themeColors.error)(stdout));
       return;
     }
-    console.log(chalk.hex(themeColors.text)(`Build successful! You can start the bot by running ${chalk.hex(themeColors.variable)("npm start")}\n`));
+    console.log(chalk.hex(themeColors.text)(`Build successful! You can start the server by running ${chalk.hex(themeColors.variable)("npm start")}\n`));
   })
 }
 

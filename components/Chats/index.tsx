@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Contact } from '..';
 import HeaderChats from './header';
 import InputBar from './inputBar';
@@ -9,7 +9,7 @@ import ChatsMessage from '../ChatsMessage';
 import { socket } from '@/pages/_app';
 import ContextMenu from '../ContextMenu';
 import { useCopyToClipboard } from '@uidotdev/usehooks';
-import { Skeleton } from '@mui/material';
+import { Box, LinearProgress } from '@mui/material';
 import { cryptMessage } from '@/tools/cryptMessage';
 
 import styles from './style.module.scss';
@@ -17,7 +17,7 @@ import styles from './style.module.scss';
 interface ChatsProps {
   token: string
   isConversation: boolean
-  id?: string
+  id?: any
   userId: string
   isInfoOpen?: boolean
   setIsInfoOpen?: (e: boolean) => void
@@ -28,6 +28,8 @@ interface ChatsProps {
   setIsSearchOpen?: (e: boolean) => void
   isLoading: boolean
   phone: string
+  allMessages: any[]
+  setAllMessages: (e: any[]) => void
 }
 
 const initialContextMenu = {
@@ -50,10 +52,11 @@ const Chats = ({
   setIsSearchOpen,
   isLoading,
   phone,
+  allMessages,
+  setAllMessages,
 }: ChatsProps) => {
   const [files, setFiles] = useState<File[]>([]);
 
-  const [allMessages, setAllMessages] = useState<any[]>([])
   const [messageLoaded, setMessageLoaded] = useState<number>(0)
   const [userTyping, setUserTyping] = useState<string>("")
   const [searchState, setSearchState] = useState<"message" | "user">("user")
@@ -65,13 +68,11 @@ const Chats = ({
   const [copiedText, copyToClipboard] = useCopyToClipboard();
   const [inputBarMode, setInputBarMode] = useState<"chat" | "edit">("chat")
   const [inputBarValue, setInputBarValue] = useState<string>("")
-  const [privateKey, setPrivateKey] = useState<string>("")
 
   const getMessages = async (nbMessages?: boolean) => {
     if (!id) return
     emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
       setAllMessages(data.data)
-      setPrivateKey(data.key)
       setMessageLoaded(
         nbMessages ? 10 : messageLoaded + 10
       )
@@ -106,11 +107,6 @@ const Chats = ({
 
     setUserTyping(data)
   })
-
-  useEffect(() => {
-    getConversations && getConversations()
-    getMessages(true)
-  }, [id])
 
   const conversationName = conversations.find(e => e._id === id)?.name
 
@@ -226,6 +222,23 @@ const Chats = ({
     })
   }
 
+  if (isLoading) return (
+    <div className={styles.Chats_container} style={{
+      width: (isInfoOpen && id) ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
+      borderRadius: (isInfoOpen && id) ? '20px' : '20px 0 0 20px',
+    }}>
+      <div className={styles.Chats_loading}>
+        <Box sx={{ width: '30%' }}>
+          <LinearProgress color='success' style={{
+            borderRadius: 20,
+            height: 5,
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+          }}/>
+        </Box>
+      </div>
+    </div>
+  )
+
   return (
     <div className={styles.Chats_container} style={{
       width: (isInfoOpen && id) ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
@@ -283,7 +296,8 @@ const Chats = ({
           }}
           onContextMenu={(e) => {e.preventDefault()}}
         >
-          {!isLoading ? allMessages.map((e, index) => {
+          {id && allMessages[id].map((e: any, index: number) => {
+            if (e === null) return
             if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
               return (
                 <div key={index} className={styles.Chats_date}>
@@ -298,7 +312,6 @@ const Chats = ({
                     handleContextMenu={handleContextMenu}
                     setMessageIdHover={setMessageIdHover}
                     handleAddReaction={handleAddReaction}
-                    privateKey={privateKey}
                   />
                 </div>
               )
@@ -313,23 +326,9 @@ const Chats = ({
                 handleContextMenu={handleContextMenu}
                 setMessageIdHover={setMessageIdHover}
                 handleAddReaction={handleAddReaction}
-                privateKey={privateKey}
               />
             }
-          }
-          ) : Array.from({ length: 10 }, (_, i) => i).map((e, index) => (
-            <Skeleton
-              key={index}
-              variant="circular"
-              width={Math.floor(Math.random() * 80) + 1 + '%'}
-              height={50}
-              animation="wave"
-              style={{
-                marginBottom: 12,
-                borderRadius: 20,
-              }}
-            />
-          ))}
+          })}
         </div>
 
         {userTyping && <div className={styles.Chats_typing}>

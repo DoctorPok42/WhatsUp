@@ -6,12 +6,14 @@ import Cookies from "universal-cookie";
 import InfoChats from "@/../components/InfoChats";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
+import unCrypt from "../../../components/Chats/decryptMessage";
 
 const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
   const [conversations, setConversations] = useState<any>([])
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [allMessages, setAllMessages] = useState<any>([])
 
   const cookies = new Cookies();
   const token = cookies.get("token");
@@ -26,7 +28,6 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
 
   const getConversations = async () => {
     emitEvent("getConversations", { token }, (data: any) => {
-      setIsLoading(false)
       const conversations = data.data.map((conversation: any) => {
         const lastMessageDecrypted = decryptMessage(conversation.lastMessage, conversation.key)
         return {
@@ -38,10 +39,22 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
     })
   }
 
-  useEffect(() => {
-    if (!id) {
-      getConversations()
+  const getAllMessages = async () => emitEvent("getAllMessages", { token }, async (data: any) => {
+    let messagesLoaded = [] as any
+    if (data.messages === "All messages sent.") {
+      await data.data.forEach((conversation: any) => {
+        const newMessages = unCrypt(conversation.messages, conversation.privateKey);
+        messagesLoaded[conversation.conversationId] = newMessages
+      })
+      setAllMessages(messagesLoaded)
+      setIsLoading(false)
     }
+  })
+
+  useEffect(() => {
+    setIsLoading(true)
+    getConversations()
+    getAllMessages()
   }, [])
 
   return (
@@ -69,6 +82,8 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
           setIsSearchOpen={setIsSearchOpen}
           isLoading={isLoading}
           phone={phone}
+          allMessages={allMessages}
+          setAllMessages={setAllMessages}
         />
         {id && <InfoChats
           isInfoOpen={isInfoOpen}
@@ -88,9 +103,5 @@ export default ChatsPage;
 export async function getServerSideProps(context: any) {
   const { id } = context.query;
 
-  if (!id) {
-    return { props: { id: "" }}
-  } else {
-    return { props: { id }};
-  }
+  return { props: { id: id || "" } };
 }
