@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 const getAllMessages = async (
   {},
   decoded: DecodedToken,
-  socketId: string
 ): Promise<{ status: string; messages: string; data: any }> => {
   const author = await UserModel.findOne({ _id: decoded.id });
   if (!author)
@@ -15,7 +14,7 @@ const getAllMessages = async (
 
   const allConversation = await Promise.all(
     firstUserConversations.map(async (conversation: any, index: number) => {
-      let userList = [] as string[];
+      let userList = [] as { authorId: string; phone: string}[];
       let findConv = (await mongoose.connection.db
         .collection(`conversation_${conversation.conversationId}`)
         .find()
@@ -25,13 +24,17 @@ const getAllMessages = async (
       if (!findConv) return;
 
       await findConv.forEach(async (message: any) => {
-        if (!userList.includes(message.authorId))
-          userList.push(message.authorId);
+        if (!userList.includes(message.authorId)) {
+          const user = await UserModel.findOne({ _id: message.authorId });
+          if (!user) return;
 
-        const user = await UserModel.findOne({ _id: message.authorId });
-        if (!user) return;
-
-        message.phone = user.phone;
+          userList.push({ authorId: message.authorId, phone: ""});
+          message.phone = user.phone;
+        } else {
+          const user = userList.find((user) => user.authorId === message.authorId);
+          if (!user) return;
+          message.phone = user.phone;
+        }
       });
 
       const realPrivateKeysId = new mongoose.Types.ObjectId(
