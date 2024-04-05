@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Contact } from '..';
 import HeaderChats from './header';
 import InputBar from './inputBar';
@@ -9,11 +9,10 @@ import ChatsMessage from '../ChatsMessage';
 import { socket } from '@/pages/_app';
 import ContextMenu from '../ContextMenu';
 import { useCopyToClipboard } from '@uidotdev/usehooks';
-import { Box, LinearProgress, Skeleton } from '@mui/material';
+import { Box, LinearProgress } from '@mui/material';
 import { cryptMessage } from '@/tools/cryptMessage';
 
 import styles from './style.module.scss';
-import unCrypt from './decryptMessage';
 
 interface ChatsProps {
   token: string
@@ -315,7 +314,6 @@ const Chats = ({
                     handleContextMenu={handleContextMenu}
                     setMessageIdHover={setMessageIdHover}
                     handleAddReaction={handleAddReaction}
-                    privateKey={privateKey}
                   />
                 </div>
               )
@@ -330,7 +328,6 @@ const Chats = ({
                 handleContextMenu={handleContextMenu}
                 setMessageIdHover={setMessageIdHover}
                 handleAddReaction={handleAddReaction}
-                privateKey={privateKey}
               />
             }
           })}

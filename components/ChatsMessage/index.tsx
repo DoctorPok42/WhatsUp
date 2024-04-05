@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import FooterMessage from './footer';
-import { decryptMessage } from '@/tools/cryptMessage';
 
 import styles from './style.module.scss';
 import ContentMessage from './content';
@@ -29,7 +28,6 @@ interface ChatsMessageProps {
   handleContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void
   setMessageIdHover: (e: string | null) => void
   handleAddReaction: (reaction: string) => void
-  privateKey: string
 }
 
 const ChatsMessage = ({
@@ -41,7 +39,6 @@ const ChatsMessage = ({
   handleContextMenu,
   setMessageIdHover,
   handleAddReaction,
-  privateKey,
 }: ChatsMessageProps) => {
   const isOtherMessage = allMessages[index + 1] && allMessages[index + 1].authorId === message.authorId;
 
