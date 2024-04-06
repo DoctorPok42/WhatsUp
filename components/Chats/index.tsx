@@ -298,7 +298,7 @@ const Chats = ({
         >
           {id && allMessages[id].map((e: any, index: number) => {
             if (e === null) return
-            if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
+            if (allMessages[id][index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[id][index - 1].date))) {
               return (
                 <div key={index} className={styles.Chats_date}>
                   <p>{formatDate(new Date(e.date), true)}</p>
@@ -307,7 +307,7 @@ const Chats = ({
                     message={e}
                     isGroup={conversationType}
                     userId={userId}
-                    allMessages={allMessages}
+                    allMessages={allMessages[id]}
                     index={index}
                     handleContextMenu={handleContextMenu}
                     setMessageIdHover={setMessageIdHover}
@@ -321,7 +321,7 @@ const Chats = ({
                 message={e}
                 isGroup={false}
                 userId={userId}
-                allMessages={allMessages}
+                allMessages={allMessages[id]}
                 index={index}
                 handleContextMenu={handleContextMenu}
                 setMessageIdHover={setMessageIdHover}

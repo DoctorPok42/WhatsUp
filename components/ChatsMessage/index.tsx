@@ -63,7 +63,7 @@ const ChatsMessage = ({
           handleAddReaction("2764-fe0f");
       }}
     >
-      <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place={message.authorId !== userId ? "left" : "right"} />
+      <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place="left" />
 
       <div className={styles.ChatsMessage_content} style={{
           backgroundColor: message.authorId !== userId ? "#2e333d" : "#6b8afd",
@@ -86,7 +86,7 @@ const ChatsMessage = ({
         <FooterMessage message={message} handleAddReaction={handleAddReaction} userId={userId} />
       </div>
 
-      <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place={message.authorId !== userId ? "right" : "left"} />
+      <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place="right" />
     </div>
   );
 };

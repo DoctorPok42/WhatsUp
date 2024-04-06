@@ -44,7 +44,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
     if (data.messages === "All messages sent.") {
       await data.data.forEach((conversation: any) => {
         const newMessages = unCrypt(conversation.messages, conversation.privateKey);
-        messagesLoaded[conversation.conversationId] = newMessages
+        messagesLoaded[conversation.conversationId] = newMessages.reverse();
       })
       setAllMessages(messagesLoaded)
       setIsLoading(false)
