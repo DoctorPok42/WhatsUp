@@ -250,7 +250,7 @@ const Chats = ({
           closeContextMenu={closeContextMenu}
           handleContextMenuAction={handleContextMenuAction}
           handleAddReaction={handleAddReaction}
-          message={allMessages.find(e => e._id === messageIdHoverContextMenu)}
+          message={allMessages.find((e: any) => e._id === messageIdHoverContextMenu)}
           userId={userId}
           isMessagePin={conversations.find(e => e._id === id)?.pinnedMessages.includes(messageIdHoverContextMenu)}
         />
@@ -296,7 +296,7 @@ const Chats = ({
           }}
           onContextMenu={(e) => {e.preventDefault()}}
         >
-          {id && allMessages[id].map((e: any, index: number) => {
+          {id && allMessages.map((e: any, index: number) => {
             if (e === null) return
             if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
               return (
