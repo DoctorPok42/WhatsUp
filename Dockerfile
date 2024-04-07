@@ -17,7 +17,7 @@ COPY components ./components/
 COPY tsconfig.json .
 COPY next.config.js .
 
-RUN npm run build
+RUN npm run build --legacy-peer-deps
 
 EXPOSE 4000
 
