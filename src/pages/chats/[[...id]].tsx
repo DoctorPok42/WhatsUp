@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 import InfoChats from "@/../components/InfoChats";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
-import unCrypt from "../../../components/Chats/decryptMessage";
+import { useWorker } from "@koale/useworker";
 
 const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
@@ -39,22 +39,62 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
     })
   }
 
+  const crypto = require("crypto");
+  const handleDecryptMessages = (data?: any) => {
+    const messageLoaded: any = {};
+    if (!data) return messageLoaded;
+
+    data.forEach((conversation: any) => {
+      const newMessages = conversation.messages.map((message: any) => {
+        if (!message.content || !conversation.privateKey) return null;
+
+        try {
+          const bufferEncryptedMessage = atob(message.content) as any;
+          if (!bufferEncryptedMessage) return null;
+          const decryptedMessage = crypto.privateDecrypt(
+            {
+              key: conversation.privateKey,
+              passphrase: "",
+            },
+            bufferEncryptedMessage
+          );
+          message.content = decryptedMessage.toString("utf-8");
+        } catch (error) {
+          console.error("Error decrypting message:", error);
+          return null;
+        }
+        return { ...message, content: message.content };
+      });
+      messageLoaded[conversation.conversationId] = newMessages.reverse();
+    });
+
+    return messageLoaded;
+  }
+
   const getAllMessages = async () => emitEvent("getAllMessages", { token }, async (data: any) => {
-    let messagesLoaded = [] as any
-    if (data.messages === "All messages sent.") {
-      await data.data.forEach((conversation: any) => {
-        const newMessages = unCrypt(conversation.messages, conversation.privateKey);
-        messagesLoaded[conversation.conversationId] = newMessages.toReversed();
-      })
-      setAllMessages(messagesLoaded)
-      setIsLoading(false)
+    try {
+      if (data.messages === "All messages sent.") {
+        worker(data.data).then((result: any) => {
+          console.log(result);
+          setAllMessages(result);
+        }).catch((error: any) => {
+          console.log(error);
+          killWorker();
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching messages:", error);
     }
   })
 
-  useEffect(() => {
+  const [worker, { status: workerStatus, kill: killWorker }] = useWorker(handleDecryptMessages);
+
+  const handleLoadApp = () => {
     setIsLoading(true)
-    getConversations()
-    getAllMessages()
+  }
+
+  useEffect(() => {
+    handleLoadApp()
   }, [])
 
   return (
@@ -68,6 +108,8 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
       </Head>
       <main className="container">
         <SideBar path="/chats" phone={phone} />
+        <button onClick={getAllMessages}>Get all messages</button>
+
         <Chats
           token={token}
           isConversation={id ? true : false}
