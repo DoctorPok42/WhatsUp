@@ -87,7 +87,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
     }
   })
 
-  const [worker, { status: workerStatus, kill: killWorker }] = useWorker(handleDecryptMessages);
+  const [worker, { kill: killWorker }] = useWorker(handleDecryptMessages);
 
   const handleLoadApp = () => {
     setIsLoading(true)
