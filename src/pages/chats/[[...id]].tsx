@@ -7,6 +7,8 @@ import InfoChats from "@/../components/InfoChats";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
 import { useWorker } from "@koale/useworker";
+import crypto from "crypto";
+import CryptoJS from 'crypto-js';
 
 const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
@@ -39,8 +41,7 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
     })
   }
 
-  const crypto = require("crypto");
-  const handleDecryptMessages = (data?: any) => {
+  const handleDecryptMessages = (data: any) => {
     const messageLoaded: any = {};
     if (!data) return messageLoaded;
 
@@ -51,14 +52,15 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
         try {
           const bufferEncryptedMessage = atob(message.content) as any;
           if (!bufferEncryptedMessage) return null;
-          const decryptedMessage = crypto.privateDecrypt(
+          /* const decryptedMessage = crypto.privateDecrypt(
             {
               key: conversation.privateKey,
               passphrase: "",
             },
             bufferEncryptedMessage
-          );
-          message.content = decryptedMessage.toString("utf-8");
+          ); */
+          const decryptedMessage = CryptoJS.AES.decrypt(bufferEncryptedMessage, conversation.privateKey).toString(CryptoJS.enc.Utf8);
+          message.content = decryptedMessage
         } catch (error) {
           console.error("Error decrypting message:", error);
           return null;
@@ -87,7 +89,10 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
     }
   })
 
-  const [worker, { kill: killWorker }] = useWorker(handleDecryptMessages);
+  const [worker, { kill: killWorker }] = useWorker(handleDecryptMessages, {
+    autoTerminate: true,
+    remoteDependencies: ["https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"]
+  });
 
   const handleLoadApp = () => {
     setIsLoading(true)
