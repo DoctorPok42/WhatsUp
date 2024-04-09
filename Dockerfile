@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --legacy-peer-deps
+RUN npm install --ignore-scripts
 
 COPY src/ ./src/
 COPY public ./public/
