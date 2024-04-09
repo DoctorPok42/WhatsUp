@@ -39,6 +39,37 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
     })
   }
 
+  const handleDecryptMessages = (data: any) => {
+    const messageLoaded: any = {};
+    if (!data) return messageLoaded;
+
+    data.forEach((conversation: any) => {
+      const newMessages = conversation.messages.map((message: any) => {
+        if (!message.content || !conversation.privateKey) return null;
+
+        try {
+          const bufferEncryptedMessage = atob(message.content) as any;
+          if (!bufferEncryptedMessage) return null;
+          const decryptedMessage = crypto.privateDecrypt(
+            {
+              key: conversation.privateKey,
+              passphrase: "",
+            },
+            bufferEncryptedMessage
+          );
+          message.content = decryptedMessage
+        } catch (error) {
+          console.error("Error decrypting message:", error);
+          return null;
+        }
+        return { ...message, content: message.content };
+      });
+      messageLoaded[conversation.conversationId] = newMessages.reverse();
+    });
+
+    return messageLoaded;
+  }
+
   const getAllMessages = async () => emitEvent("getAllMessages", { token }, async (data: any) => {
     if (data.messages === "All messages sent.") {
       setTimeout(() => {
@@ -70,6 +101,8 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
 
       <main className="container">
         <SideBar path="/chats" phone={phone} />
+        <button onClick={getAllMessages}>Get all messages</button>
+
         <Chats
           token={token}
           isConversation={id ? true : false}
