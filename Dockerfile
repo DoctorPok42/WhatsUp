@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --ignore-scripts --legacy-peer-deps
+RUN npm install --ignore-scripts
 
 COPY src/ ./src/
 COPY public ./public/
@@ -17,7 +17,7 @@ COPY components ./components/
 COPY tsconfig.json .
 COPY next.config.js .
 
-RUN npm run build --legacy-peer-deps
+RUN npm run build
 
 EXPOSE 4000
 
