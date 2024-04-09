@@ -41,10 +41,8 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
 
   const getAllMessages = async () => emitEvent("getAllMessages", { token }, async (data: any) => {
     if (data.messages === "All messages sent.") {
-      setTimeout(() => {
-        setAllMessages(data.data)
-        setIsLoading(false)
-      }, 130)
+      setAllMessages(data.data)
+      setIsLoading(false)
     }
   })
 
@@ -70,7 +68,6 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
 
       <main className="container">
         <SideBar path="/chats" phone={phone} />
-        <button onClick={getAllMessages}>Get all messages</button>
 
         <Chats
           token={token}
@@ -87,7 +84,9 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
           isLoading={isLoading}
           phone={phone}
           allMessages={
-            id ? allMessages[id] : allMessages
+            id && allMessages[id[0]]
+              ? allMessages[id[0]]
+              : []
           }
           setAllMessages={setAllMessages}
         />
