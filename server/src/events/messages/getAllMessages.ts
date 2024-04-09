@@ -21,9 +21,8 @@ const decrypt = (messages: any[], privateKey: string) => {
       message.content = decryptedMessage.toString("utf-8");
     } catch (error) {
       return null;
-    } finally {
-      return message;
     }
+    return message;
   });
 
   return decryptedMessages;
@@ -76,7 +75,7 @@ const getAllMessages = async (
       if (!conversationKey) return;
 
       // Decrypt messages
-      findConv = await decrypt(findConv, conversationKey.key);
+      findConv = decrypt(findConv, conversationKey.key);
 
       return {
         conversationId: conversation.conversationId,
