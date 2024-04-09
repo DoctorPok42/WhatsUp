@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 import InfoChats from "@/../components/InfoChats";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
-import unCrypt from "../../../components/Chats/decryptMessage";
+import Script from "next/script";
 
 const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
@@ -40,22 +40,18 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
   }
 
   const getAllMessages = async () => emitEvent("getAllMessages", { token }, async (data: any) => {
-    let messagesLoaded = [] as any
     if (data.messages === "All messages sent.") {
-      await data.data.forEach((conversation: any) => {
-        const newMessages = unCrypt(conversation.messages, conversation.privateKey);
-        messagesLoaded[conversation.conversationId] = newMessages.toReversed();
-      })
-      setAllMessages(messagesLoaded)
-      setIsLoading(false)
+      setTimeout(() => {
+        setAllMessages(data.data)
+        setIsLoading(false)
+      }, 130)
     }
   })
 
-  useEffect(() => {
-    setIsLoading(true)
+  const startChat = async () => {
     getConversations()
     getAllMessages()
-  }, [])
+  }
 
   return (
     <>
@@ -66,6 +62,12 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
         <meta name="theme-color" content="#5ad27d" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.1.0/lodash.min.js"
+        onLoad={startChat}
+      />
+
       <main className="container">
         <SideBar path="/chats" phone={phone} />
         <Chats

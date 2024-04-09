@@ -1,10 +1,37 @@
 import UserModel from "../../schemas/users";
-import { DecodedToken } from "../../types";
+import { DecodedToken, Message } from "../../types";
 import mongoose from "mongoose";
+import crypto from "crypto";
+
+const decrypt = (messages: any[], privateKey: string) => {
+  const decryptedMessages = messages.map((message: Message) => {
+    if (!message || !privateKey) return null;
+
+    try {
+      const bufferEncryptedMessage =
+        message && Buffer.from(message.content, "base64");
+      if (!bufferEncryptedMessage) return null;
+      const decryptedMessage = crypto.privateDecrypt(
+        {
+          key: privateKey,
+          passphrase: "",
+        },
+        bufferEncryptedMessage
+      );
+      message.content = decryptedMessage.toString("utf-8");
+    } catch (error) {
+      return null;
+    } finally {
+      return message;
+    }
+  });
+
+  return decryptedMessages;
+};
 
 const getAllMessages = async (
   {},
-  decoded: DecodedToken,
+  decoded: DecodedToken
 ): Promise<{ status: string; messages: string; data: any }> => {
   const author = await UserModel.findOne({ _id: decoded.id });
   if (!author)
@@ -14,7 +41,7 @@ const getAllMessages = async (
 
   const allConversation = await Promise.all(
     firstUserConversations.map(async (conversation: any, index: number) => {
-      let userList = [] as { authorId: string; phone: string}[];
+      let userList = [] as { authorId: string; phone: string }[];
       let findConv = (await mongoose.connection.db
         .collection(`conversation_${conversation.conversationId}`)
         .find()
@@ -28,10 +55,12 @@ const getAllMessages = async (
           const user = await UserModel.findOne({ _id: message.authorId });
           if (!user) return;
 
-          userList.push({ authorId: message.authorId, phone: ""});
+          userList.push({ authorId: message.authorId, phone: "" });
           message.phone = user.phone;
         } else {
-          const user = userList.find((user) => user.authorId === message.authorId);
+          const user = userList.find(
+            (user) => user.authorId === message.authorId
+          );
           if (!user) return;
           message.phone = user.phone;
         }
@@ -46,12 +75,12 @@ const getAllMessages = async (
         .findOne({ conversationId: realPrivateKeysId });
       if (!conversationKey) return;
 
+      // Decrypt messages
+      findConv = await decrypt(findConv, conversationKey.key);
+
       return {
         conversationId: conversation.conversationId,
         messages: findConv,
-        nbConversations: author.conversationsId.length,
-        index,
-        privateKey: conversationKey.key,
       };
     })
   );
