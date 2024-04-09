@@ -38,7 +38,9 @@ const getAllMessages = async (
 
   const firstUserConversations = author.conversationsId.slice(0, 10);
 
-  const allConversation = await Promise.all(
+  const allConversation = {} as any;
+
+  await Promise.all(
     firstUserConversations.map(async (conversation: any, index: number) => {
       let userList = [] as { authorId: string; phone: string }[];
       let findConv = (await mongoose.connection.db
@@ -77,10 +79,7 @@ const getAllMessages = async (
       // Decrypt messages
       findConv = decrypt(findConv, conversationKey.key);
 
-      return {
-        conversationId: conversation.conversationId,
-        messages: findConv,
-      };
+      allConversation[conversation.conversationId] = findConv;
     })
   );
 

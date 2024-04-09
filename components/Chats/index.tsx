@@ -296,7 +296,7 @@ const Chats = ({
           }}
           onContextMenu={(e) => {e.preventDefault()}}
         >
-          {id && allMessages.map((e: any, index: number) => {
+          {(id && allMessages.length > 0) && allMessages.map((e: any, index: number) => {
             if (e === null) return
             if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
               return (
