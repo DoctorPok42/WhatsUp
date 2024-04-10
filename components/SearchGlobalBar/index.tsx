@@ -74,6 +74,9 @@ const SearchGlobalBar = ({
           username: e.username
         }));
         newUsers = newUsers.filter((e: any) => e.id !== userId)
+        const usersInConversation = newUsers.filter((e: any) => usersConversation.find((el: string) => el === e.id))
+        const usersNotInConversation = newUsers.filter((e: any) => !usersConversation.find((el: string) => el === e.id))
+        newUsers = [...usersNotInConversation, ...usersInConversation]
         setUserSearchedAdd(newUsers)
         setLoading(false)
       }
@@ -136,7 +139,7 @@ const SearchGlobalBar = ({
           </div>}
         </div>
 
-        {(userSearchedAdd.length < 1 && isSearching && !loading && state === 'user') && <div className={styles.noUserFound}>
+        {(userSearchedAdd.length < 1 && isSearching && !loading) && <div className={styles.noUserFound}>
           <h2>😢 No {state} found</h2>
         </div>}
 
