@@ -218,9 +218,19 @@
 
   .Chats_typing {
     position: absolute;
-    bottom: 3.5em;
-    left: 0.5em;
+    bottom: 6em;
+    left: 1.2em;
+    font-size: 0.8em;
+    padding: 0 1em;
+    background-color: #2e333d;
+    border-radius: 50px 50px 50px 0;
     color: #7d7f92;
+
+    p {
+      span {
+        font-weight: bold;
+      }
+    }
   }
 
   .InputBar_container {

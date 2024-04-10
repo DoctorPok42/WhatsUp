@@ -9,7 +9,6 @@ import ChatsMessage from '../ChatsMessage';
 import { socket } from '@/pages/_app';
 import ContextMenu from '../ContextMenu';
 import { useCopyToClipboard } from '@uidotdev/usehooks';
-import { Box, LinearProgress } from '@mui/material';
 import { cryptMessage } from '@/tools/cryptMessage';
 
 import styles from './style.module.scss';
@@ -317,7 +316,7 @@ const Chats = ({
         </div>
 
         {userTyping && <div className={styles.Chats_typing}>
-          <p>{userTyping} is typing...</p>
+          <p><span>{userTyping}</span> is typing...</p>
         </div>}
 
         <InputBar
