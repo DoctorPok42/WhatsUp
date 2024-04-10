@@ -108,7 +108,7 @@ const Chats = ({
     setUserTyping(data)
   })
 
-  const conversationName = conversations && conversations.find(e => e._id === id)?.name
+  const conversationName = conversations?.find(e => e._id === id)?.name
 
   const onSend = (message: string) => {
     message = message.trim()
@@ -158,7 +158,7 @@ const Chats = ({
     }
   }
 
-  const conversationType = conversations && conversations.find(e => e._id === id)?.conversationType === "group"
+  const conversationType = conversations?.find(e => e._id === id)?.conversationType === "group"
 
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()

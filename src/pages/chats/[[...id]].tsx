@@ -10,10 +10,10 @@ import Script from "next/script";
 
 const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
-  const [conversations, setConversations] = useState<any | null>(null)
+  const [conversations, setConversations] = useState<any>(null)
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [allMessages, setAllMessages] = useState<any | null>(null)
+  const [allMessages, setAllMessages] = useState<any>(null)
 
   const cookies = new Cookies();
   const token = cookies.get("token");
