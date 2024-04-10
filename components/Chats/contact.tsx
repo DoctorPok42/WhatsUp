@@ -114,7 +114,7 @@ const Contact = ({
       </div>
 
       <div className={styles.conversations}>
-        {(!isLoading && conversations.length > 0) ? conversations.map((conversation, index) => (
+        {(!isLoading && conversations) ? conversations.map((conversation, index) => (
           <ConversationCard key={index} id={id} conversation={conversation} onClick={() => router.push(`/chats/${conversation._id}`)} showContact={showContact} />
         )) :
           Array(7).fill(0).map((_, index) => (

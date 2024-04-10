@@ -1,0 +1,59 @@
+.Chats_container {
+  width: calc(100% - 6em);
+  max-height: calc(100vh - 1em);
+  background-color: #202329;
+  border-radius: 22px 0 0 22px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  padding: 1em 0.5em;
+  padding-bottom: 0;
+  transition: var(--transition);
+  position: relative;
+
+  .Chats_header {
+    padding: 0 1em;
+
+    .Chats_header_title {
+      font-size: 1.5em;
+      font-weight: bold;
+      font-family: "Nunito", sans-serif;
+      margin-bottom: 1em;
+
+      h1 {
+        margin: 0;
+        width: fit-content;
+        background: linear-gradient(90deg, #007a96 70%, var(--green) 0%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+
+    .Chats_header_subtitle {
+      font-size: 1em;
+      font-family: "Nunito", sans-serif;
+      font-weight: bold;
+      color: #ccc;
+      font-style: italic;
+      margin-bottom: 1em;
+    }
+  }
+
+  .Chats_loading {
+    width: calc(100% - 3em);
+    height: 1%;
+    padding: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+
+    span {
+      border-radius: 8px;
+      background-color: var(--green);
+    }
+  }
+}

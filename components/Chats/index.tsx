@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Contact } from '..';
+import { Contact, Loading } from '..';
 import HeaderChats from './header';
 import InputBar from './inputBar';
 import emitEvent from '@/tools/webSocketHandler';
@@ -108,7 +108,7 @@ const Chats = ({
     setUserTyping(data)
   })
 
-  const conversationName = conversations.find(e => e._id === id)?.name
+  const conversationName = conversations?.find(e => e._id === id)?.name
 
   const onSend = (message: string) => {
     message = message.trim()
@@ -158,7 +158,7 @@ const Chats = ({
     }
   }
 
-  const conversationType = conversations.find(e => e._id === id)?.conversationType === "group"
+  const conversationType = conversations?.find(e => e._id === id)?.conversationType === "group"
 
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault()
@@ -222,22 +222,7 @@ const Chats = ({
     })
   }
 
-  if (isLoading) return (
-    <div className={styles.Chats_container} style={{
-      width: (isInfoOpen && id) ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
-      borderRadius: (isInfoOpen && id) ? '20px' : '20px 0 0 20px',
-    }}>
-      <div className={styles.Chats_loading}>
-        <Box sx={{ width: '30%' }}>
-          <LinearProgress color='success' style={{
-            borderRadius: 20,
-            height: 5,
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
-          }}/>
-        </Box>
-      </div>
-    </div>
-  )
+  if (isLoading) return <Loading />
 
   return (
     <div className={styles.Chats_container} style={{
