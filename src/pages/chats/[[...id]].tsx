@@ -86,12 +86,11 @@ const ChatsPage = ({ id } : { id: string }) => {
           setIsSearchOpen={setIsSearchOpen}
           isLoading={isLoading}
           phone={phone}
-          allMessages={
+          messages={
             (id && allMessages) && allMessages[id[0]]
               ? allMessages[id[0]]
               : []
           }
-          setAllMessages={setAllMessages}
         />
         {(id && conversations) && <InfoChats
           isInfoOpen={isInfoOpen}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Contact, Loading } from '..';
 import HeaderChats from './header';
 import InputBar from './inputBar';
@@ -27,8 +27,7 @@ interface ChatsProps {
   setIsSearchOpen?: (e: boolean) => void
   isLoading: boolean
   phone: string
-  allMessages: any[]
-  setAllMessages: (e: any[]) => void
+  messages: any[]
 }
 
 const initialContextMenu = {
@@ -51,10 +50,10 @@ const Chats = ({
   setIsSearchOpen,
   isLoading,
   phone,
-  allMessages,
-  setAllMessages,
+  messages,
 }: ChatsProps) => {
   const [files, setFiles] = useState<File[]>([]);
+  const [allMessages, setAllMessages] = useState<any[]>(messages)
 
   const [messageLoaded, setMessageLoaded] = useState<number>(0)
   const [userTyping, setUserTyping] = useState<string>("")
@@ -217,9 +216,13 @@ const Chats = ({
         newAllMessages[messageIndex].reactions = []
       newAllMessages[messageIndex].reactions = data.data.messageToUpdate.reactions
 
-      setAllMessages([...allMessages])
+      setAllMessages(newAllMessages)
     })
   }
+
+  useEffect(() => {
+    setAllMessages(messages)
+  }, [messages])
 
   if (isLoading) return <Loading />
 
