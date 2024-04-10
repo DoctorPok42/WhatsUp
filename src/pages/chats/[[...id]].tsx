@@ -10,10 +10,10 @@ import Script from "next/script";
 
 const ChatsPage = ({ id } : { id: string | undefined }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
-  const [conversations, setConversations] = useState<any>([])
+  const [conversations, setConversations] = useState<any | null>(null)
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [allMessages, setAllMessages] = useState<any>([])
+  const [allMessages, setAllMessages] = useState<any | null>(null)
 
   const cookies = new Cookies();
   const token = cookies.get("token");
@@ -40,16 +40,19 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
   }
 
   const getAllMessages = async () => emitEvent("getAllMessages", { token }, async (data: any) => {
-    if (data.messages === "All messages sent.") {
-      setAllMessages(data.data)
-      setIsLoading(false)
-    }
+    if (data.messages === "All messages sent.") setAllMessages(data.data)
   })
 
   const startChat = async () => {
     getConversations()
     getAllMessages()
   }
+
+  useEffect(() => {
+    if (allMessages && conversations) {
+      setIsLoading(false)
+    }
+  }, [allMessages, conversations])
 
   return (
     <>
