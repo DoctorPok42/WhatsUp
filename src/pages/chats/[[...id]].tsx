@@ -8,7 +8,7 @@ import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
 import Script from "next/script";
 
-const ChatsPage = ({ id } : { id: string | undefined }) => {
+const ChatsPage = ({ id } : { id: string }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
   const [conversations, setConversations] = useState<any>(null)
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
@@ -87,13 +87,13 @@ const ChatsPage = ({ id } : { id: string | undefined }) => {
           isLoading={isLoading}
           phone={phone}
           allMessages={
-            id && allMessages[id[0]]
+            (id && allMessages) && allMessages[id[0]]
               ? allMessages[id[0]]
               : []
           }
           setAllMessages={setAllMessages}
         />
-        {id && <InfoChats
+        {(id && conversations) && <InfoChats
           isInfoOpen={isInfoOpen}
           setIsInfoOpen={setIsInfoOpen}
           id={id[0]}
