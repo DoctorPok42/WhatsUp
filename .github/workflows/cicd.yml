@@ -61,7 +61,7 @@ jobs:
           docker build -t whatsup_frontend:latest . --build-arg SERVER_URL=${{ secrets.SERVER_URL }}
 
   push_docker_images:
-    name: 📡 Push Docker images to Docker Hub
+    name: 📡 Push Docker images
     runs-on: self-hosted
     needs: build_docker_images
     if: github.event_name == 'push'
