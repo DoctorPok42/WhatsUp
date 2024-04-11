@@ -1,6 +1,7 @@
 import UserModel from "../../schemas/users";
 import { DecodedToken, Message, User } from "../../types";
 import mongoose from "mongoose";
+import crypto from "crypto";
 
 const getPrivateKey = async (id: string): Promise<string | null> => {
   const realId = new mongoose.Types.ObjectId(id);
@@ -9,6 +10,31 @@ const getPrivateKey = async (id: string): Promise<string | null> => {
     .collection("privateKeys")
     .findOne({ conversationId: realId });
   return userPrivateKey ? userPrivateKey.key : null;
+};
+
+const decrypt = (messages: any[], privateKey: string) => {
+  const decryptedMessages = messages.map((message: Message) => {
+    if (!message || !privateKey) return null;
+
+    try {
+      const bufferEncryptedMessage =
+        message && Buffer.from(message.content, "base64");
+      if (!bufferEncryptedMessage) return null;
+      const decryptedMessage = crypto.privateDecrypt(
+        {
+          key: privateKey,
+          passphrase: "",
+        },
+        bufferEncryptedMessage
+      );
+      message.content = decryptedMessage.toString("utf-8");
+    } catch (error) {
+      return null;
+    }
+    return message;
+  });
+
+  return decryptedMessages;
 };
 
 const getMessages = async (
@@ -23,8 +49,7 @@ const getMessages = async (
 ): Promise<{
   status: string;
   message: string;
-  data: Message[] | null;
-  key: string | null;
+  data: (Message | null)[] | null;
 }> => {
   // Get the last 20 messages from the conversation
   const messages = (await mongoose.connection.db
@@ -38,7 +63,6 @@ const getMessages = async (
       status: "error",
       message: "Messages not found.",
       data: null,
-      key: null,
     };
 
   // Get the phone of the author of each message
@@ -53,7 +77,6 @@ const getMessages = async (
       status: "error",
       message: "Messages not found.",
       data: null,
-      key: null,
     };
 
   const user = (await UserModel.findOne({ _id: decoded.id })) as User;
@@ -66,8 +89,7 @@ const getMessages = async (
 
   if (rightConversation) {
     await UserModel.updateOne(
-      { _id: decoded.id
-      },
+      { _id: decoded.id },
       {
         $set: {
           "conversationsId.$[elem].lastMessageSeen": messagesWithPhone[0]._id,
@@ -79,11 +101,23 @@ const getMessages = async (
     );
   }
 
+  // Decrypt the messages
+  const privateKey = await getPrivateKey(conversationId);
+  if (!privateKey)
+    return { status: "error", message: "Private key not found.", data: null };
+
+  const decryptedMessages = await decrypt(messagesWithPhone, privateKey);
+  if (!decryptedMessages)
+    return {
+      status: "error",
+      message: "Error while decrypting messages.",
+      data: null,
+    };
+
   return {
     status: "success",
     message: "Messages found.",
-    data: messagesWithPhone.reverse(),
-    key: await getPrivateKey(conversationId),
+    data: decryptedMessages.reverse(),
   };
 };
 

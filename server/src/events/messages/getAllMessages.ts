@@ -79,7 +79,7 @@ const getAllMessages = async (
       // Decrypt messages
       findConv = decrypt(findConv, conversationKey.key);
 
-      allConversation[conversation.conversationId] = findConv;
+      allConversation[conversation.conversationId] = findConv.reverse();
     })
   );
 
