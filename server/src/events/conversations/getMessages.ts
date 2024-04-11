@@ -81,10 +81,10 @@ const getMessages = async (
   if (!privateKey)
     return { status: "error", message: "Private key not found.", data: null };
 
-  const decryptedMessages = await decryptMessages(
+  const decryptedMessages = decryptMessages(
     messagesWithPhone,
     privateKey
-  );
+  ).reverse();
   if (!decryptedMessages)
     return {
       status: "error",
@@ -95,7 +95,7 @@ const getMessages = async (
   return {
     status: "success",
     message: "Messages found.",
-    data: decryptedMessages.reverse(),
+    data: decryptedMessages,
   };
 };
 
