@@ -1,7 +1,7 @@
 import UserModel from "../../schemas/users";
 import { DecodedToken, Message, User } from "../../types";
 import mongoose from "mongoose";
-import crypto from "crypto";
+import { decryptMessages } from "../../functions";
 
 const getPrivateKey = async (id: string): Promise<string | null> => {
   const realId = new mongoose.Types.ObjectId(id);
@@ -10,31 +10,6 @@ const getPrivateKey = async (id: string): Promise<string | null> => {
     .collection("privateKeys")
     .findOne({ conversationId: realId });
   return userPrivateKey ? userPrivateKey.key : null;
-};
-
-const decrypt = (messages: any[], privateKey: string) => {
-  const decryptedMessages = messages.map((message: Message) => {
-    if (!message || !privateKey) return null;
-
-    try {
-      const bufferEncryptedMessage =
-        message && Buffer.from(message.content, "base64");
-      if (!bufferEncryptedMessage) return null;
-      const decryptedMessage = crypto.privateDecrypt(
-        {
-          key: privateKey,
-          passphrase: "",
-        },
-        bufferEncryptedMessage
-      );
-      message.content = decryptedMessage.toString("utf-8");
-    } catch (error) {
-      return null;
-    }
-    return message;
-  });
-
-  return decryptedMessages;
 };
 
 const getMessages = async (
@@ -106,7 +81,10 @@ const getMessages = async (
   if (!privateKey)
     return { status: "error", message: "Private key not found.", data: null };
 
-  const decryptedMessages = await decrypt(messagesWithPhone, privateKey);
+  const decryptedMessages = await decryptMessages(
+    messagesWithPhone,
+    privateKey
+  );
   if (!decryptedMessages)
     return {
       status: "error",
