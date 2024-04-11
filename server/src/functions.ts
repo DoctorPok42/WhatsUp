@@ -3,8 +3,9 @@ import jwt from "jsonwebtoken";
 import UserModel from "./schemas/users";
 import ConversationsModel from "./schemas/conversations";
 import DashboardModel from "./schemas/dashboard";
-import { User } from "./types";
+import { Message, User } from "./types";
 import { createDashboard, deleteDashboard } from "./userDashboard";
+import crypto from "crypto";
 
 const themeColors = {
   text: "#2B2",
@@ -36,6 +37,31 @@ export const checkAuthToken = (token: string) => {
   if (!decoded || !decoded.id) return null;
 
   return decoded;
+};
+
+export const decryptMessages = (messages: any[], privateKey: string) => {
+  const decryptedMessages = messages.map((message: Message) => {
+    if (!message || !privateKey) return null;
+
+    try {
+      const bufferEncryptedMessage =
+        message && Buffer.from(message.content, "base64");
+      if (!bufferEncryptedMessage) return null;
+      const decryptedMessage = crypto.privateDecrypt(
+        {
+          key: privateKey,
+          passphrase: "",
+        },
+        bufferEncryptedMessage
+      );
+      message.content = decryptedMessage.toString("utf-8");
+    } catch (error) {
+      return null;
+    }
+    return message;
+  });
+
+  return decryptedMessages;
 };
 
 export const checkCollections = () => {

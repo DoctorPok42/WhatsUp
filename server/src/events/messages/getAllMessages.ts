@@ -1,32 +1,7 @@
 import UserModel from "../../schemas/users";
-import { DecodedToken, Message } from "../../types";
+import { DecodedToken } from "../../types";
 import mongoose from "mongoose";
-import crypto from "crypto";
-
-const decrypt = (messages: any[], privateKey: string) => {
-  const decryptedMessages = messages.map((message: Message) => {
-    if (!message || !privateKey) return null;
-
-    try {
-      const bufferEncryptedMessage =
-        message && Buffer.from(message.content, "base64");
-      if (!bufferEncryptedMessage) return null;
-      const decryptedMessage = crypto.privateDecrypt(
-        {
-          key: privateKey,
-          passphrase: "",
-        },
-        bufferEncryptedMessage
-      );
-      message.content = decryptedMessage.toString("utf-8");
-    } catch (error) {
-      return null;
-    }
-    return message;
-  });
-
-  return decryptedMessages;
-};
+import { decryptMessages } from "../../functions";
 
 const getAllMessages = async (
   {},
@@ -77,9 +52,9 @@ const getAllMessages = async (
       if (!conversationKey) return;
 
       // Decrypt messages
-      findConv = decrypt(findConv, conversationKey.key);
+      findConv = decryptMessages(findConv, conversationKey.key);
 
-      allConversation[conversation.conversationId] = findConv;
+      allConversation[conversation.conversationId] = findConv.reverse();
     })
   );
 
