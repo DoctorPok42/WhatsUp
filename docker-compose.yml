@@ -18,8 +18,25 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    volumes:
+      - file_volume:/srv/file_storage/
+    depends_on:
+      - file_storage
     networks:
       - mynetwork
+
+  file_storage:
+    image: ubuntu:latest
+    container_name: file_storage
+    restart: always
+    volumes:
+      - file_volume:/srv/file_storage/
+    command: tail -f /dev/null
+    networks:
+      - mynetwork
+
+volumes:
+  file_volume:
 
 networks:
   mynetwork:

@@ -57,6 +57,7 @@ jobs:
 
       - name: 🛠️ Build Docker images
         run: |
+          docker buid -t whatsup_file_storage:latest .
           docker build -t whatsup_backend:latest ./server --build-arg SERVER_URL=${{ secrets.SERVER_URL }} --build-arg SERVER_PORT=${{ secrets.SERVER_PORT }} --build-arg MONGO_URI=${{ secrets.MONGO_URI }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg TOKEN_EXPIRATION=${{ secrets.TOKEN_EXPIRATION }} --build-arg TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} --build-arg TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }}
           docker build -t whatsup_frontend:latest . --build-arg SERVER_URL=${{ secrets.SERVER_URL }}
 
@@ -69,10 +70,12 @@ jobs:
     steps:
       - run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker tag whatsup_frontend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+          docker tag whatsup_file_storage:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage
           docker tag whatsup_backend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+          docker tag whatsup_frontend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage
           docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
 
   deploy:
     name: 🚀 Deploy to VPS
@@ -89,6 +92,7 @@ jobs:
           script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
             sudo cp -f docker-compose.yml ./
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
             sudo docker compose -f docker-compose.yml up -d --force-recreate
