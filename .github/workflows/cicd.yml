@@ -91,8 +91,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
-            rm -f docker-compose.yml
-            sudo cp -f docker-compose.yml ./
+            sudo curl -Lf "https://raw.githubusercontent.com/DoctorPok42/WhatsUp/main/docker-compose.yml" -o docker-compose.yml
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
