@@ -70,10 +70,12 @@ jobs:
     steps:
       - run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker tag whatsup_frontend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+          docker tag whatsup_file_storage:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage
           docker tag whatsup_backend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+          docker tag whatsup_frontend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage
           docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
 
   deploy:
     name: 🚀 Deploy to VPS
@@ -90,6 +92,7 @@ jobs:
           script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
             sudo cp -f docker-compose.yml ./
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
             sudo docker compose -f docker-compose.yml up -d --force-recreate
