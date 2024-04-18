@@ -50,12 +50,12 @@ const sendMessage = async (
 
   const messageDate = new Date();
 
-  const isFile = files ? true : false;
+  // const isFile = files ? true : false;
   let filesData = files ?? "EMPTY";
   if (filesData === "EMPTY") filesData = null;
 
   let fileId = "";
-  if (isFile) {
+  if (files) {
     fileId =
       Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15);
@@ -68,7 +68,7 @@ const sendMessage = async (
     date: messageDate,
     options: {
       ...(isLink && { isLink: true }),
-      ...(isFile && {
+      ...(files && {
         isFile: true,
         data: {
           name: filesData.name,
@@ -90,9 +90,7 @@ const sendMessage = async (
   if (!conversation)
     return { status: "error", message: "Conversation not found.", data: null };
 
-  conversation.lastMessage = isFile
-    ? `${author.username} sent a file`
-    : content;
+  conversation.lastMessage = files ? `${author.username} sent a file` : content;
   conversation.lastMessageDate = messageDate;
   conversation.lastMessageAuthorId = decoded.id;
   conversation.updatedAt = messageDate;
@@ -133,7 +131,7 @@ const sendMessage = async (
         date: message.date,
         authorId: message.authorId,
         phone: author.phone,
-        type: isFile ? "file" : "text",
+        type: files ? "file" : "text",
       } as Message & User & { status: string; type: string });
     })
   );
@@ -143,7 +141,7 @@ const sendMessage = async (
   return {
     status: "success",
     message: "Message sent.",
-    type: isFile ? "file" : "text",
+    type: files ? "file" : "text",
     data: {
       _id: message._id,
       content: message.content,
