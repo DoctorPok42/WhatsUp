@@ -39,6 +39,37 @@
       }
     }
 
+    .content_file {
+      border-radius: 12px;
+      background-color: #28292c;
+      padding: 0.8em 0.8em;
+      padding-left: 0.8em;
+      display: flex;
+      justify-content: space-around;
+      gap: 1em;
+      transition: var(--transition);
+      cursor: pointer;
+
+      .file {
+        h2 {
+          margin: 0;
+          font-size: 1em;
+          transition: var(--transition);
+        }
+      }
+    }
+
+    .content_file:hover {
+      background-color: #1e1f21;
+
+      .file {
+        h2 {
+          color: var(--blue);
+          // text-decoration: underline;
+        }
+      }
+    }
+
     .footer {
       height: 1.5em;
       display: flex;

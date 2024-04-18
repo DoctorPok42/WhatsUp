@@ -9,7 +9,6 @@
   position: relative;
 
   .Contact_container {
-    width: 22.5em;
     height: 95%;
     padding: 1em 0;
     display: flex;
@@ -85,7 +84,6 @@
 
   .Chats_content {
     position: relative;
-    width: calc(100% - 6em);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -239,7 +237,6 @@
     width: calc(100% - 2em);
     margin-left: 0.5em;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     padding: 0.2em 0.5em;
     margin-bottom: 0.5em;
@@ -253,7 +250,7 @@
       width: 100%;
       height: 100%;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       position: relative;
 
       .Input_files {
@@ -323,86 +320,92 @@
         border-radius: 8px;
       }
 
-      .Input_icon {
-        width: 2em;
-        height: 2em;
-        margin-left: 0.2em;
+      .inputBar {
         display: flex;
         align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: var(--transition);
+        gap: 0.5em;
 
-        img {
-          width: 1.5em;
-          height: 1.5em;
+        .Input_icon {
+          width: 2em;
+          height: 2em;
+          margin-left: 0.2em;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: var(--transition);
+
+          img {
+            width: 1.5em;
+            height: 1.5em;
+          }
+
+          &:hover {
+            background-color: #3e4453;
+          }
         }
 
-        &:hover {
-          background-color: #3e4453;
+        .Input {
+          width: calc(100% - 5.5em);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          overflow: hidden;
+          margin-top: 1em;
+
+          textarea {
+            width: 100%;
+            max-height: 30em;
+            outline: none;
+            background-color: transparent;
+            resize: none;
+            border: none;
+            font-size: 16px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            color: #ccc;
+          }
+
+          textarea::placeholder {
+            color: #7d7f92;
+          }
         }
-      }
 
-      .Input {
-        width: calc(100% - 5.5em);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        margin-top: 1em;
-
-        textarea {
-          width: 100%;
-          max-height: 30em;
-          outline: none;
-          background-color: transparent;
-          resize: none;
-          border: none;
-          font-size: 16px;
-          box-sizing: border-box;
-          overflow-y: auto;
-          color: #ccc;
+        .Input_icon_emoji {
+          display: flex;
+          align-items: center;
+          filter: grayscale(100%);
+          cursor: pointer;
+          transition: all 0.15s ease-in-out;
         }
 
-        textarea::placeholder {
-          color: #7d7f92;
+        .Input_icon_emoji:hover {
+          filter: grayscale(0%);
+          transform: scale(1.15);
         }
-      }
 
-      .Input_icon_emoji {
-        display: flex;
-        align-items: center;
-        filter: grayscale(100%);
-        cursor: pointer;
-        transition: all 0.15s ease-in-out;
-      }
+        .pickEmoji {
+          position: absolute;
+          right: -0.4em;
+          top: -30em;
+          filter: drop-shadow(0 0 1em #2e333d);
+        }
 
-      .Input_icon_emoji:hover {
-        filter: grayscale(0%);
-        transform: scale(1.15);
-      }
+        textarea::-webkit-scrollbar {
+          width: 0.5em;
+          height: 0.5em;
+        }
 
-      .pickEmoji {
-        position: absolute;
-        right: -0.4em;
-        top: -30em;
-        filter: drop-shadow(0 0 1em #2e333d);
-      }
+        textarea::-webkit-scrollbar-thumb {
+          background-color: #7d7f92;
+          border-radius: 8px;
+        }
 
-      textarea::-webkit-scrollbar {
-        width: 0.5em;
-        height: 0.5em;
-      }
-
-      textarea::-webkit-scrollbar-thumb {
-        background-color: #7d7f92;
-        border-radius: 8px;
-      }
-
-      textarea::-webkit-scrollbar-track {
-        background-color: #202329;
-        border-radius: 8px;
+        textarea::-webkit-scrollbar-track {
+          background-color: #202329;
+          border-radius: 8px;
+        }
       }
     }
   }

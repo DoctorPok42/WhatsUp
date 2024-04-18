@@ -87,15 +87,6 @@ const Chats = ({
     if (data.conversationsId === id) {
       setAllMessages([...allMessages, data])
     }
-
-    setConversation(conversations.map(e => {
-      if (e._id === data.conversationId) {
-        e.lastMessage = data.content
-        e.lastMessageDate = data.date
-        e.lastMessageAuthorId = data.authorId
-      }
-      return e
-    }))
   })
 
   socket.on("isTypingUser", (data: any) => {
@@ -108,19 +99,42 @@ const Chats = ({
 
   const conversationName = conversations?.find(e => e._id === id)?.name
 
-  const onSend = (message: string) => {
+  const onSend = (message: string, files: File[]) => {
     message = message.trim()
     if (!message && !files.length) return
     const tempId = Math.random().toString(36).substring(7)
     setAllMessages([...allMessages, { content: message, authorId: userId, phone, date: new Date().toISOString(), _id: `temp-${tempId}`, files, isTemp: true }])
+    // Crypt message
     const encryptedMessage = cryptMessage(message, conversations.find(e => e._id === id)?.publicKey)
     if (!encryptedMessage) {
       setAllMessages(allMessages.filter(e => e._id !== `temp-${tempId}`))
       return
     }
-    emitEvent("sendMessage", { token, conversationId: id, content: encryptedMessage }, (data: any) => {
-      setAllMessages([...allMessages, data.data])
-    })
+
+    // Send files if there are some
+    if (files.length > 0) {
+      files.map(e => {
+        let file;
+        const reader = new FileReader()
+        reader.readAsArrayBuffer(e)
+
+         reader.onload = () => {
+          let fileBuffer = Buffer.from(reader.result as ArrayBuffer)
+          file = { name: e.name, type: e.type, size: e.size, buffer: fileBuffer }
+
+          emitEvent("sendFile", { token, conversationId: id, files: file }, (data: any) => {
+            setAllMessages([
+              ...allMessages,
+              data.data
+            ])
+          })
+        }
+      })
+    } else {
+      emitEvent("sendMessage", { token, conversationId: id, content: encryptedMessage }, (data: any) => {
+        setAllMessages([...allMessages, data.data])
+      })
+    }
   }
 
   const onEdit = (message: string) => {
@@ -134,6 +148,27 @@ const Chats = ({
         newAllMessages[messageIndex].content = message
         setAllMessages([...allMessages])
         setInputBarMode("chat")
+    })
+  }
+
+  const downloadFile = (fileId: string, name: string) => {
+    emitEvent("downloadFile", { token, fileId }, (data: any) => {
+      const byteCharacters = atob(data.data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray]);
+
+      // Créer un lien pour télécharger le fichier
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', name);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode && link.parentNode.removeChild(link);
     })
   }
 
@@ -266,74 +301,83 @@ const Chats = ({
         setShowContact={setShowContact}
       />
 
-      {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) && <div className={styles.Chats_content}>
-        <HeaderChats
-          isInfoOpen={isInfoOpen}
-          setIsInfoOpen={setIsInfoOpen}
-          conversationName={conversationName}
-          setIsSearchOpen={setIsSearchOpen}
-          setSearchState={setSearchState}
-        />
-
-        <div className={styles.Chats_messages} onScroll={handleScroll} onLoad={() => {
-            const element = document.querySelector(`.${styles.Chats_messages}`)
-            if (element && allMessages.length === 20) {
-              element.scrollTop = element.scrollHeight
-            }
+      {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) &&
+        <div
+          className={styles.Chats_content}
+          style={{
+            width: showContact ? 'calc(100% - 24em)' : 'calc(100% - 5.65em)',
           }}
-          onContextMenu={(e) => {e.preventDefault()}}
         >
-          {(id && allMessages.length > 0) && allMessages.map((e: any, index: number) => {
-            if (e === null) return
-            if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
-              return (
-                <div key={index} className={styles.Chats_date}>
-                  <p>{formatDate(new Date(e.date), true)}</p>
-                  <ChatsMessage
-                    key={index}
-                    message={e}
-                    isGroup={conversationType}
-                    userId={userId}
-                    allMessages={allMessages}
-                    index={index}
-                    handleContextMenu={handleContextMenu}
-                    setMessageIdHover={setMessageIdHover}
-                    handleAddReaction={handleAddReaction}
-                  />
-                </div>
-              )
-            } else {
-              return <ChatsMessage
-                key={index}
-                message={e}
-                isGroup={false}
-                userId={userId}
-                allMessages={allMessages}
-                index={index}
-                handleContextMenu={handleContextMenu}
-                setMessageIdHover={setMessageIdHover}
-                handleAddReaction={handleAddReaction}
-              />
-            }
-          })}
+          <HeaderChats
+            isInfoOpen={isInfoOpen}
+            setIsInfoOpen={setIsInfoOpen}
+            conversationName={conversationName}
+            setIsSearchOpen={setIsSearchOpen}
+            setSearchState={setSearchState}
+          />
+
+          <div className={styles.Chats_messages} onScroll={handleScroll} onLoad={() => {
+              const element = document.querySelector(`.${styles.Chats_messages}`)
+              if (element && allMessages.length === 20) {
+                element.scrollTop = element.scrollHeight
+              }
+            }}
+            onContextMenu={(e) => {e.preventDefault()}}
+          >
+            {(id && allMessages.length > 0) && allMessages.map((e: any, index: number) => {
+              if (e === null) return
+              if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
+                return (
+                  <div key={index} className={styles.Chats_date}>
+                    <p>{formatDate(new Date(e.date), true)}</p>
+                    <ChatsMessage
+                      key={index}
+                      message={e}
+                      isGroup={conversationType}
+                      userId={userId}
+                      allMessages={allMessages}
+                      index={index}
+                      handleContextMenu={handleContextMenu}
+                      setMessageIdHover={setMessageIdHover}
+                      handleAddReaction={handleAddReaction}
+                      downloadFile={downloadFile}
+                    />
+                  </div>
+                )
+              } else {
+                return <ChatsMessage
+                  key={index}
+                  message={e}
+                  isGroup={false}
+                  userId={userId}
+                  allMessages={allMessages}
+                  index={index}
+                  handleContextMenu={handleContextMenu}
+                  setMessageIdHover={setMessageIdHover}
+                  handleAddReaction={handleAddReaction}
+                  downloadFile={downloadFile}
+                />
+              }
+            })}
+          </div>
+
+          {userTyping && <div className={styles.Chats_typing}>
+            <p><span>{userTyping}</span> is typing...</p>
+          </div>}
+
+          <InputBar
+            files={files}
+            onSend={onSend}
+            onEdit={onEdit}
+            onAttach={onAttach}
+            onTyping={onTyping}
+            setFiles={setFiles}
+            mode={inputBarMode}
+            setMode={setInputBarMode}
+            value={inputBarValue}
+          />
         </div>
-
-        {userTyping && <div className={styles.Chats_typing}>
-          <p><span>{userTyping}</span> is typing...</p>
-        </div>}
-
-        <InputBar
-          files={files}
-          onSend={onSend}
-          onEdit={onEdit}
-          onAttach={onAttach}
-          onTyping={onTyping}
-          setFiles={setFiles}
-          mode={inputBarMode}
-          setMode={setInputBarMode}
-          value={inputBarValue}
-        />
-      </div>}
+      }
     </div>
   );
 };
