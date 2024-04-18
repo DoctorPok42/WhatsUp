@@ -55,7 +55,11 @@ export interface Conversations extends mongoose.Document {
 interface MessageOptions {
   isLink: boolean;
   isFile: boolean;
-  data?: string;
+  data?: {
+    name: string;
+    size: number;
+    type: "image" | "video" | "audio" | "file";
+  };
 }
 
 export interface Message extends mongoose.Document {

@@ -43,6 +43,8 @@ export const decryptMessages = (messages: any[], privateKey: string) => {
   const decryptedMessages = messages.map((message: Message) => {
     if (!message || !privateKey) return null;
 
+    if (message.options.isFile) return message;
+
     try {
       const bufferEncryptedMessage =
         message && Buffer.from(message.content, "base64");
