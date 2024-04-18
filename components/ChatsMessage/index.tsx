@@ -28,7 +28,7 @@ interface ChatsMessageProps {
   handleContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void
   setMessageIdHover: (e: string | null) => void
   handleAddReaction: (reaction: string) => void
-  downloadFile: (content: string) => void
+  downloadFile: (content: string, name: string) => void
 }
 
 const ChatsMessage = ({

@@ -99,6 +99,21 @@ const Chats = ({
 
   const conversationName = conversations?.find(e => e._id === id)?.name
 
+  const sendFile = (file: File) => {
+    let fileBuffer;
+    const reader = new FileReader()
+    reader.readAsArrayBuffer(file)
+
+    reader.onload = () => {
+      fileBuffer = Buffer.from(reader.result as ArrayBuffer)
+      const fileToSend = { name: file.name, type: file.type, size: file.size, buffer: fileBuffer }
+
+      emitEvent("sendFile", { token, conversationId: id, files: fileToSend }, (data: any) => {
+        setAllMessages([...allMessages, data.data])
+      })
+    }
+  }
+
   const onSend = (message: string, files: File[]) => {
     message = message.trim()
     if (!message && !files.length) return
@@ -114,21 +129,7 @@ const Chats = ({
     // Send files if there are some
     if (files.length > 0) {
       files.map(e => {
-        let file;
-        const reader = new FileReader()
-        reader.readAsArrayBuffer(e)
-
-         reader.onload = () => {
-          let fileBuffer = Buffer.from(reader.result as ArrayBuffer)
-          file = { name: e.name, type: e.type, size: e.size, buffer: fileBuffer }
-
-          emitEvent("sendFile", { token, conversationId: id, files: file }, (data: any) => {
-            setAllMessages([
-              ...allMessages,
-              data.data
-            ])
-          })
-        }
+        sendFile(e)
       })
     } else {
       emitEvent("sendMessage", { token, conversationId: id, content: encryptedMessage }, (data: any) => {
@@ -168,7 +169,7 @@ const Chats = ({
       link.setAttribute('download', name);
       document.body.appendChild(link);
       link.click();
-      link.parentNode && link.parentNode.removeChild(link);
+      link.parentNode?.removeChild(link);
     })
   }
 
