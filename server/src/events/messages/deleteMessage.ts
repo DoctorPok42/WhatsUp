@@ -1,5 +1,18 @@
 import { DecodedToken } from "../../types";
 import mongoose from "mongoose";
+import fs from "fs";
+
+const deleteFile = async (fileId: string, extension: string) => {
+  const path = `/srv/file_storage/${fileId}.${extension}`;
+  try {
+    if (fs.existsSync(path)) {
+      fs.unlinkSync(path);
+    }
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
 
 const deleteMessage = async (
   { conversationId, messageId }: { conversationId: string; messageId: string },
@@ -42,6 +55,10 @@ const deleteMessage = async (
         },
       }
     );
+  }
+
+  if (messageToDelete.options.isFile) {
+    await Promise.resolve(deleteFile(messageToDelete.content, messageToDelete.options.data.type.split("/")[1]));
   }
 
   await mongoose.connection.db

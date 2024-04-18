@@ -4,6 +4,27 @@ import { DecodedToken, Message, User } from "../../types";
 import { Socket } from "socket.io";
 import mongoose from "mongoose";
 import dashboardActions from "../../userDashboard";
+import fs from "fs";
+
+type FileData = {
+  name: string;
+  type: string;
+  size: number;
+  buffer: string;
+};
+
+const saveFile = async (fileId: string, fileData: FileData) => {
+  const path = `/srv/file_storage/${fileId}.${fileData.type.split("/")[1]}`;
+  console.log("PATH", path);
+
+  try {
+    fs.writeFileSync(path, fileData.buffer);
+    return path;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
 
 const detectLink = (text: string) => {
   const links = text.match(/(https?:\/\/[^\s]+)/g);
@@ -13,9 +34,14 @@ const detectLink = (text: string) => {
 };
 
 const sendMessage = async (
-  { conversationId, content }: any,
+  { conversationId, content, files }: any,
   decoded: DecodedToken
-): Promise<{ status: string; message: string; data: Message | null }> => {
+): Promise<{
+  status: string;
+  message: string;
+  type?: string;
+  data: Message | null;
+}> => {
   const author = await UserModel.findOne({ _id: decoded.id });
   if (!author)
     return { status: "error", message: "Author not found.", data: null };
@@ -24,6 +50,16 @@ const sendMessage = async (
 
   const messageDate = new Date();
 
+  let filesData = files ?? "EMPTY";
+  if (filesData === "EMPTY") filesData = null;
+
+  let fileId = "";
+  if (files) {
+    fileId =
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15);
+  }
+
   const message = {
     _id: new mongoose.Types.ObjectId(),
     content,
@@ -31,8 +67,20 @@ const sendMessage = async (
     date: messageDate,
     options: {
       ...(isLink && { isLink: true }),
+      ...(files && {
+        isFile: true,
+        data: {
+          name: filesData.name,
+          type: filesData.type,
+          size: filesData.size,
+        },
+      }),
     },
-  };
+  } as Message;
+
+  const fileSavedRequest = await Promise.resolve(saveFile(fileId, filesData));
+  if (!fileSavedRequest)
+    return { status: "error", message: "An error occurred.", data: null };
 
   // Put the message in the lastMessage field of the conversation
   const conversation = await ConversationsModel.findOne({
@@ -41,7 +89,7 @@ const sendMessage = async (
   if (!conversation)
     return { status: "error", message: "Conversation not found.", data: null };
 
-  conversation.lastMessage = content;
+  conversation.lastMessage = files ? `${author.username} sent a file` : content;
   conversation.lastMessageDate = messageDate;
   conversation.lastMessageAuthorId = decoded.id;
   conversation.updatedAt = messageDate;
@@ -82,7 +130,8 @@ const sendMessage = async (
         date: message.date,
         authorId: message.authorId,
         phone: author.phone,
-      } as Message & User & { status: string });
+        type: files ? "file" : "text",
+      } as Message & User & { status: string; type: string });
     })
   );
 
@@ -91,6 +140,7 @@ const sendMessage = async (
   return {
     status: "success",
     message: "Message sent.",
+    type: files ? "file" : "text",
     data: {
       _id: message._id,
       content: message.content,

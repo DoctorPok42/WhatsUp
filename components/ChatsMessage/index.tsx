@@ -1,9 +1,10 @@
 import React from 'react';
 import FooterMessage from './footer';
-
-import styles from './style.module.scss';
 import ContentMessage from './content';
 import AuthorMessage from './author';
+import ContentFileMessage from './content_file';
+
+import styles from './style.module.scss';
 
 interface ChatsMessageProps {
   message: {
@@ -14,11 +15,10 @@ interface ChatsMessageProps {
     phone: string
     options?: {
       isLink: boolean
+      isFile: boolean
+      data?: { name: string, size: number, type: "image" | "video" | "audio" | "file" }
     }
-    reactions?: {
-      value: string
-      usersId: string[]
-    }[]
+    reactions?: { value: string, usersId: string[] }[]
     isTemp?: boolean
   }
   isGroup: boolean
@@ -28,6 +28,7 @@ interface ChatsMessageProps {
   handleContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void
   setMessageIdHover: (e: string | null) => void
   handleAddReaction: (reaction: string) => void
+  downloadFile: (content: string, name: string) => void
 }
 
 const ChatsMessage = ({
@@ -39,6 +40,7 @@ const ChatsMessage = ({
   handleContextMenu,
   setMessageIdHover,
   handleAddReaction,
+  downloadFile,
 }: ChatsMessageProps) => {
   const isOtherMessage = allMessages[index + 1] && allMessages[index + 1].authorId === message.authorId;
 
@@ -82,7 +84,11 @@ const ChatsMessage = ({
           </span>
         </div>
 
-        <ContentMessage message={message} returnJustLink={returnJustLink} userId={userId} />
+        {message.options?.isFile ? (
+          <ContentFileMessage message={message} handleDownload={downloadFile} />
+        ) : (
+          <ContentMessage message={message} returnJustLink={returnJustLink} userId={userId} />
+        )}
         <FooterMessage message={message} handleAddReaction={handleAddReaction} userId={userId} />
       </div>
 

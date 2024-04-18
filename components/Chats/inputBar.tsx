@@ -12,7 +12,7 @@ const emojiStyleChoose = "google" as EmojiStyle;
 
 interface InputBarProps {
   files: File[];
-  onSend: (message: string) => void;
+  onSend: (message: string, files: File[]) => void;
   onEdit: (message: string) => void;
   onAttach: (files: File[]) => void;
   onTyping: () => void;
@@ -86,8 +86,9 @@ const InputBar = ({
 
   const handleSend = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      if (e.currentTarget.value.trim() === '') return;
-      if (mode === "chat") onSend(e.currentTarget.value);
+      if (e.currentTarget.value.trim() === '' && files.length === 0) return;
+      setFiles([]);
+      if (mode === "chat") onSend(e.currentTarget.value, files);
       if (mode === "edit") {
         onEdit(e.currentTarget.value);
       }
@@ -142,42 +143,44 @@ const InputBar = ({
             )})}
         </div>}
 
-        <div {...getRootProps()} className={styles.Input_icon}>
-          <input {...getInputProps()} />
-          <FontAwesomeIcon icon={faPaperclip} width={16} height={16} color='#7d7f92' />
-        </div>
+        <div className={styles.inputBar}>
+          <div {...getRootProps()} className={styles.Input_icon}>
+            <input {...getInputProps()} />
+            <FontAwesomeIcon icon={faPaperclip} width={16} height={16} color='#7d7f92' />
+          </div>
 
-        <div className={styles.Input}>
-          <textarea
-            ref={inputRef}
-            placeholder="Your message"
-            {...(mode === "edit" && { value: newValue })}
-            autoFocus
-            onChange={(e) => handleChange(e)}
-            onKeyUp={(e) => handleSend(e)}
-          />
-        </div>
+          <div className={styles.Input}>
+            <textarea
+              ref={inputRef}
+              placeholder="Your message"
+              {...(mode === "edit" && { value: newValue })}
+              autoFocus
+              onChange={(e) => handleChange(e)}
+              onKeyUp={(e) => handleSend(e)}
+            />
+          </div>
 
-        <div className={styles.Input_icon_emoji}
-          onMouseEnter={() => setIndexEmoji((indexEmoji + 1) % emojiList.length)}
-          onClick={() => showEmoji()}
-        >
-          <Emoji unified={emojiList[indexEmoji]} size={28} emojiStyle={'google' as EmojiStyle} />
-        </div>
+          <div className={styles.Input_icon_emoji}
+            onMouseEnter={() => setIndexEmoji((indexEmoji + 1) % emojiList.length)}
+            onClick={() => showEmoji()}
+          >
+            <Emoji unified={emojiList[indexEmoji]} size={28} emojiStyle={'google' as EmojiStyle} />
+          </div>
 
-        {emojiPickerOpen && <p className={styles.pickEmoji} ref={ref}>
-          <EmojiPicker
-            open={emojiPickerOpen}
-            onEmojiClick={(emoji) => addReactionToInput(emoji.emoji)}
-            theme={"auto" as Theme}
-            emojiStyle={emojiStyleChoose}
-            style={{
-              backgroundColor: "#2e333d",
-            }}
-            searchPlaceHolder='Find the perfect emoji...'
-            lazyLoadEmojis
-          />
-        </p>}
+          {emojiPickerOpen && <p className={styles.pickEmoji} ref={ref}>
+            <EmojiPicker
+              open={emojiPickerOpen}
+              onEmojiClick={(emoji) => addReactionToInput(emoji.emoji)}
+              theme={"auto" as Theme}
+              emojiStyle={emojiStyleChoose}
+              style={{
+                backgroundColor: "#2e333d",
+              }}
+              searchPlaceHolder='Find the perfect emoji...'
+              lazyLoadEmojis
+            />
+          </p>}
+        </div>
       </div>
     </div>
   );
