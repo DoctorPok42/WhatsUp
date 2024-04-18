@@ -50,7 +50,6 @@ const sendMessage = async (
 
   const messageDate = new Date();
 
-  // const isFile = files ? true : false;
   let filesData = files ?? "EMPTY";
   if (filesData === "EMPTY") filesData = null;
 
