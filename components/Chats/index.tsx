@@ -108,7 +108,7 @@ const Chats = ({
       fileBuffer = Buffer.from(reader.result as ArrayBuffer)
       const fileToSend = { name: file.name, type: file.type, size: file.size, buffer: fileBuffer }
 
-      emitEvent("sendMessage", { token, conversationId: id, files: fileToSend }, (data: any) => {
+      emitEvent("sendMessage", { token, conversationId: id, content: "", files: fileToSend }, (data: any) => {
         setAllMessages([...allMessages, data.data])
       })
     }

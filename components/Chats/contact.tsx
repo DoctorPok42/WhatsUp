@@ -82,7 +82,7 @@ const Contact = ({
 
   return (
     <div className={styles.Contact_container} onContextMenu={(e) => e.preventDefault()} style={{
-      ...id && { width: showContact ? '28em' : '5.65em' },
+      ...id && { width: showContact ? '25em' : '5.65em' },
     }}>
       <div className={styles.arrow} style={{
         transform: showContact ? 'rotate(0)' : 'rotate(180deg)',

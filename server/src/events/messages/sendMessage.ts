@@ -15,7 +15,6 @@ type FileData = {
 
 const saveFile = async (fileId: string, fileData: FileData) => {
   const path = `/srv/file_storage/${fileId}.${fileData.type.split("/")[1]}`;
-  console.log("PATH", path);
 
   try {
     fs.writeFileSync(path, fileData.buffer);
@@ -37,7 +36,7 @@ const sendMessage = async (
   { conversationId, content, files }: any,
   decoded: DecodedToken
 ): Promise<{
-  status: string;
+  status: "success" | "error";
   message: string;
   type?: string;
   data: Message | null;
@@ -130,6 +129,7 @@ const sendMessage = async (
         date: message.date,
         authorId: message.authorId,
         phone: author.phone,
+        options: message.options,
         type: files ? "file" : "text",
       } as Message & User & { status: string; type: string });
     })
@@ -147,6 +147,7 @@ const sendMessage = async (
       date: message.date,
       authorId: message.authorId,
       phone: author.phone,
+      options: message.options,
     } as Message & User,
   };
 };
