@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useClickAway } from "@uidotdev/usehooks";
-import { faArrowCircleLeft, faArrowCircleRight, faCopy, faLink, faPen, faThumbTack, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowCircleLeft, faArrowCircleRight, faCopy, faDownload, faLink, faPen, faThumbTack, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Zoom } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -26,6 +26,7 @@ interface ContextMenuProps {
   message: any
   userId: string
   isMessagePin: boolean
+  downloadFile: (fileId : string, name: string) => void
 }
 
 const emojiStyleChoose = "google" as EmojiStyle;
@@ -57,17 +58,29 @@ const ContextMenu = ({
   message,
   userId,
   isMessagePin,
+  downloadFile,
 }: ContextMenuProps) => {
   const ref = useClickAway(() => {
     closeContextMenu();
   }) as React.MutableRefObject<HTMLDivElement>;
   const [showPicker, setShowPicker] = useState(false);
 
+  const handleDownloadFile = (message: any) => {
+    if (!message.options?.data?.name) return;
+    downloadFile(
+      message.content + "." + message.options?.data?.type.split("/")[1],
+      message.options?.data?.name
+    )
+  }
+
+  const canEdit = message.authorId === userId && !message.options.isFile;
+
   const menuButtons = [
-    ...message.authorId === userId ? [{ name: "Edit", value: "edit", icon: faPen }] : [],
+    ...canEdit ? [{ name: "Edit", value: "edit", icon: faPen }] : [],
+    ...message.options.isFile ? [{ name: "Download", value: "download", icon: faDownload, action: () => handleDownloadFile(message) }] : [],
     { name: "More reactions", icon: (x > window.innerWidth - 600) ? faArrowCircleLeft : faArrowCircleRight, action: () => setShowPicker(!showPicker)},
     { name: isMessagePin ? "Unpin Message" : "Pin Message", value: "pin", icon: faThumbTack, angle: 45 },
-    { name: "Copy", value: "copy", icon: faCopy },
+    ...message.options.isFile ? [] : [{ name: "Copy", value: "copy", icon: faCopy }],
     { name: "Copy Message Link", value: "clink", icon: faLink },
     ...message.authorId === userId ? [{ name: "Delete", value: "delete", icon: faTrash, color: true }] : [],
   ]

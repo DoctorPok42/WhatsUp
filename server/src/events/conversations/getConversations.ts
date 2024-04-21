@@ -4,6 +4,12 @@ import UserModel from "../../schemas/users";
 import { Conversations, DecodedToken, User } from "../../types";
 import urlMetadata from "url-metadata";
 
+type Response = {
+  status: string;
+  message: string;
+  data: Conversations[] | null;
+};
+
 const getPrivateKey = async (id: string): Promise<string | null> => {
   const realId = new mongoose.Types.ObjectId(id);
 
@@ -16,11 +22,7 @@ const getPrivateKey = async (id: string): Promise<string | null> => {
 const getConversations = async (
   {},
   decoded: DecodedToken
-): Promise<{
-  status: string;
-  message: string;
-  data: Conversations[] | null;
-}> => {
+): Promise<Response> => {
   const realUserId = new mongoose.Types.ObjectId(decoded.id);
   const user = await UserModel.findOne({ _id: realUserId });
   if (!user)

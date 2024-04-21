@@ -61,7 +61,7 @@ const sendMessage = async (
 
   const message = {
     _id: new mongoose.Types.ObjectId(),
-    content,
+    content: files ? fileId : content,
     authorId: decoded.id,
     date: messageDate,
     options: {

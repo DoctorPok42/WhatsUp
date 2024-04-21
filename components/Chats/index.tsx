@@ -28,6 +28,8 @@ interface ChatsProps {
   isLoading: boolean
   phone: string
   messages: any[]
+  files: File[]
+  setFiles: (e: File[]) => void
 }
 
 const initialContextMenu = {
@@ -51,8 +53,9 @@ const Chats = ({
   isLoading,
   phone,
   messages,
+  files,
+  setFiles,
 }: ChatsProps) => {
-  const [files, setFiles] = useState<File[]>([]);
   const [allMessages, setAllMessages] = useState<any[]>(messages)
 
   const [messageLoaded, setMessageLoaded] = useState<number>(0)
@@ -114,7 +117,7 @@ const Chats = ({
     }
   }
 
-  const onSend = (message: string, files: File[]) => {
+  const onSend = (message: string) => {
     message = message.trim()
     if (!message && !files.length) return
     const tempId = Math.random().toString(36).substring(7)
@@ -276,6 +279,7 @@ const Chats = ({
           message={allMessages.find((e: any) => e._id === messageIdHoverContextMenu)}
           userId={userId}
           isMessagePin={conversations.find(e => e._id === id)?.pinnedMessages.includes(messageIdHoverContextMenu)}
+          downloadFile={downloadFile}
         />
       }
 
