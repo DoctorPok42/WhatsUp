@@ -73,8 +73,10 @@ const ContextMenu = ({
     )
   }
 
+  const canEdit = message.authorId === userId && !message.options.isFile;
+
   const menuButtons = [
-    ...message.authorId === userId ? message.options.isFile ? [] : [{ name: "Edit", value: "edit", icon: faPen }] : [],
+    ...canEdit ? [{ name: "Edit", value: "edit", icon: faPen }] : [],
     ...message.options.isFile ? [{ name: "Download", value: "download", icon: faDownload, action: () => handleDownloadFile(message) }] : [],
     { name: "More reactions", icon: (x > window.innerWidth - 600) ? faArrowCircleLeft : faArrowCircleRight, action: () => setShowPicker(!showPicker)},
     { name: isMessagePin ? "Unpin Message" : "Pin Message", value: "pin", icon: faThumbTack, angle: 45 },
