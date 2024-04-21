@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import router from "next/router";
-import { Chats, SideBar } from "../../../components/";
+import { Chats, UploadPopup, SideBar, InfoChats } from "../../../components";
 import Cookies from "universal-cookie";
-import InfoChats from "@/../components/InfoChats";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
 import Script from "next/script";
@@ -14,6 +13,8 @@ const ChatsPage = ({ id } : { id: string }) => {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [allMessages, setAllMessages] = useState<any>(null)
+  const [isOnDrop, setIsOnDrop] = useState<boolean>(false)
+  const [files, setFiles] = useState<File[]>([]);
 
   const cookies = new Cookies();
   const token = cookies.get("token");
@@ -54,6 +55,37 @@ const ChatsPage = ({ id } : { id: string }) => {
     }
   }, [allMessages, conversations])
 
+  const mainRef = React.useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const onDragOver = (e: DragEvent) => {
+      e.preventDefault()
+      setIsOnDrop(true)
+    }
+
+    const onDragLeave = (e: DragEvent) => {
+      e.preventDefault()
+      setIsOnDrop(false)
+    }
+
+    mainRef.current?.addEventListener("dragover", onDragOver)
+    mainRef.current?.addEventListener("dragleave", onDragLeave)
+
+    return () => {
+      mainRef.current?.removeEventListener("dragover", onDragOver)
+      mainRef.current?.removeEventListener("dragleave", onDragLeave)
+    }
+  }, [mainRef])
+
+  const handleAddFiles = (e: File[], directly: boolean) => {
+    if (directly) {
+      const inputBar = document.getElementById("inputBar")
+      inputBar?.focus()
+    } else {
+      setFiles([...files, ...e])
+    }
+  }
+
   return (
     <>
       <Head>
@@ -69,7 +101,15 @@ const ChatsPage = ({ id } : { id: string }) => {
         onLoad={startChat}
       />
 
-      <main className="container">
+      <main ref={mainRef} className="container">
+        {(id && conversations && isOnDrop) &&
+          <UploadPopup
+            conversationName={conversations.find((conversation: any) => conversation._id === id[0]).name}
+            onUpload={(e: File[], directly: boolean) => handleAddFiles(e, directly)}
+            setIsOnDrop={setIsOnDrop}
+          />
+        }
+
         <SideBar path="/chats" phone={phone} />
 
         <Chats
@@ -91,6 +131,8 @@ const ChatsPage = ({ id } : { id: string }) => {
               ? allMessages[id[0]]
               : []
           }
+          files={files}
+          setFiles={setFiles}
         />
         {(id && conversations) && <InfoChats
           isInfoOpen={isInfoOpen}

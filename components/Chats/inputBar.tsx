@@ -12,7 +12,7 @@ const emojiStyleChoose = "google" as EmojiStyle;
 
 interface InputBarProps {
   files: File[];
-  onSend: (message: string, files: File[]) => void;
+  onSend: (message: string) => void;
   onEdit: (message: string) => void;
   onAttach: (files: File[]) => void;
   onTyping: () => void;
@@ -88,7 +88,7 @@ const InputBar = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       if (e.currentTarget.value.trim() === '' && files.length === 0) return;
       setFiles([]);
-      if (mode === "chat") onSend(e.currentTarget.value, files);
+      if (mode === "chat") onSend(e.currentTarget.value);
       if (mode === "edit") {
         onEdit(e.currentTarget.value);
       }
@@ -152,6 +152,7 @@ const InputBar = ({
           <div className={styles.Input}>
             <textarea
               ref={inputRef}
+              id="inputBar"
               placeholder="Your message"
               {...(mode === "edit" && { value: newValue })}
               autoFocus
