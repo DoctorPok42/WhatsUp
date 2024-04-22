@@ -51,6 +51,14 @@ const ChatsMessage = ({
     return { link: link[0], text: content.replace(link[0], "") };
   }
 
+  let imagePreview;
+
+  if (message.options?.data?.type.split("/")[0] === "image") {
+    const fileBuffer = Buffer.from(message.content, "base64");
+    const file = new File([fileBuffer], message.options.data.name, { type: message.options.data.type });
+    imagePreview = URL.createObjectURL(file);
+  }
+
   return (
     <div
       className={styles.ChatsMessage_container}
@@ -67,30 +75,33 @@ const ChatsMessage = ({
     >
       <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place="left" />
 
-      <div className={styles.ChatsMessage_content} style={{
-          backgroundColor: message.authorId !== userId ? "#2e333d" : "#6b8afd",
-          paddingBottom: message.reactions ? ".5em" : "0.8em",
-          ...message.isTemp && { filter: "brightness(0.5)" },
-        }}
-      >
-        <div className={styles.title} style={{
-          marginBottom: isGroup ? "0.3em" : "0",
-        }}>
-          <span>
-            {
-              (allMessages[index - 1] && allMessages[index - 1].authorId === message.authorId) ? "" :
-                message.phone
-            }
-          </span>
-        </div>
+      {message.options?.data?.type.split("/")[0] !== "image" ?
+        <div className={styles.ChatsMessage_content} style={{
+            backgroundColor: message.authorId !== userId ? "#2e333d" : "#6b8afd",
+            paddingBottom: message.reactions ? ".5em" : "0.8em",
+            ...message.isTemp && { filter: "brightness(0.5)" },
+          }}
+        >
+          <div className={styles.title} style={{
+            marginBottom: isGroup ? "0.3em" : "0",
+          }}>
+            <span>
+              {
+                (allMessages[index - 1] && allMessages[index - 1].authorId === message.authorId) ? "" :
+                  message.phone
+              }
+            </span>
+          </div>
 
-        {message.options?.isFile ? (
-          <ContentFileMessage message={message} handleDownload={downloadFile} />
-        ) : (
-          <ContentMessage message={message} returnJustLink={returnJustLink} userId={userId} />
-        )}
-        <FooterMessage message={message} handleAddReaction={handleAddReaction} userId={userId} />
-      </div>
+          {message.options?.isFile ? (
+            <ContentFileMessage message={message} handleDownload={downloadFile} />
+          ) : (
+            <ContentMessage message={message} returnJustLink={returnJustLink} userId={userId} />
+          )}
+          <FooterMessage message={message} handleAddReaction={handleAddReaction} userId={userId} />
+        </div>
+      : <img src={imagePreview} alt="preview" className={styles.preview_image} />
+      }
 
       <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place="right" />
     </div>

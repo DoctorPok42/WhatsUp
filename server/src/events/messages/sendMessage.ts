@@ -59,9 +59,15 @@ const sendMessage = async (
       Math.random().toString(36).substring(2, 15);
   }
 
+  const messageContent = files
+    ? filesData.type.split("/")[0] === "image"
+      ? filesData.buffer
+      : fileId
+    : content;
+
   const message = {
     _id: new mongoose.Types.ObjectId(),
-    content: files ? fileId : content,
+    content: messageContent,
     authorId: decoded.id,
     date: messageDate,
     options: {
@@ -75,6 +81,7 @@ const sendMessage = async (
         },
       }),
     },
+    reactions: [],
   } as Message;
 
   const fileSavedRequest = await Promise.resolve(saveFile(fileId, filesData));

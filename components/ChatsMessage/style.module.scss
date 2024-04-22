@@ -109,6 +109,12 @@
     }
   }
 
+  .preview_image {
+    max-width: 30em;
+    max-height: 30em;
+    border-radius: 22px;
+  }
+
   .ChatsMessage_author {
     width: 3.125em;
     height: 3.125em;
