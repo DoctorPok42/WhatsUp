@@ -1,5 +1,6 @@
 import React from 'react';
 import LinksPart from './links';
+import FilePart from './file';
 
 import styles from './style.module.scss';
 
@@ -42,6 +43,7 @@ const PartChat = ({
       {elements.length > 0 && !showMinimized && <div className={styles.content}>
         {elements.map((element, index) => (
           <div key={index} className={styles.element}>
+            {name === "Shared Files" && <FilePart {...element} onClick={() => {}} />}
             {name === "Shared Links" && <LinksPart {...element} onClick={() => window.open(element.content, '_blank')} />}
           </div>
           )
