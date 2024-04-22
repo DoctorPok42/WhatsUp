@@ -27,7 +27,7 @@ const FilePart = ({
         <FontAwesomeIcon icon={faFileLines} width={25} height={25} color="#e9eaeb" />
       </div>
 
-      <div className={styles.text} onClick={handleClick}>
+      <div className={styles.file} onClick={handleClick} role="button" tabIndex={0} onKeyUp={handleClick}>
         <h2>
           {name.length > 45 ? name.slice(0, 45) + "..." : name}
         </h2>
