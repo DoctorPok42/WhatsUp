@@ -102,6 +102,15 @@ const sendMessage = async (
       });
     });
   }
+  if (files) {
+    conversation.files.push({
+      id: fileId,
+      name: filesData.name,
+      authorsId: decoded.id,
+      date: messageDate,
+      type: filesData.type,
+    });
+  }
   conversation.save();
 
   // Insert the message in the conversation collection
