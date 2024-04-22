@@ -183,6 +183,43 @@
               }
             }
           }
+
+          .FilePart_container {
+            display: flex;
+            align-items: center;
+            gap: 1em;
+            animation: fadeIn 0.4s ease-in-out forwards;
+
+            .icon {
+              padding: 1.3em;
+              border-radius: 18px;
+              background-color: #2e333d;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+
+            .text {
+              width: 75%;
+
+              h2 {
+                font-size: 1em;
+                font-weight: 300;
+                color: #d9dae0;
+                cursor: pointer;
+                overflow-wrap: break-word;
+                transition: var(--transition);
+              }
+            }
+          }
+
+          .FilePart_container:hover {
+            .text {
+              h2 {
+                color: var(--blue);
+              }
+            }
+          }
         }
       }
     }

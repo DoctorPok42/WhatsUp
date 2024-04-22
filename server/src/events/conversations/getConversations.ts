@@ -74,15 +74,6 @@ const getConversations = async (
     return { ...e._doc, name: name[0] || null };
   });
 
-  // Get the PriaKey of each conversation
-  conversationsWithNames = await Promise.all(
-    conversationsWithNames.map(async (e: any) => {
-      if (!e) return e;
-      const key = await getPrivateKey(e._id);
-      return { ...e, key: key };
-    })
-  );
-
   // Get the unread messages
   conversationsWithNames = (await Promise.all(
     conversationsWithNames.map(async (conv: Conversations) => {

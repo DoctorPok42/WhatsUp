@@ -29,11 +29,11 @@ interface ConversationsLinks {
 }
 
 interface ConversationsFiles {
+  id: string;
   name: string;
-  data: string;
   authorsId: string;
   date: Date;
-  type: "image" | "video" | "audio" | "file";
+  type: string;
 }
 
 export interface Conversations extends mongoose.Document {

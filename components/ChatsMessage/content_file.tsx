@@ -31,7 +31,7 @@ const ContentFileMessage = ({
 
   return (
     <div className={styles.content_file} onClick={handleDownloadFile} role="button" tabIndex={0} onKeyUp={handleDownloadFile}>
-      <FontAwesomeIcon icon={faFileLines} />
+      <FontAwesomeIcon icon={faFileLines} width={16} height={16} />
       <div className={styles.file}>
         <h2>
           {
