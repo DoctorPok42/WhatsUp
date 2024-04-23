@@ -7,6 +7,7 @@ import dashboardActions from "../../userDashboard";
 import fs from "fs";
 
 type FileData = {
+  id: string;
   name: string;
   type: string;
   size: number;
@@ -35,41 +36,39 @@ const detectLink = (text: string) => {
 const saveConversation = async (
   conversationId: string,
   content: string,
-  files: boolean,
   filesData: FileData,
   decoded: DecodedToken,
   author: User,
   message: Message,
-  messageDate: Date,
-  isLink: boolean,
-  link: string[] | null,
-  fileId: string
+  link: string[] | null
 ) => {
   const conversation = await ConversationsModel.findOne({
     _id: conversationId,
   });
   if (!conversation) return null;
 
-  conversation.lastMessage = files ? `${author.username} sent a file` : content;
-  conversation.lastMessageDate = messageDate;
+  conversation.lastMessage = filesData
+    ? `${author.username} sent a file`
+    : content;
+  conversation.lastMessageDate = message.date;
   conversation.lastMessageAuthorId = decoded.id;
-  conversation.updatedAt = messageDate;
+  conversation.updatedAt = message.date;
   conversation.lastMessageId = (message._id as unknown) as string;
-  if (isLink) {
+  if (link) {
     link?.forEach((element: string) => {
       conversation.links.push({
         content: element,
         authorId: decoded.id,
-        date: messageDate,
+        date: message.date,
       });
     });
   }
-  if (files) {
+  if (filesData) {
     conversation.files.push({
-      id: fileId,
+      id: filesData.id,
       name: filesData.name,
       authorsId: decoded.id,
-      date: messageDate,
+      date: message.date,
       type: filesData.type,
     });
   }
@@ -103,6 +102,8 @@ const sendMessage = async (
       Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15);
   }
+
+  filesData.id = fileId;
 
   let messageContent;
 
@@ -143,15 +144,11 @@ const sendMessage = async (
   const conversation = (await saveConversation(
     conversationId,
     content,
-    files,
     filesData,
     decoded,
     author,
     message,
-    messageDate,
-    isLink,
-    link,
-    fileId
+    link
   )) as any;
 
   // Insert the message in the conversation collection
