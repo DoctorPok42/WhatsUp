@@ -29,7 +29,7 @@ const FilePart = ({
 
       <div className={styles.file} onClick={handleClick} role="button" tabIndex={0} onKeyUp={handleClick}>
         <h2>
-          {name.length > 45 ? name.slice(0, 45) + "..." : name}
+          {name}
         </h2>
       </div>
     </div>
