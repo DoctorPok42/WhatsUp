@@ -49,8 +49,7 @@ const sendMessage = async (
 
   const messageDate = new Date();
 
-  let filesData = files ?? "EMPTY";
-  if (filesData === "EMPTY") filesData = null;
+  let filesData = files ?? null;
 
   let fileId = "";
   if (files) {
@@ -59,11 +58,17 @@ const sendMessage = async (
       Math.random().toString(36).substring(2, 15);
   }
 
-  const messageContent = files
-    ? filesData.type.split("/")[0] === "image"
-      ? filesData.buffer
-      : fileId
-    : content;
+  let messageContent;
+
+  if (files) {
+    if (filesData.type.split("/")[0] === "image") {
+      messageContent = filesData.buffer;
+    } else {
+      messageContent = fileId;
+    }
+  } else {
+    messageContent = content;
+  }
 
   const message = {
     _id: new mongoose.Types.ObjectId(),

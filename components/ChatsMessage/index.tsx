@@ -1,8 +1,6 @@
 import React from 'react';
-import FooterMessage from './footer';
-import ContentMessage from './content';
 import AuthorMessage from './author';
-import ContentFileMessage from './content_file';
+import Message from './message';
 
 import styles from './style.module.scss';
 
@@ -75,33 +73,17 @@ const ChatsMessage = ({
     >
       <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place="left" />
 
-      {message.options?.data?.type.split("/")[0] !== "image" ?
-        <div className={styles.ChatsMessage_content} style={{
-            backgroundColor: message.authorId !== userId ? "#2e333d" : "#6b8afd",
-            paddingBottom: message.reactions ? ".5em" : "0.8em",
-            ...message.isTemp && { filter: "brightness(0.5)" },
-          }}
-        >
-          <div className={styles.title} style={{
-            marginBottom: isGroup ? "0.3em" : "0",
-          }}>
-            <span>
-              {
-                (allMessages[index - 1] && allMessages[index - 1].authorId === message.authorId) ? "" :
-                  message.phone
-              }
-            </span>
-          </div>
-
-          {message.options?.isFile ? (
-            <ContentFileMessage message={message} handleDownload={downloadFile} />
-          ) : (
-            <ContentMessage message={message} returnJustLink={returnJustLink} userId={userId} />
-          )}
-          <FooterMessage message={message} handleAddReaction={handleAddReaction} userId={userId} />
-        </div>
-      : <img src={imagePreview} alt="preview" className={styles.preview_image} />
-      }
+      <Message
+        message={message}
+        isGroup={isGroup}
+        allMessages={allMessages}
+        userId={userId}
+        index={index}
+        handleAddReaction={handleAddReaction}
+        downloadFile={downloadFile}
+        returnJustLink={returnJustLink}
+        imagePreview={imagePreview}
+      />
 
       <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place="right" />
     </div>
