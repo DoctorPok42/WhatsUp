@@ -5,7 +5,6 @@ import { Chats, UploadPopup, SideBar, InfoChats } from "../../../components";
 import Cookies from "universal-cookie";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
-import Script from "next/script";
 
 const ChatsPage = ({ id } : { id: string }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
@@ -15,6 +14,7 @@ const ChatsPage = ({ id } : { id: string }) => {
   const [allMessages, setAllMessages] = useState<any>(null)
   const [isOnDrop, setIsOnDrop] = useState<boolean>(false)
   const [files, setFiles] = useState<File[]>([]);
+  const [firstTime, setFirstTime] = useState<boolean>(true)
 
   const cookies = new Cookies();
   const token = cookies.get("token");
@@ -44,10 +44,13 @@ const ChatsPage = ({ id } : { id: string }) => {
     if (data.messages === "All messages sent.") setAllMessages(data.data)
   })
 
-  const startChat = async () => {
-    getConversations()
-    getAllMessages()
-  }
+  useEffect(() => {
+    if (firstTime) {
+      setFirstTime(false)
+      getConversations()
+      getAllMessages()
+    }
+  }, [])
 
   useEffect(() => {
     if (allMessages && conversations) {
@@ -95,11 +98,6 @@ const ChatsPage = ({ id } : { id: string }) => {
         <meta name="theme-color" content="#5ad27d" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <Script
-        src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.1.0/lodash.min.js"
-        onLoad={startChat}
-      />
 
       <main ref={mainRef} className="container">
         {(id && conversations && isOnDrop) &&
