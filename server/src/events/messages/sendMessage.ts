@@ -32,6 +32,52 @@ const detectLink = (text: string) => {
   return { isLink: true, link: links };
 };
 
+const saveConversation = async (
+  conversationId: string,
+  content: string,
+  files: boolean,
+  filesData: FileData,
+  decoded: DecodedToken,
+  author: User,
+  message: Message,
+  messageDate: Date,
+  isLink: boolean,
+  link: string[] | null,
+  fileId: string
+) => {
+  const conversation = await ConversationsModel.findOne({
+    _id: conversationId,
+  });
+  if (!conversation) return null;
+
+  conversation.lastMessage = files ? `${author.username} sent a file` : content;
+  conversation.lastMessageDate = messageDate;
+  conversation.lastMessageAuthorId = decoded.id;
+  conversation.updatedAt = messageDate;
+  conversation.lastMessageId = (message._id as unknown) as string;
+  if (isLink) {
+    link?.forEach((element: string) => {
+      conversation.links.push({
+        content: element,
+        authorId: decoded.id,
+        date: messageDate,
+      });
+    });
+  }
+  if (files) {
+    conversation.files.push({
+      id: fileId,
+      name: filesData.name,
+      authorsId: decoded.id,
+      date: messageDate,
+      type: filesData.type,
+    });
+  }
+  conversation.save();
+
+  return conversation;
+};
+
 const sendMessage = async (
   { conversationId, content, files }: any,
   decoded: DecodedToken
@@ -94,36 +140,19 @@ const sendMessage = async (
     return { status: "error", message: "An error occurred.", data: null };
 
   // Put the message in the lastMessage field of the conversation
-  const conversation = await ConversationsModel.findOne({
-    _id: conversationId,
-  });
-  if (!conversation)
-    return { status: "error", message: "Conversation not found.", data: null };
-
-  conversation.lastMessage = files ? `${author.username} sent a file` : content;
-  conversation.lastMessageDate = messageDate;
-  conversation.lastMessageAuthorId = decoded.id;
-  conversation.updatedAt = messageDate;
-  conversation.lastMessageId = (message._id as unknown) as string;
-  if (isLink) {
-    link?.forEach((element: string) => {
-      conversation.links.push({
-        content: element,
-        authorId: decoded.id,
-        date: messageDate,
-      });
-    });
-  }
-  if (files) {
-    conversation.files.push({
-      id: fileId,
-      name: filesData.name,
-      authorsId: decoded.id,
-      date: messageDate,
-      type: filesData.type,
-    });
-  }
-  conversation.save();
+  const conversation = (await saveConversation(
+    conversationId,
+    content,
+    files,
+    filesData,
+    decoded,
+    author,
+    message,
+    messageDate,
+    isLink,
+    link,
+    fileId
+  )) as any;
 
   // Insert the message in the conversation collection
   const response = await mongoose.connection.db
