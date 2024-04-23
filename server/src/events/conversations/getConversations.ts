@@ -10,15 +10,6 @@ type Response = {
   data: Conversations[] | null;
 };
 
-const getPrivateKey = async (id: string): Promise<string | null> => {
-  const realId = new mongoose.Types.ObjectId(id);
-
-  const userPrivateKey = await mongoose.connection.db
-    .collection("privateKeys")
-    .findOne({ conversationId: realId });
-  return userPrivateKey ? userPrivateKey.key : null;
-};
-
 const getConversations = async (
   {},
   decoded: DecodedToken

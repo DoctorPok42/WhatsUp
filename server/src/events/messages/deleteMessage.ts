@@ -1,6 +1,7 @@
 import { DecodedToken } from "../../types";
 import mongoose from "mongoose";
 import fs from "fs";
+import ConversationsModel from "../../schemas/conversations";
 
 const deleteFile = async (fileId: string, extension: string) => {
   const path = `/srv/file_storage/${fileId}.${extension}`;
@@ -12,7 +13,7 @@ const deleteFile = async (fileId: string, extension: string) => {
     console.error(error);
     return null;
   }
-}
+};
 
 const deleteMessage = async (
   { conversationId, messageId }: { conversationId: string; messageId: string },
@@ -58,7 +59,22 @@ const deleteMessage = async (
   }
 
   if (messageToDelete.options.isFile) {
-    await Promise.resolve(deleteFile(messageToDelete.content, messageToDelete.options.data.type.split("/")[1]));
+    await Promise.resolve(
+      deleteFile(
+        messageToDelete.content,
+        messageToDelete.options.data.type.split("/")[1]
+      )
+    );
+    const conversation = await ConversationsModel.findOne({
+      _id: conversationId,
+    });
+    if (!conversation)
+      return { status: "error", message: "Conversation not found." };
+
+    conversation.files = conversation.files.filter(
+      (file) => file.id !== messageToDelete.content
+    );
+    conversation.save();
   }
 
   await mongoose.connection.db

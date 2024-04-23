@@ -7,6 +7,7 @@ import dashboardActions from "../../userDashboard";
 import fs from "fs";
 
 type FileData = {
+  id: string;
   name: string;
   type: string;
   size: number;
@@ -32,6 +33,50 @@ const detectLink = (text: string) => {
   return { isLink: true, link: links };
 };
 
+const saveConversation = async (
+  conversationId: string,
+  content: string,
+  filesData: FileData,
+  decoded: DecodedToken,
+  author: User,
+  message: Message,
+  link: string[] | null
+) => {
+  const conversation = await ConversationsModel.findOne({
+    _id: conversationId,
+  });
+  if (!conversation) return null;
+
+  conversation.lastMessage = filesData
+    ? `${author.username} sent a file`
+    : content;
+  conversation.lastMessageDate = message.date;
+  conversation.lastMessageAuthorId = decoded.id;
+  conversation.updatedAt = message.date;
+  conversation.lastMessageId = (message._id as unknown) as string;
+  if (link) {
+    link?.forEach((element: string) => {
+      conversation.links.push({
+        content: element,
+        authorId: decoded.id,
+        date: message.date,
+      });
+    });
+  }
+  if (filesData) {
+    conversation.files.push({
+      id: filesData.id,
+      name: filesData.name,
+      authorsId: decoded.id,
+      date: message.date,
+      type: filesData.type,
+    });
+  }
+  conversation.save();
+
+  return conversation;
+};
+
 const sendMessage = async (
   { conversationId, content, files }: any,
   decoded: DecodedToken
@@ -49,8 +94,7 @@ const sendMessage = async (
 
   const messageDate = new Date();
 
-  let filesData = files ?? "EMPTY";
-  if (filesData === "EMPTY") filesData = null;
+  let filesData = files ?? null;
 
   let fileId = "";
   if (files) {
@@ -59,9 +103,23 @@ const sendMessage = async (
       Math.random().toString(36).substring(2, 15);
   }
 
+  filesData.id = fileId;
+
+  let messageContent;
+
+  if (files) {
+    if (filesData.type.split("/")[0] === "image") {
+      messageContent = filesData.buffer;
+    } else {
+      messageContent = fileId;
+    }
+  } else {
+    messageContent = content;
+  }
+
   const message = {
     _id: new mongoose.Types.ObjectId(),
-    content: files ? fileId : content,
+    content: messageContent,
     authorId: decoded.id,
     date: messageDate,
     options: {
@@ -75,6 +133,7 @@ const sendMessage = async (
         },
       }),
     },
+    reactions: [],
   } as Message;
 
   const fileSavedRequest = await Promise.resolve(saveFile(fileId, filesData));
@@ -82,36 +141,15 @@ const sendMessage = async (
     return { status: "error", message: "An error occurred.", data: null };
 
   // Put the message in the lastMessage field of the conversation
-  const conversation = await ConversationsModel.findOne({
-    _id: conversationId,
-  });
-  if (!conversation)
-    return { status: "error", message: "Conversation not found.", data: null };
-
-  conversation.lastMessage = files ? `${author.username} sent a file` : content;
-  conversation.lastMessageDate = messageDate;
-  conversation.lastMessageAuthorId = decoded.id;
-  conversation.updatedAt = messageDate;
-  conversation.lastMessageId = (message._id as unknown) as string;
-  if (isLink) {
-    link?.forEach((element: string) => {
-      conversation.links.push({
-        content: element,
-        authorId: decoded.id,
-        date: messageDate,
-      });
-    });
-  }
-  if (files) {
-    conversation.files.push({
-      id: fileId,
-      name: filesData.name,
-      authorsId: decoded.id,
-      date: messageDate,
-      type: filesData.type,
-    });
-  }
-  conversation.save();
+  const conversation = (await saveConversation(
+    conversationId,
+    content,
+    filesData,
+    decoded,
+    author,
+    message,
+    link
+  )) as any;
 
   // Insert the message in the conversation collection
   const response = await mongoose.connection.db
