@@ -198,7 +198,7 @@
             animation: fadeIn 0.4s ease-in-out forwards;
 
             .icon {
-              padding: 1.3em;
+              padding: 1.2em;
               border-radius: 18px;
               background-color: #2e333d;
               display: flex;
@@ -206,22 +206,26 @@
               align-items: center;
             }
 
-            .text {
+            .file {
               width: 75%;
 
               h2 {
                 font-size: 1em;
                 font-weight: 300;
-                color: #d9dae0;
+                color: #e9eaeb;
                 cursor: pointer;
-                overflow-wrap: break-word;
                 transition: var(--transition);
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                line-height: 1.3em;
               }
             }
           }
 
           .FilePart_container:hover {
-            .text {
+            .file {
               h2 {
                 color: var(--blue);
               }
