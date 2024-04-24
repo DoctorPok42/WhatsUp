@@ -14,7 +14,7 @@ const addReaction = async (
   // find and update the message from the conversation
   let messageToUpdate = (await mongoose.connection.db
     .collection(`conversation_${conversationId}`)
-    .findOne({ _id: realId })) as Message | null;
+    .findOne({ _id: realId })) as any;
   if (!messageToUpdate)
     return { status: "error", message: "Message not found." };
 
@@ -22,7 +22,7 @@ const addReaction = async (
 
   // check if the reaction already exists
   const reactionIndex = messageToUpdate.reactions.findIndex(
-    (e) => e.value === reaction
+    (e: any) => e.value === reaction
   );
   if (reactionIndex !== -1) {
     const userIndex = messageToUpdate.reactions[reactionIndex].usersId.indexOf(
