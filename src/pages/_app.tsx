@@ -1,5 +1,5 @@
 import "@/styles/globals.scss";
-import type { AppProps } from "next/app";
+import { AppProps } from "next/app";
 import Cookies from "universal-cookie";
 import dotenv from 'dotenv'
 
