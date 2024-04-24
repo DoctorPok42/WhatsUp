@@ -34,6 +34,7 @@ interface ConversationsFiles {
   authorsId: string;
   date: Date;
   type: string;
+  content?: string;
 }
 
 export interface Conversations extends mongoose.Document {

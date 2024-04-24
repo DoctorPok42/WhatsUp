@@ -70,6 +70,9 @@ const saveConversation = async (
       authorsId: decoded.id,
       date: message.date,
       type: filesData.type,
+      ...(filesData.type.split("/")[0] === "image" && {
+        content: filesData.buffer,
+      }),
     });
   }
   conversation.save();

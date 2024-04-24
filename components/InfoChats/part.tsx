@@ -1,6 +1,7 @@
 import React from 'react';
 import LinksPart from './links';
 import FilePart from './file';
+import ImagePart from './image';
 
 import styles from './style.module.scss';
 
@@ -25,6 +26,10 @@ const PartChat = ({
   value,
   elements,
 }: PartChatProps) => {
+  if (name === "Shared Files") {
+    elements = elements.filter((element) => !element.type.includes("image"))
+  }
+
   const elementLength = elements.length
   elements = elements.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   elements = isLarge ? elements : elements.slice(0, 4)
@@ -40,13 +45,20 @@ const PartChat = ({
         </div>
       </div>
 
-      {elements.length > 0 && !showMinimized && <div className={styles.content}>
-        {elements.map((element, index) => (
-          <div key={index} className={styles.element}>
-            {name === "Shared Files" && <FilePart {...element} onClick={() => {}} />}
-            {name === "Shared Links" && <LinksPart {...element} onClick={() => window.open(element.content, '_blank')} />}
-          </div>
-          )
+      {elements.length > 0 && !showMinimized && <div className={
+        name === "Photos and Videos" ? styles.imagePartContainer : styles.elementContainer
+      }>
+        {elements.map((element, index) => {
+          const isImg = element.type.includes("image")
+          return (
+            <div key={index} className={
+              isImg ? styles.imagePart : styles.element
+            } >
+              {name === "Photos and Videos" && <ImagePart {...element} onClick={() => {}} />}
+              {name === "Shared Files" && <FilePart {...element} onClick={() => {}} />}
+              {name === "Shared Links" && <LinksPart {...element} onClick={() => window.open(element.content, '_blank')} />}
+            </div>
+          )}
         )}
       </div>}
     </div>
