@@ -14,7 +14,7 @@ interface ContentFileMessageProps {
       data?: { name: string, size: number, type: "image" | "video" | "audio" | "file" }
     }
   }
-  handleDownload: (content: string, name: string) => void
+  handleDownload: (content: string, name: string, type: string) => void
 }
 
 const ContentFileMessage = ({
@@ -25,7 +25,8 @@ const ContentFileMessage = ({
     if (!message.options?.data?.name) return;
     handleDownload(
       message.content + "." + message.options?.data?.type.split("/")[1],
-      message.options?.data?.name
+      message.options?.data?.name,
+      message.options?.data?.type
     )
   }
 

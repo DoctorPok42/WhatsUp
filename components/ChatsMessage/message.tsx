@@ -25,7 +25,7 @@ interface MessageProps {
   userId: string
   index: number
   handleAddReaction: (reaction: string) => void
-  downloadFile: (content: string, name: string) => void
+  downloadFile: (content: string, name: string, type: string) => void
   returnJustLink: (content: string) => { link: string, text: string }
   imagePreview: string | undefined
 }
