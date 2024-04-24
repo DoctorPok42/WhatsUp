@@ -26,7 +26,7 @@ interface ContextMenuProps {
   message: any
   userId: string
   isMessagePin: boolean
-  downloadFile: (fileId : string, name: string) => void
+  downloadFile: (fileId : string, name: string, type: string, content?: string) => void
 }
 
 const emojiStyleChoose = "google" as EmojiStyle;
@@ -69,7 +69,9 @@ const ContextMenu = ({
     if (!message.options?.data?.name) return;
     downloadFile(
       message.content + "." + message.options?.data?.type.split("/")[1],
-      message.options?.data?.name
+      message.options?.data?.name,
+      message.options?.data?.type,
+      message.content
     )
   }
 

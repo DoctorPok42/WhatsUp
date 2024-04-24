@@ -71,6 +71,12 @@ const InfoChats = ({
     }))
   }
 
+  conversations = conversations.map((e) => {
+    const allFiles = e.files
+    e.pictures = allFiles.filter((file: any) => file.type.includes("image"))
+    return e
+  })
+
   return (
     <div
       className={styles.InfoChats_container}
