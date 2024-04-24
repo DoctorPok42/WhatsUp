@@ -51,7 +51,7 @@ const PartChat = ({
         {elements.map((element, index) => {
           const isImg = element.type.includes("image")
           return (
-            <div key={index} className={
+            <div key={index + element._id} className={
               isImg ? styles.imagePart : styles.element
             } >
               {name === "Photos and Videos" && <ImagePart {...element} onClick={() => {}} />}
