@@ -1,4 +1,4 @@
-import { DecodedToken } from "../../types";
+import { DecodedToken, Message } from "../../types";
 import mongoose from "mongoose";
 import fs from "fs";
 import ConversationsModel from "../../schemas/conversations";
@@ -22,9 +22,9 @@ const deleteMessage = async (
   const realId = new mongoose.Types.ObjectId(messageId);
 
   // find and delete the message from the conversation
-  const messageToDelete = await mongoose.connection.db
+  const messageToDelete = (await mongoose.connection.db
     .collection(`conversation_${conversationId}`)
-    .findOne({ _id: realId });
+    .findOne({ _id: realId })) as Message;
   if (!messageToDelete)
     return { status: "error", message: "Message not found." };
 
@@ -58,10 +58,10 @@ const deleteMessage = async (
     );
   }
 
-  if (messageToDelete.options.isFile) {
+  if (messageToDelete.options.isFile && messageToDelete.options.data) {
     await Promise.resolve(
       deleteFile(
-        messageToDelete.content,
+        messageToDelete.options.data.id,
         messageToDelete.options.data.type.split("/")[1]
       )
     );
@@ -72,7 +72,7 @@ const deleteMessage = async (
       return { status: "error", message: "Conversation not found." };
 
     conversation.files = conversation.files.filter(
-      (file) => file.id !== messageToDelete.content
+      (file) => file.id !== messageToDelete.options.data?.id
     );
     conversation.save();
   }
