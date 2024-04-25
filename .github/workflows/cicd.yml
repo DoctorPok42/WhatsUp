@@ -35,7 +35,6 @@ jobs:
           docker build -t whatsup_backend:latest ./server
           docker build -t whatsup_frontend:latest .
 
-
   build_docker_images:
     name: 🛠️ Build Docker images
     runs-on: self-hosted
@@ -61,10 +60,27 @@ jobs:
           docker build -t whatsup_backend:latest ./server --build-arg SERVER_URL=${{ secrets.SERVER_URL }} --build-arg SERVER_PORT=${{ secrets.SERVER_PORT }} --build-arg MONGO_URI=${{ secrets.MONGO_URI }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg TOKEN_EXPIRATION=${{ secrets.TOKEN_EXPIRATION }} --build-arg TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} --build-arg TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }}
           docker build -t whatsup_frontend:latest . --build-arg SERVER_URL=${{ secrets.SERVER_URL }}
 
+  security:
+    name: 🔒 Security
+    runs-on: self-hosted
+
+    steps:
+      - name: 🕵️‍♂️ Security Scan Backend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: whatsup_backend:latest
+          format: table
+
+      - name: 🕵️‍♂️ Security Scan Frontend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: whatsup_frontend:latest
+          format: table
+
   push_docker_images:
     name: 📡 Push Docker images
     runs-on: self-hosted
-    needs: build_docker_images
+    needs: security
     if: github.event_name == 'push'
 
     steps:
