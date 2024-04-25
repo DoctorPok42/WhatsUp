@@ -133,6 +133,7 @@ const sendMessage = async (
           name: filesData.name,
           type: filesData.type,
           size: filesData.size,
+          id: filesData.id,
         },
       }),
     },

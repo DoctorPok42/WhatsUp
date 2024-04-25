@@ -60,6 +60,7 @@ interface MessageOptions {
     name: string;
     size: number;
     type: "image" | "video" | "audio" | "file";
+    id: string;
   };
 }
 
