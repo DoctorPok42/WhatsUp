@@ -14,6 +14,7 @@ interface PartChatProps {
   isLarge: boolean
   value: string
   elements: any[]
+  downloadFile: (fileId: string, name: string, type: string, content?: string) => void
 }
 
 const PartChat = ({
@@ -25,9 +26,10 @@ const PartChat = ({
   isLarge,
   value,
   elements,
+  downloadFile,
 }: PartChatProps) => {
   if (name === "Shared Files") {
-    elements = elements.filter((element) => !element.type.includes("image"))
+    elements = elements.filter((element) => !element.type?.includes("image"))
   }
 
   const elementLength = elements.length
@@ -49,13 +51,13 @@ const PartChat = ({
         name === "Photos and Videos" ? styles.imagePartContainer : styles.elementContainer
       }>
         {elements.map((element, index) => {
-          const isImg = element.type.includes("image")
+          const isImg = element.type?.includes("image")
           return (
             <div key={index + element._id} className={
               isImg ? styles.imagePart : styles.element
             } >
-              {name === "Photos and Videos" && <ImagePart {...element} onClick={() => {}} />}
-              {name === "Shared Files" && <FilePart {...element} onClick={() => {}} />}
+              {name === "Photos and Videos" && <ImagePart {...element} onClick={() => downloadFile(element.id, element.name, element.type, element.content)} />}
+              {name === "Shared Files" && <FilePart {...element} onClick={() => downloadFile(element.id, element.name, element.type)} />}
               {name === "Shared Links" && <LinksPart {...element} onClick={() => window.open(element.content, '_blank')} />}
             </div>
           )}

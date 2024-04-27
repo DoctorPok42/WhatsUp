@@ -5,6 +5,7 @@ import { Chats, UploadPopup, SideBar, InfoChats } from "../../../components";
 import Cookies from "universal-cookie";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
+import downloadFile from "@/tools/downloadFile";
 
 const ChatsPage = ({ id } : { id: string }) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
@@ -89,6 +90,11 @@ const ChatsPage = ({ id } : { id: string }) => {
     }
   }
 
+  const handleDownloadFile = (fileId: string, name: string, type: string, content?: string) => {
+    fileId = fileId + "." + type.split("/")[1]
+    return downloadFile(token, fileId, name, type, content)
+  }
+
   return (
     <>
       <Head>
@@ -139,6 +145,7 @@ const ChatsPage = ({ id } : { id: string }) => {
           token={token}
           conversations={conversations}
           setIsSearchOpen={setIsSearchOpen}
+          downloadFile={handleDownloadFile}
         />}
       </main>
     </>

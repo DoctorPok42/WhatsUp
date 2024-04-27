@@ -12,6 +12,7 @@ import { useCopyToClipboard } from '@uidotdev/usehooks';
 import { cryptMessage } from '@/tools/cryptMessage';
 
 import styles from './style.module.scss';
+import downloadFile from '@/tools/downloadFile';
 
 interface ChatsProps {
   token: string
@@ -89,6 +90,11 @@ const Chats = ({
   socket.on("message", (data: any) => {
     if (data.conversationsId === id) {
       setAllMessages([...allMessages, data])
+    } else {
+      const conversationIndex = conversations.findIndex(e => e._id === data.conversationsId)
+      const newConversations = [...conversations]
+      newConversations[conversationIndex].unreadMessages++
+      setConversation(newConversations)
     }
   })
 
@@ -155,35 +161,9 @@ const Chats = ({
     })
   }
 
-  const downloadFile = (fileId: string, name: string, type: string, content?: string) => {
-    let link;
-    if (type.includes("image") && content) {
-      const fileBuffer = Buffer.from(content, "base64");
-      const file = new File([fileBuffer], name, { type: type });
-      const imagePreview = URL.createObjectURL(file);
-      link = document.createElement('a');
-      link.href = imagePreview;
-    } else {
-      emitEvent("downloadFile", { token, fileId }, (data: any) => {
-        const byteCharacters = atob(data.data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray]);
 
-        // Créer un lien pour télécharger le fichier
-        const url = window.URL.createObjectURL(blob);
-        link = document.createElement('a');
-        link.href = url;
-      })
-    }
-    if (!link) return
-    link.setAttribute('download', name);
-    document.body.appendChild(link);
-    link.click();
-    link.parentNode?.removeChild(link);
+  const handleDownloadFile = (fileId: string, name: string, type: string, content?: string) => {
+    return downloadFile(token, fileId, name, type, content)
   }
 
   const onAttach = (e: File[]) => {
@@ -289,7 +269,7 @@ const Chats = ({
           message={allMessages.find((e: any) => e._id === messageIdHoverContextMenu)}
           userId={userId}
           isMessagePin={conversations.find(e => e._id === id)?.pinnedMessages.includes(messageIdHoverContextMenu)}
-          downloadFile={downloadFile}
+          downloadFile={handleDownloadFile}
         />
       }
 
@@ -355,7 +335,7 @@ const Chats = ({
                       handleContextMenu={handleContextMenu}
                       setMessageIdHover={setMessageIdHover}
                       handleAddReaction={handleAddReaction}
-                      downloadFile={downloadFile}
+                      downloadFile={handleDownloadFile}
                     />
                   </div>
                 )
@@ -370,7 +350,7 @@ const Chats = ({
                   handleContextMenu={handleContextMenu}
                   setMessageIdHover={setMessageIdHover}
                   handleAddReaction={handleAddReaction}
-                  downloadFile={downloadFile}
+                  downloadFile={handleDownloadFile}
                 />
               }
             })}

@@ -15,6 +15,7 @@ interface InfoChatsProps {
   setIsInfoOpen: (e: boolean) => void
   conversations: any[]
   setIsSearchOpen: (e: boolean) => void
+  downloadFile: (fileId: string, name: string, type: string, content?: string) => void
 }
 
 const InfoChats = ({
@@ -24,6 +25,7 @@ const InfoChats = ({
   setIsInfoOpen,
   conversations,
   setIsSearchOpen,
+  downloadFile,
 }: InfoChatsProps) => {
   const leaveChat = () => {
     emitEvent("leave", { token, conversationId: id }, (data: any) => {
@@ -102,7 +104,7 @@ const InfoChats = ({
 
       <div className={styles.parts}>
         {parts.map((part, index) => (
-          <PartChat key={index} id={index} {...part} elements={conversations.find(e => e._id === id)?.[part.value] || []} />
+          <PartChat key={index} id={index} {...part} elements={conversations.find(e => e._id === id)?.[part.value] || []} downloadFile={downloadFile} />
         ))}
       </div>
     </div>
