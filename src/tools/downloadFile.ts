@@ -33,7 +33,6 @@ const downloadFile = async (
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
-      return;
     });
   }
 

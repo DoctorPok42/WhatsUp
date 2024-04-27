@@ -104,7 +104,7 @@ const InfoChats = ({
 
       <div className={styles.parts}>
         {parts.map((part, index) => (
-          <PartChat key={index} id={index} {...part} elements={conversations.find(e => e._id === id)?.[part.value] || []} downloadFile={downloadFile} />
+          <PartChat key={index + part.name} id={index} {...part} elements={conversations.find(e => e._id === id)?.[part.value] || []} downloadFile={downloadFile} />
         ))}
       </div>
     </div>
