@@ -40,7 +40,7 @@ const saveConversation = async (
   decoded: DecodedToken,
   author: User,
   message: Message,
-  link: string[] | null
+  isLink: string[] | null
 ) => {
   const conversation = await ConversationsModel.findOne({
     _id: conversationId,
@@ -54,8 +54,8 @@ const saveConversation = async (
   conversation.lastMessageAuthorId = decoded.id;
   conversation.updatedAt = message.date;
   conversation.lastMessageId = (message._id as unknown) as string;
-  if (link) {
-    link?.forEach((element: string) => {
+  if (isLink) {
+    isLink?.forEach((element: string) => {
       conversation.links.push({
         content: element,
         authorId: decoded.id,
@@ -81,7 +81,7 @@ const saveConversation = async (
 };
 
 const sendMessage = async (
-  { conversationId, content, files }: any,
+  { conversationId, content, files, isLink }: any,
   decoded: DecodedToken
 ): Promise<{
   status: "success" | "error";
@@ -92,8 +92,6 @@ const sendMessage = async (
   const author = await UserModel.findOne({ _id: decoded.id });
   if (!author)
     return { status: "error", message: "Author not found.", data: null };
-
-  const { isLink, link } = detectLink(content);
 
   const messageDate = new Date();
 
@@ -152,7 +150,7 @@ const sendMessage = async (
     decoded,
     author,
     message,
-    link
+    isLink,
   )) as any;
 
   // Insert the message in the conversation collection
