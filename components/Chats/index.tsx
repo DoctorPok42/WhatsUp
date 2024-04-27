@@ -141,8 +141,12 @@ const Chats = ({
         sendFile(e)
       })
     } else {
-      emitEvent("sendMessage", { token, conversationId: id, content: encryptedMessage }, (data: any) => {
-        setAllMessages([...allMessages, data.data])
+      const isLink = message.match(/(https?:\/\/[^\s]+)/g);
+      emitEvent("sendMessage", { token, conversationId: id, content: encryptedMessage, isLink }, (data: any) => {
+        setAllMessages([...allMessages, {
+          ...data.data,
+          content: message,
+        }])
       })
     }
   }
