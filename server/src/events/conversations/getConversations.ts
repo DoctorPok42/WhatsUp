@@ -68,31 +68,11 @@ const getConversations = async (
   // Get the unread messages
   conversationsWithNames = (await Promise.all(
     conversationsWithNames.map(async (conv: Conversations) => {
-      const lastMessageId = conv.lastMessageId;
-      const rightConversation = user.conversationsId.find((e: any) => {
-        if (typeof e === "string") return false;
-        if (e.conversationId.toString() === conv._id.toString()) return conv;
-      });
-      if (!rightConversation) return conv;
+      const messagesConversation = await mongoose.connection.db.collection(`conversation_${conv._id}`).find().toArray();
+      if (!messagesConversation) return conv;
 
-      if (rightConversation.lastMessageSeen === lastMessageId) {
-        return { ...conv, unreadMessages: 0 };
-      } else {
-        if (
-          !rightConversation.lastMessageSeen ||
-          rightConversation.lastMessageSeen === ""
-        ) {
-          return { ...conv, unreadMessages: 0 };
-        }
-        const realId = new mongoose.Types.ObjectId(
-          rightConversation.lastMessageSeen
-        );
-        // count the number of message after the last message seen
-        const unreadMessages = await mongoose.connection.db
-          .collection(`conversation_${rightConversation.conversationId}`)
-          .countDocuments({ _id: { $gt: realId } });
-        return { ...conv, unreadMessages };
-      }
+      const unreadMessages = messagesConversation.filter((message: any) => !message.viewedBy.includes(decoded.id)).length;
+      return { ...conv, unreadMessages };
     })
   )) as any;
 
