@@ -69,7 +69,14 @@ const Message = ({
           <FooterMessage message={message} handleAddReaction={handleAddReaction} userId={userId} />
         </div>
       :
-        <img src={imagePreview} alt="preview" className={styles.preview_image} />
+        <div className={styles.ChatsMessage_content} style={{
+          paddingTop: 0,
+          paddingRight: 0,
+          userSelect: "none",
+        }}>
+          <img src={imagePreview} alt="preview" className={styles.preview_image} />
+          <FooterMessage message={message} handleAddReaction={handleAddReaction} userId={userId} />
+        </div>
       }
     </>
   );
