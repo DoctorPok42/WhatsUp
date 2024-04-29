@@ -150,7 +150,7 @@ const sendMessage = async (
     decoded,
     author,
     message,
-    isLink,
+    isLink
   )) as any;
 
   // Insert the message in the conversation collection
