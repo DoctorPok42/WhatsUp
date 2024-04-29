@@ -10,9 +10,9 @@ import { socket } from '@/pages/_app';
 import ContextMenu from '../ContextMenu';
 import { useCopyToClipboard } from '@uidotdev/usehooks';
 import { cryptMessage } from '@/tools/cryptMessage';
+import downloadFile from '@/tools/downloadFile';
 
 import styles from './style.module.scss';
-import downloadFile from '@/tools/downloadFile';
 
 interface ChatsProps {
   token: string
@@ -261,7 +261,7 @@ const Chats = ({
 
   return (
     <div className={styles.Chats_container} style={{
-      width: (isInfoOpen && id) ? 'calc(100% - 29em)' : 'calc(100% - 6em)',
+      width: (isInfoOpen && id) ? 'calc(100% - 24em)' : 'calc(100% - 6em)',
       borderRadius: (isInfoOpen && id) ? '20px' : '20px 0 0 20px',
     }}>
       {contextMenu.isOpen &&
@@ -304,7 +304,7 @@ const Chats = ({
         <div
           className={styles.Chats_content}
           style={{
-            width: showContact ? 'calc(100% - 24em)' : 'calc(100% - 5.65em)',
+            width: showContact ? 'calc(100% - 25em)' : 'calc(100% - 5.65em)',
           }}
         >
           <HeaderChats
