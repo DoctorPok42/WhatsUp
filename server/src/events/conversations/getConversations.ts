@@ -68,10 +68,15 @@ const getConversations = async (
   // Get the unread messages
   conversationsWithNames = (await Promise.all(
     conversationsWithNames.map(async (conv: Conversations) => {
-      const messagesConversation = await mongoose.connection.db.collection(`conversation_${conv._id}`).find().toArray();
+      const messagesConversation = await mongoose.connection.db
+        .collection(`conversation_${conv._id}`)
+        .find()
+        .toArray();
       if (!messagesConversation) return conv;
 
-      const unreadMessages = messagesConversation.filter((message: any) => !message.viewedBy.includes(decoded.id)).length;
+      const unreadMessages = messagesConversation.filter(
+        (message: any) => !message.viewedBy?.includes(decoded.id)
+      ).length;
       return { ...conv, unreadMessages };
     })
   )) as any;
