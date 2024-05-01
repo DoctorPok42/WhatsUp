@@ -70,6 +70,7 @@ const Chats = ({
   const [copiedText, copyToClipboard] = useCopyToClipboard();
   const [inputBarMode, setInputBarMode] = useState<"chat" | "edit">("chat")
   const [inputBarValue, setInputBarValue] = useState<string>("")
+  const [canHaveNewMessages, setCanHaveNewMessages] = useState<boolean>(true)
 
   const getMessages = async (nbMessages?: boolean) => {
     if (!id) return
@@ -213,31 +214,23 @@ const Chats = ({
   const closeContextMenu = () => setContextMenu(initialContextMenu)
 
   const handleContextMenuAction = (action: string) => {
-    switch (action) {
-      case "copy":
-        copyToClipboard(allMessages.find(e => e._id === messageIdHoverContextMenu)?.content)
-        break;
-      case "clink":
-        copyToClipboard(window.location.href + `/${messageIdHoverContextMenu}`)
-        break;
-      case "edit":
-        setInputBarMode("edit")
-        setInputBarValue(allMessages.find(e => e._id === messageIdHoverContextMenu)?.content)
-        break;
-      case "pin":
-        emitEvent("pinMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
+    const actions = [
+      { name: "copy", action: copyToClipboard(allMessages.find(e => e._id === messageIdHoverContextMenu)?.content) },
+      { name: "clink", action: copyToClipboard(window.location.href + `/${messageIdHoverContextMenu}`) },
+      { name: "edit", action: setInputBarMode("edit") },
+      { name: "pin", action: emitEvent("pinMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
           const conversationIndex = conversations.findIndex(e => e._id === id)
           const newConversations = [...conversations]
           newConversations[conversationIndex].pinnedMessages = data.data
           setConversation(newConversations)
         })
-        break;
-      case "delete":
-        emitEvent("deleteMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
+      },
+      { name: "delete", action: emitEvent("deleteMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
           setAllMessages(allMessages.filter(e => e._id !== messageIdHoverContextMenu))
         })
-        break;
-    }
+      },
+    ]
+    actions.find(e => e.name === action)?.action
   }
 
   const handleAddReaction = (reaction: string) => {
@@ -255,6 +248,12 @@ const Chats = ({
 
   useEffect(() => {
     setAllMessages(messages)
+
+    setTimeout(() => {
+      emitEvent("viewMessage", { token, conversationId: id }, () => {
+        setCanHaveNewMessages(false)
+      })
+    }, 3000)
   }, [messages])
 
   if (isLoading) return <Loading />
@@ -340,6 +339,7 @@ const Chats = ({
                       setMessageIdHover={setMessageIdHover}
                       handleAddReaction={handleAddReaction}
                       downloadFile={handleDownloadFile}
+                      canHaveNewMessages={canHaveNewMessages}
                     />
                   </div>
                 )
@@ -355,6 +355,7 @@ const Chats = ({
                   setMessageIdHover={setMessageIdHover}
                   handleAddReaction={handleAddReaction}
                   downloadFile={handleDownloadFile}
+                  canHaveNewMessages={canHaveNewMessages}
                 />
               }
             })}
