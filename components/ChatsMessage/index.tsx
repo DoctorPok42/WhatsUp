@@ -18,6 +18,7 @@ interface ChatsMessageProps {
     }
     reactions?: { value: string, usersId: string[] }[]
     isTemp?: boolean
+    viewedBy: string[]
   }
   isGroup: boolean
   allMessages: any[]
@@ -27,6 +28,7 @@ interface ChatsMessageProps {
   setMessageIdHover: (e: string | null) => void
   handleAddReaction: (reaction: string) => void
   downloadFile: (content: string, name: string, type: string) => void
+  canHaveNewMessages: boolean
 }
 
 const ChatsMessage = ({
@@ -39,8 +41,10 @@ const ChatsMessage = ({
   setMessageIdHover,
   handleAddReaction,
   downloadFile,
+  canHaveNewMessages,
 }: ChatsMessageProps) => {
   const isOtherMessage = allMessages[index + 1] && allMessages[index + 1].authorId === message.authorId;
+  const isShowViewed = (!message.viewedBy?.includes(userId) && allMessages[index - 1]?.viewedBy?.includes(userId));
 
   const returnJustLink = (content: string): { link: string, text: string} => {
     const link = content.match(/(https?:\/\/[^\s]+)/g);
@@ -58,6 +62,12 @@ const ChatsMessage = ({
   }
 
   return (
+    <>
+    {(isShowViewed && canHaveNewMessages) && (
+      <div className={styles.ChatsMessage_viewed}>
+        <span>new</span>
+      </div>
+    )}
     <div
       className={styles.ChatsMessage_container}
       style={{
@@ -71,6 +81,7 @@ const ChatsMessage = ({
           handleAddReaction("2764-fe0f");
       }}
     >
+
       <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place="left" />
 
       <Message
@@ -87,6 +98,7 @@ const ChatsMessage = ({
 
       <AuthorMessage allMessages={allMessages} index={index} message={message} userId={userId} place="right" />
     </div>
+    </>
   );
 };
 
