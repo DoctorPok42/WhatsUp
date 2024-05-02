@@ -253,7 +253,7 @@ const Chats = ({
       emitEvent("viewMessage", { token, conversationId: id }, () => {
         setCanHaveNewMessages(false)
       })
-    }, 3000)
+    }, 5000)
   }, [messages])
 
   if (isLoading) return <Loading />

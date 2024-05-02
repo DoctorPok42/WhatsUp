@@ -74,13 +74,6 @@ const getMessages = async (
         arrayFilters: [{ "elem.conversationId": conversationId }],
       }
     );
-
-    await mongoose.connection.db
-      .collection(`conversation_${conversationId}`)
-      .updateMany(
-        { _id: { $in: messagesWithPhone.map((e) => e._id) } },
-        { $addToSet: { viewedBy: decoded.id } as any }
-      );
   }
 
   // Decrypt the messages

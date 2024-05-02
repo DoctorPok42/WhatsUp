@@ -63,7 +63,7 @@ const ChatsMessage = ({
 
   return (
     <>
-    {(isShowViewed && !canHaveNewMessages) && (
+    {(isShowViewed && canHaveNewMessages) && (
       <div className={styles.ChatsMessage_viewed}>
         <span>new</span>
       </div>
