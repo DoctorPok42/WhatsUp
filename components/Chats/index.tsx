@@ -69,7 +69,7 @@ const Chats = ({
   const [messageIdHoverContextMenu, setMessageIdHoverContextMenu] = useState<string | null>(null)
   const [copiedText, copyToClipboard] = useCopyToClipboard();
   const [inputBarMode, setInputBarMode] = useState<"chat" | "edit">("chat")
-  const [inputBarValue, setInputBarValue] = useState<string>("")
+  const [inputBarValue] = useState<string>("")
   const [canHaveNewMessages, setCanHaveNewMessages] = useState<boolean>(true)
 
   const getMessages = async (nbMessages?: boolean) => {

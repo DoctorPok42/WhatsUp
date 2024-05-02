@@ -1,6 +1,5 @@
 import UserModel from "../../schemas/users";
 import mongoose from "mongoose";
-import { DecodedToken } from "../../types";
 
 const viewMessage = async (
   {
@@ -14,7 +13,7 @@ const viewMessage = async (
   if (!author)
     return { status: "error", messages: "Author not found.", data: null };
 
-  const newMessage = await mongoose.connection.db
+  await mongoose.connection.db
     .collection(`conversation_${conversationId}`)
     .updateMany(
       { viewedBy: { $nin: [decoded.id] } },
