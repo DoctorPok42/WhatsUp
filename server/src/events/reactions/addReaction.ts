@@ -1,4 +1,4 @@
-import { DecodedToken, Message } from "../../types";
+import { DecodedToken } from "../../types";
 import mongoose from "mongoose";
 
 const addReaction = async (

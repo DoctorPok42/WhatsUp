@@ -11,6 +11,7 @@ import ContextMenu from '../ContextMenu';
 import { useCopyToClipboard } from '@uidotdev/usehooks';
 import { cryptMessage } from '@/tools/cryptMessage';
 import downloadFile from '@/tools/downloadFile';
+import ContextMenuFunctions from '../ContextMenu/functions';
 
 import styles from './style.module.scss';
 
@@ -69,8 +70,9 @@ const Chats = ({
   const [messageIdHoverContextMenu, setMessageIdHoverContextMenu] = useState<string | null>(null)
   const [copiedText, copyToClipboard] = useCopyToClipboard();
   const [inputBarMode, setInputBarMode] = useState<"chat" | "edit">("chat")
-  const [inputBarValue] = useState<string>("")
+  const [inputBarValue, setInputBarValue] = useState<string>("")
   const [canHaveNewMessages, setCanHaveNewMessages] = useState<boolean>(true)
+  const [isForceUnread, setIsForceUnread] = useState<boolean>(false)
 
   const getMessages = async (nbMessages?: boolean) => {
     if (!id) return
@@ -143,7 +145,7 @@ const Chats = ({
       })
     } else {
       const isLink = message.match(/(https?:\/\/[^\s]+)/g);
-      emitEvent("sendMessage", { token, conversationId: id, content: encryptedMessage, isLink }, (data: any) => {
+      emitEvent("sendMessage", { token, conversationId: id, content: encryptedMessage, files: null, isLink }, (data: any) => {
         setAllMessages([...allMessages, {
           ...data.data,
           content: message,
@@ -214,23 +216,7 @@ const Chats = ({
   const closeContextMenu = () => setContextMenu(initialContextMenu)
 
   const handleContextMenuAction = (action: string) => {
-    const actions = [
-      { name: "copy", action: copyToClipboard(allMessages.find(e => e._id === messageIdHoverContextMenu)?.content) },
-      { name: "clink", action: copyToClipboard(window.location.href + `/${messageIdHoverContextMenu}`) },
-      { name: "edit", action: setInputBarMode("edit") },
-      { name: "pin", action: emitEvent("pinMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
-          const conversationIndex = conversations.findIndex(e => e._id === id)
-          const newConversations = [...conversations]
-          newConversations[conversationIndex].pinnedMessages = data.data
-          setConversation(newConversations)
-        })
-      },
-      { name: "delete", action: emitEvent("deleteMessage", { token, conversationId: id, messageId: messageIdHoverContextMenu }, (data: any) => {
-          setAllMessages(allMessages.filter(e => e._id !== messageIdHoverContextMenu))
-        })
-      },
-    ]
-    actions.find(e => e.name === action)?.action
+    ContextMenuFunctions(action, token, id, allMessages, conversations, setConversation, setAllMessages, setInputBarMode, setInputBarValue, emitEvent, messageIdHoverContextMenu, copyToClipboard, setCanHaveNewMessages, userId, setIsForceUnread)
   }
 
   const handleAddReaction = (reaction: string) => {
@@ -248,6 +234,8 @@ const Chats = ({
 
   useEffect(() => {
     setAllMessages(messages)
+
+    if (isForceUnread) return
 
     setTimeout(() => {
       emitEvent("viewMessage", { token, conversationId: id }, () => {

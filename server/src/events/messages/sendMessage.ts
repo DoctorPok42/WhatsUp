@@ -26,13 +26,6 @@ const saveFile = async (fileId: string, fileData: FileData) => {
   }
 };
 
-const detectLink = (text: string) => {
-  const links = text.match(/(https?:\/\/[^\s]+)/g);
-  if (!links) return { isLink: false, link: null };
-
-  return { isLink: true, link: links };
-};
-
 const saveConversation = async (
   conversationId: string,
   content: string,
@@ -98,17 +91,16 @@ const sendMessage = async (
   let filesData = files ?? null;
 
   let fileId = "";
-  if (files) {
+  if (filesData) {
     fileId =
       Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15);
+    filesData.id = fileId;
   }
-
-  filesData.id = fileId;
 
   let messageContent;
 
-  if (files) {
+  if (filesData) {
     if (filesData.type.split("/")[0] === "image") {
       messageContent = filesData.buffer;
     } else {
@@ -138,10 +130,11 @@ const sendMessage = async (
     reactions: [],
   } as Message;
 
-  const fileSavedRequest = await Promise.resolve(saveFile(fileId, filesData));
-  if (!fileSavedRequest)
-    return { status: "error", message: "An error occurred.", data: null };
-
+  if (filesData) {
+    const fileSavedRequest = await Promise.resolve(saveFile(fileId, filesData));
+    if (!fileSavedRequest)
+      return { status: "error", message: "An error occurred.", data: null };
+  }
   // Put the message in the lastMessage field of the conversation
   const conversation = (await saveConversation(
     conversationId,
