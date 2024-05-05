@@ -131,7 +131,7 @@ const ChatsPage = ({ id } : { id: string }) => {
           isLoading={isLoading}
           phone={phone}
           messages={
-            id ? allMessages?.[id[0]] : []
+            allMessages?.[id[0]] ? allMessages[id[0]] : []
           }
           files={files}
           setFiles={setFiles}

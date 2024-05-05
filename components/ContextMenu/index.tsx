@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useClickAway } from "@uidotdev/usehooks";
-import { faArrowCircleLeft, faArrowCircleRight, faCopy, faDownload, faLink, faPen, faRotateLeft, faRotateRight, faThumbTack, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowCircleLeft,
+  faArrowCircleRight,
+  faCopy,
+  faDownload,
+  faLink,
+  faPen,
+  faRotateLeft,
+  faThumbTack,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Zoom } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
