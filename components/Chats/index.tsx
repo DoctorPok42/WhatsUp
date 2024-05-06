@@ -73,6 +73,7 @@ const Chats = ({
   const [inputBarValue, setInputBarValue] = useState<string>("")
   const [canHaveNewMessages, setCanHaveNewMessages] = useState<boolean>(true)
   const [isForceUnread, setIsForceUnread] = useState<boolean>(false)
+  const [lastReaction, setLastReaction] = useState<{ value: string, authorId: string[] }[] | null>(null)
 
   const getMessages = async (nbMessages?: boolean) => {
     if (!id) return
@@ -107,6 +108,21 @@ const Chats = ({
     }, 3000)
 
     setUserTyping(data)
+  })
+
+  socket.on("reaction", (data: any) => {
+    if (lastReaction && lastReaction == data.reaction) return
+    if (data.conversationId !== id) return
+    const messageIndex = allMessages.findIndex(e => e._id === data.messageId)
+
+    const newAllMessages = [...allMessages]
+    if (messageIndex === -1) return
+    if (!newAllMessages[messageIndex]?.reactions)
+      newAllMessages[messageIndex].reactions = []
+    newAllMessages[messageIndex].reactions = data.reaction
+
+    setLastReaction(data.reaction)
+    setAllMessages(newAllMessages)
   })
 
   const conversationName = conversations?.find(e => e._id === id)?.name

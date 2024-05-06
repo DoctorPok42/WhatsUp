@@ -162,6 +162,8 @@ const sendMessage = async (
     conversation.membersId.map(async (memberId: string) => {
       const user = (await UserModel.findOne({ _id: memberId })) as User;
       if (!user.options.online) return;
+      if (user._id === author._id) return;
+      if (user._id.toString() == decoded.id) return;
 
       io.to(user.socketId).emit("message", {
         status: "success",

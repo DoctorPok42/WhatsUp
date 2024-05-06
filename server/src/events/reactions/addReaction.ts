@@ -1,3 +1,6 @@
+import { Socket } from "socket.io";
+import ConversationsModel from "../../schemas/conversations";
+import UserModel from "../../schemas/users";
 import { DecodedToken } from "../../types";
 import mongoose from "mongoose";
 
@@ -46,6 +49,31 @@ const addReaction = async (
       { _id: realId },
       { $set: { reactions: messageToUpdate.reactions } }
     );
+
+  const conversation = await ConversationsModel.findOne({
+    _id: conversationId,
+  });
+  if (!conversation)
+    return { status: "error", message: "Conversation not found." };
+
+  const sendReactions = await Promise.resolve(
+    conversation.membersId.map(async (memberId) => {
+      const user = (await UserModel.findOne({ _id: memberId })) as any;
+      if (!user.options.online) return;
+      if (user._id.toString() == decoded.id) return;
+
+      const io = require("../../main").io as Socket;
+
+      io.to(user.socketId).emit("reaction", {
+        status: "success",
+        conversationId,
+        messageId,
+        reaction: messageToUpdate.reactions,
+      });
+    })
+  );
+
+  await Promise.all(sendReactions);
 
   return {
     status: "success",
