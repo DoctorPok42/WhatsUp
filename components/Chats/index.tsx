@@ -38,6 +38,7 @@ const initialContextMenu = {
   isOpen: false,
   x: 0,
   y: 0,
+  e: null,
 }
 
 const Chats = ({
@@ -210,7 +211,7 @@ const Chats = ({
 
   const conversationType = conversations?.find(e => e._id === id)?.conversationType === "group"
 
-  const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleContextMenu = (e: any) => {
     e.preventDefault()
 
     setMessageIdHoverContextMenu(messageIdHover)
@@ -226,6 +227,7 @@ const Chats = ({
       isOpen: true,
       x,
       y,
+      e,
     })
   }
 
