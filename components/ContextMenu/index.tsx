@@ -115,7 +115,7 @@ const ContextMenu = ({
   const handleGetEmojiPosition = () => {
     const { pageY } = e;
 
-    let y = pageY;
+    let y;
 
     if (window.innerHeight - pageY < 270) {
       y = pageY - 895
