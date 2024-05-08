@@ -30,6 +30,7 @@ const Picker = dynamic(
 interface ContextMenuProps {
   x: number
   y: number
+  e: any
   closeContextMenu: () => void
   handleContextMenuAction: (action: string) => void
   handleAddReaction: (reaction: string) => void
@@ -62,6 +63,7 @@ const NameTooltip = styled(({ className, ...props }: any) => (
 const ContextMenu = ({
   x,
   y,
+  e,
   closeContextMenu,
   handleContextMenuAction,
   handleAddReaction,
@@ -108,6 +110,20 @@ const ContextMenu = ({
   const handleAction = (action: string) => {
     handleContextMenuAction(action);
     closeContextMenu();
+  }
+
+  const handleGetEmojiPosition = () => {
+    const { pageY } = e;
+
+    let y = pageY;
+
+    if (window.innerHeight - pageY < 270) {
+      y = pageY - 895
+    } else {
+      y = pageY - 272
+    }
+
+    return y;
   }
 
   return (
@@ -192,7 +208,7 @@ const ContextMenu = ({
           backgroundColor: "var(--black)",
           position: "absolute",
           left: "13.5em",
-          top: "0em",
+          top: handleGetEmojiPosition(),
           transform: `translateX(${x > window.innerWidth - 600 ? "-163.5%" : ""})`
         }}
         searchPlaceHolder='Find the perfect emoji...'
