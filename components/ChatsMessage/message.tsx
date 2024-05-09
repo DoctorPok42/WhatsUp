@@ -11,7 +11,7 @@ interface MessageProps {
     content: string
     date: Date
     authorId: string
-    phone: string
+    img: string
     options?: {
       isLink: boolean
       isFile: boolean
@@ -56,7 +56,7 @@ const Message = ({
             <span>
               {
                 (allMessages[index - 1] && allMessages[index - 1].authorId === message.authorId) ? "" :
-                  message.phone
+                  message.img
               }
             </span>
           </div>
