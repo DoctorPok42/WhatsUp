@@ -114,6 +114,7 @@ const sendMessage = async (
     _id: new mongoose.Types.ObjectId(),
     content: messageContent,
     authorId: decoded.id,
+    img: author.phone,
     date: messageDate,
     options: {
       ...(isLink && { isLink: true }),

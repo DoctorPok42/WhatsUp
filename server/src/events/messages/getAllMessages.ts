@@ -16,8 +16,7 @@ const getAllMessages = async (
   const allConversation = {} as any;
 
   await Promise.all(
-    firstUserConversations.map(async (conversation: any, index: number) => {
-      let userList = [] as { authorId: string; phone: string }[];
+    firstUserConversations.map(async (conversation: any) => {
       let findConv = (await mongoose.connection.db
         .collection(`conversation_${conversation.conversationId}`)
         .find()
@@ -25,22 +24,6 @@ const getAllMessages = async (
         .sort({ date: -1 })
         .toArray()) as any;
       if (!findConv) return;
-
-      await findConv.forEach(async (message: any) => {
-        if (!userList.includes(message.authorId)) {
-          const user = await UserModel.findOne({ _id: message.authorId });
-          if (!user) return;
-
-          userList.push({ authorId: message.authorId, phone: "" });
-          message.phone = user.phone;
-        } else {
-          const user = userList.find(
-            (user) => user.authorId === message.authorId
-          );
-          if (!user) return;
-          message.phone = user.phone;
-        }
-      });
 
       const realPrivateKeysId = new mongoose.Types.ObjectId(
         conversation.conversationId

@@ -10,7 +10,7 @@ interface ChatsMessageProps {
     content: string
     date: Date
     authorId: string
-    phone: string
+    img: string
     options?: {
       isLink: boolean
       isFile: boolean

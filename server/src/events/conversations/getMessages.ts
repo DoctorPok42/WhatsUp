@@ -40,20 +40,6 @@ const getMessages = async (
       data: null,
     };
 
-  // Get the phone of the author of each message
-  const messagesWithPhone = await Promise.all(
-    messages.map(async (message: any) => {
-      const user = (await UserModel.findOne({ _id: message.authorId })) as User;
-      return { ...message, phone: user.phone };
-    })
-  );
-  if (!messagesWithPhone)
-    return {
-      status: "error",
-      message: "Messages not found.",
-      data: null,
-    };
-
   const user = (await UserModel.findOne({ _id: decoded.id })) as User;
 
   // update the last message seen for this conversation
@@ -67,7 +53,7 @@ const getMessages = async (
       { _id: decoded.id },
       {
         $set: {
-          "conversationsId.$[elem].lastMessageSeen": messagesWithPhone[0]._id,
+          "conversationsId.$[elem].lastMessageSeen": messages[0]._id,
         },
       },
       {
@@ -82,7 +68,7 @@ const getMessages = async (
     return { status: "error", message: "Private key not found.", data: null };
 
   const decryptedMessages = decryptMessages(
-    messagesWithPhone,
+    messages,
     privateKey
   ).reverse();
   if (!decryptedMessages)

@@ -68,6 +68,7 @@ export interface Message extends mongoose.Document {
   content: string;
   authorId: string;
   date: Date;
+  img: string;
   options: MessageOptions;
   reactions:
     | {
