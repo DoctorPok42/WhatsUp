@@ -87,12 +87,24 @@ const ContextMenu = ({
     )
   }
 
+  const handleGetEmojiPosition = () => {
+    const { pageX, pageY } = e;
+
+    let x = 0;
+    let y = 0;
+
+    if (pageX > window.innerWidth - 600) x = 1
+    if (pageY > window.innerHeight - 270) y = pageY - 882
+
+    return { x, y }
+  }
+
   const canEdit = message.authorId === userId && !message.options.isFile;
 
   const menuButtons = [
     ...canEdit ? [{ name: "Edit", value: "edit", icon: faPen }] : [],
     ...message.options.isFile ? [{ name: "Download", value: "download", icon: faDownload, action: () => handleDownloadFile(message) }] : [],
-    { name: "More reactions", icon: (x > window.innerWidth - 600) ? faArrowCircleLeft : faArrowCircleRight, action: () => setShowPicker(!showPicker)},
+    { name: "More reactions", icon: handleGetEmojiPosition().x ? faArrowCircleLeft : faArrowCircleRight, action: () => setShowPicker(!showPicker)},
     { name: isMessagePin ? "Unpin Message" : "Pin Message", value: "pin", icon: faThumbTack, angle: 45 },
     ...message.options.isFile ? [] : [{ name: "Copy Text", value: "copy", icon: faCopy }],
     { name: "Copy Message Link", value: "clink", icon: faLink },
@@ -112,20 +124,6 @@ const ContextMenu = ({
     closeContextMenu();
   }
 
-  const handleGetEmojiPosition = () => {
-    const { pageY } = e;
-
-    let y;
-
-    if (window.innerHeight - pageY < 270) {
-      y = pageY - 895
-    } else {
-      y = pageY - 272
-    }
-
-    return y;
-  }
-
   return (
     <div
       ref={ref}
@@ -137,83 +135,84 @@ const ContextMenu = ({
         left: `${x - 80}px`,
       }}
     >
-
-      <div className={styles.ContextMenu_reactions}>
-        {preSelectedReactions.map((reaction, index) => (
-          <NameTooltip
-            key={index}
-            title={reaction.name}
-            placement="top"
-            TransitionComponent={Zoom}
-            TransitionProps={{ timeout: 100 }}
-            arrow
-          >
-            <div
+      <div className={styles.ContextMenu_content}>
+        <div className={styles.ContextMenu_reactions}>
+          {preSelectedReactions.map((reaction, index) => (
+            <NameTooltip
               key={index}
-              className={styles.ContextMenu_button_reactions}
-              onClick={() => handleAddReaction(reaction.icon)}
+              title={reaction.name}
+              placement="top"
+              TransitionComponent={Zoom}
+              TransitionProps={{ timeout: 100 }}
+              arrow
             >
-                <p>
-                  <Emoji
-                    unified={reaction.icon}
-                    emojiStyle={emojiStyleChoose}
-                    size={25}
-                  />
-                </p>
-            </div>
-          </NameTooltip>
-        ))}
-      </div>
-
-      {menuButtons.map((button, index) => (
-        <div
-          key={index}
-          className={styles.ContextMenu_button}
-          id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
-          onClick={
-            button.action
-              ? button.action
-              : () => handleAction(button.value as string)
-          }
-          style={{
-            backgroundColor: showPicker && button.name === "More reactions" ? "var(--blue)" : "",
-            color: showPicker && button.name === "More reactions" ? "var(--white)" : "",
-          }}
-        >
-          <p
-            id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
-          >
-            {button.name}
-          </p>
-          <FontAwesomeIcon
-            icon={button.icon}
-            id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
-            width={16}
-            height={16}
-            style={
-              button.angle
-                ? { transform: `rotate(${button.angle}deg)` }
-                : {}
-            }
-          />
+              <div
+                key={index}
+                className={styles.ContextMenu_button_reactions}
+                onClick={() => handleAddReaction(reaction.icon)}
+              >
+                  <p>
+                    <Emoji
+                      unified={reaction.icon}
+                      emojiStyle={emojiStyleChoose}
+                      size={25}
+                    />
+                  </p>
+              </div>
+            </NameTooltip>
+          ))}
         </div>
-      ))}
 
-      <Picker
-        open={showPicker}
-        onEmojiClick={(emoji) => handleAddReaction(emoji.unified)}
-        theme={"dark" as any}
-        emojiStyle={emojiStyleChoose}
-        style={{
-          backgroundColor: "var(--black)",
-          position: "absolute",
-          left: "13.5em",
-          top: handleGetEmojiPosition(),
-          transform: `translateX(${x > window.innerWidth - 600 ? "-163.5%" : ""})`
-        }}
-        searchPlaceHolder='Find the perfect emoji...'
-        lazyLoadEmojis
-      />
+        {menuButtons.map((button, index) => (
+          <div
+            key={index}
+            className={styles.ContextMenu_button}
+            id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
+            onClick={
+              button.action
+                ? button.action
+                : () => handleAction(button.value as string)
+            }
+            style={{
+              backgroundColor: showPicker && button.name === "More reactions" ? "var(--blue)" : "",
+              color: showPicker && button.name === "More reactions" ? "var(--white)" : "",
+            }}
+          >
+            <p
+              id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
+            >
+              {button.name}
+            </p>
+            <FontAwesomeIcon
+              icon={button.icon}
+              id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
+              width={16}
+              height={16}
+              style={
+                button.angle
+                  ? { transform: `rotate(${button.angle}deg)` }
+                  : {}
+              }
+            />
+          </div>
+        ))}
+
+        <Picker
+          open={showPicker}
+          onEmojiClick={(emoji) => handleAddReaction(emoji.unified)}
+          theme={"dark" as any}
+          emojiStyle={emojiStyleChoose}
+          style={{
+            backgroundColor: "var(--black)",
+            position: "absolute",
+            ...(handleGetEmojiPosition().y !== 0 ? { bottom: "-.45em" } : { top: "-.45em" }),
+            ...(handleGetEmojiPosition().x ? { right: "-22.5em" } : { left: "13.5em" }),
+            transform: `translateX(${x > window.innerWidth - 600 ? "-163.5%" : ""})`
+          }}
+          searchPlaceHolder='Find the perfect emoji...'
+          lazyLoadEmojis
+        />
+      </div>
     </div>
   );
 };
