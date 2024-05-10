@@ -5,11 +5,9 @@ import { ConfirmPopup, SideBar } from "../../components";
 import router from "next/router";
 import DashBox from "../../components/DashBox";
 import emitEvent from "@/tools/webSocketHandler";
+import jwt from "jsonwebtoken";
 
-export default function Dashboard() {
-  const cookies = new Cookies();
-  const phone = cookies.get("phone");
-  const token = cookies.get("token");
+const Dashboard = ({ token, phone }: any) => {
   const [dashboard, setDashboard] = useState<any>();
   const [loading, setLoading] = useState<boolean>(true);
   const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
@@ -76,7 +74,7 @@ export default function Dashboard() {
               <h1>Dashboard</h1>
             </div>
 
-            {dashboard && !loading ?
+            {dashboard &&
               <div className="dashBoxs">
                 <div className="deleteDash" onClick={() => setConfirmPopup(true)} onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -103,6 +101,9 @@ export default function Dashboard() {
                 <DashBox
                   subtitle="Total contacts"
                   text={dashboard?.contactsNumber}
+                  subtitleStyle={{
+                    color: "#2e333d"
+                  }}
                   style={{
                     width: "15em",
                     background: "linear-gradient(90deg, #f1a15b 0%, #f18b34 100%)",
@@ -120,8 +121,8 @@ export default function Dashboard() {
                   }}
                 />
               </div>
-            :
-              <div className="noDash">
+              }
+              {(!loading && !dashboard) && <div className="noDash">
                 <DashBox
                   title="No dashboard found!"
                   titleEmoji="1f625"
@@ -141,11 +142,50 @@ export default function Dashboard() {
                     Create dashboard
                   </button>
                 </DashBox>
-              </div>
-            }
+              </div>}
           </div>
         </div>
       </main>
     </>
   );
+}
+
+export default Dashboard;
+
+export async function getServerSideProps(context: any) {
+  const { id } = context.query;
+
+  const cookies = new Cookies(context.req.headers.cookie);
+  const token = cookies.get("token");
+
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string, name: string };
+  } catch (error) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      id: id || "",
+      token: token,
+      phone: decodedToken.name,
+      userId: decodedToken.id,
+    }
+  };
 }
