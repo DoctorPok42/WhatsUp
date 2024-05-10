@@ -97,7 +97,14 @@ const getConversations = async (
           }
         })
       );
-      return { ...conv, links: links };
+
+      // get the conversation private key
+      const realPrivateKeysId = new mongoose.Types.ObjectId(conv._id);
+      const conversationKey = await mongoose.connection.db
+        .collection("privateKeys")
+        .findOne({ conversationId: realPrivateKeysId });
+      if (!conversationKey) return { ...conv, links: links };
+      return { ...conv, links: links, key: conversationKey.key };
     })
   );
 
