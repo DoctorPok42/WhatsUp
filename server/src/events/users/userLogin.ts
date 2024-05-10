@@ -45,14 +45,13 @@ const userLogin = async ({
     await user.save();
   }
 
-  const token = createAuthToken(user._id);
+  const token = await createAuthToken(user._id);
 
   if (token)
     return {
       status: "success",
       message: "User logged in.",
       token,
-      userId: user._id,
     };
   else return { status: "error", message: "An error occurred.", token: null };
 };

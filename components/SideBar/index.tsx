@@ -1,9 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import router from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartSimple, faComments, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faChartSimple, faComments } from '@fortawesome/free-solid-svg-icons';
 import { Zoom } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
@@ -71,12 +70,6 @@ const SideBar = ({
         <div className={styles.footer}>
           <div className={styles.profile} onClick={() => router.push('/me')}>
             <Image src={`https://api.dicebear.com/7.x/avataaars/png?seed=${phone}&radius=20&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="favicon" width={50} height={50} />
-          </div>
-
-          <div className={styles.params}>
-            <Link href="/settings" passHref>
-              <FontAwesomeIcon className={styles.icon} icon={faGear} width={20} height={20} color='#8393a3' />
-            </Link>
           </div>
         </div>
       </div>

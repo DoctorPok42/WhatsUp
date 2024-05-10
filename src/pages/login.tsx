@@ -13,6 +13,13 @@ export default function Login() {
   const [loginStep, setLoginStep] = useState<"phone" | "code">("phone");
   const [verifCode, setVerifCode] = useState<string>("");
 
+  const cookies = new Cookies();
+  const token = cookies.get("token");
+
+  useEffect(() => {
+    if (token) router.push("/chats");
+  }, [token]);
+
   useEffect(() => {
     if (loginStep === "code") return;
       const phoneRegex = new RegExp(/^(\d{2}\s){4}\d{2}$/);
@@ -50,10 +57,7 @@ export default function Login() {
   const handleSubmitCode = async () => {
     const userPhone = phone.replace(/\s/g, "");
     emitEvent("userLogin", { phone: userPhone, verifCode }, (data: any) => {
-      const cookies = new Cookies();
       cookies.set("token", data.token, { path: "/", maxAge: 60 * 60 * 24 });
-      cookies.set("phone", userPhone, { path: "/", maxAge: 60 * 60 * 24 });
-      cookies.set("userId", data.userId, { path: "/", maxAge: 60 * 60 * 24 });
       router.push("/chats");
     });
   }

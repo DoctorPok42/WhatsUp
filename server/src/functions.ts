@@ -20,10 +20,21 @@ export const color = (color: any, message: any) => {
   return chalk.hex(themeColors[color])(message);
 };
 
-export const createAuthToken = (id: string) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, {
-    expiresIn: process.env.TOKEN_EXPIRATION,
-  });
+export const createAuthToken = async (id: string) => {
+  const user = await UserModel.findOne({ _id: id });
+  if (!user) return null;
+
+  return jwt.sign(
+    {
+      id,
+      phone: user.phone,
+      name: user.username,
+    },
+    process.env.JWT_SECRET as string,
+    {
+      expiresIn: process.env.TOKEN_EXPIRATION,
+    }
+  );
 };
 
 export const verifyAuthToken = (token: string) => {
