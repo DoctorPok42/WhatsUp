@@ -6,8 +6,9 @@ import Cookies from "universal-cookie";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
 import downloadFile from "@/tools/downloadFile";
+import jwt from 'jsonwebtoken';
 
-const ChatsPage = ({ id } : { id: string }) => {
+const ChatsPage = ({ id, token, phone, userId } : any) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
   const [conversations, setConversations] = useState<any>(null)
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
@@ -16,17 +17,6 @@ const ChatsPage = ({ id } : { id: string }) => {
   const [isOnDrop, setIsOnDrop] = useState<boolean>(false)
   const [files, setFiles] = useState<File[]>([]);
   const [firstTime, setFirstTime] = useState<boolean>(true)
-
-  const cookies = new Cookies();
-  const token = cookies.get("token");
-  const phone = cookies.get("phone");
-  const userId = cookies.get("userId");
-
-  useEffect(() => {
-    if (!token || !phone || !userId) {
-      router.push("/login");
-    }
-  }, [token, phone, userId]);
 
   const getConversations = async () => {
     emitEvent("getConversations", { token }, (data: any) => {
@@ -155,5 +145,37 @@ export default ChatsPage;
 export async function getServerSideProps(context: any) {
   const { id } = context.query;
 
-  return { props: { id: id || "" } };
+  const cookies = new Cookies(context.req.headers.cookie);
+  const token = cookies.get("token");
+
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string, name: string };
+  } catch (error) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      id: id || "",
+      token: token,
+      phone: decodedToken.name,
+      userId: decodedToken.id,
+    }
+  };
 }

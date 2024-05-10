@@ -52,7 +52,6 @@ const userLogin = async ({
       status: "success",
       message: "User logged in.",
       token,
-      userId: user._id,
     };
   else return { status: "error", message: "An error occurred.", token: null };
 };
