@@ -3,9 +3,12 @@ import { Server } from "socket.io";
 import { readdirSync } from "fs";
 import { join } from "path";
 import { config } from "dotenv";
-import { Events } from "./types";
+import { Events, User } from "./types";
 import { checkCollections, color } from "./functions";
+import UserModel from "./schemas/users";
+import dashboardActions from "./userDashboard";
 import startComunication from "./socket";
+import cron from "node-cron";
 
 config();
 
@@ -50,5 +53,16 @@ const initServer = async () => {
 };
 
 initServer();
+
+cron.schedule("0 0 1 * *", () => {
+  UserModel.find({ "options.hasDashboard": true }, (err: any, res: any) => {
+    if (err) console.error(err);
+    if (res) {
+      res.forEach((user: User) => {
+        dashboardActions("resetMessages", user._id);
+      });
+    }
+  });
+});
 
 export { io };
