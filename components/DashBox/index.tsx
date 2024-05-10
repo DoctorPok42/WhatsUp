@@ -6,6 +6,7 @@ import styles from './style.module.scss';
 interface DashBoxProps {
   title?: string;
   titleEmoji?: string;
+  subtitleStyle?: React.CSSProperties;
   subtitle?: string;
   text?: string;
   children?: React.ReactNode;
@@ -15,6 +16,7 @@ interface DashBoxProps {
 const DashBox = ({
   title,
   titleEmoji,
+  subtitleStyle,
   subtitle,
   text,
   children,
@@ -34,7 +36,7 @@ const DashBox = ({
         {title && <h1 className={styles.title}>
           {title} {titleEmoji && <Emoji emojiStyle={"google" as EmojiStyle} unified={titleEmoji} size={30} />}
         </h1>}
-        {subtitle && <h2 className={styles.subtitle}>{subtitle}</h2>}
+        {subtitle && <h2 className={styles.subtitle} style={subtitleStyle}>{subtitle}</h2>}
         {text && <p className={styles.text}>{formatNumber(parseInt(text))}</p>}
       </div>
 
