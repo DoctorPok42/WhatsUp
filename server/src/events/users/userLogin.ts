@@ -45,7 +45,7 @@ const userLogin = async ({
     await user.save();
   }
 
-  const token = createAuthToken(user._id);
+  const token = await createAuthToken(user._id);
 
   if (token)
     return {

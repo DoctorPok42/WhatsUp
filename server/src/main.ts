@@ -4,7 +4,7 @@ import { readdirSync } from "fs";
 import { join } from "path";
 import { config } from "dotenv";
 import { Events, User } from "./types";
-import { checkCollections, color, createAuthToken } from "./functions";
+import { checkCollections, color } from "./functions";
 import UserModel from "./schemas/users";
 import dashboardActions from "./userDashboard";
 import startComunication from "./socket";

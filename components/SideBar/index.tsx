@@ -1,9 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import router from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartSimple, faComments, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faChartSimple, faComments } from '@fortawesome/free-solid-svg-icons';
 import { Zoom } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';

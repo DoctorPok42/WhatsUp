@@ -24,7 +24,7 @@ const userCreate = async (
 
     console.log(`👤 User ${response.phone} has been registered.`);
 
-    const token = createAuthToken(response._id);
+    const token = await createAuthToken(response._id);
 
     if (token)
       return { status: "success", message: "User has been registered.", token };

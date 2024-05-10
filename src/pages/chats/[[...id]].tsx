@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import router from "next/router";
 import { Chats, UploadPopup, SideBar, InfoChats } from "../../../components";
 import Cookies from "universal-cookie";
 import emitEvent from "@/tools/webSocketHandler";
