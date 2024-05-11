@@ -62,15 +62,15 @@ const UploadPopup = ({
         }}>
           <div className={styles.files}>
             <div className={styles.icons}>
-              <FontAwesomeIcon icon={faFileText} size='7x' color={
+              <FontAwesomeIcon icon={faFileText} width={110} height={110} size='7x' color={
                 fileToLarge ? '#f8abab' : '#abbcf8'
               }  />
             </div>
             <div className={styles.icons}>
-              <FontAwesomeIcon icon={faFileImage} size='7x' />
+              <FontAwesomeIcon icon={faFileImage} width={110} height={110} size='7x' />
             </div>
             <div className={styles.icons}>
-              <FontAwesomeIcon icon={faFileCode} size='7x' color={
+              <FontAwesomeIcon icon={faFileCode} width={110} height={110} size='7x' color={
                 fileToLarge ? '#f8abab' : '#abbcf8'
               }  />
             </div>
