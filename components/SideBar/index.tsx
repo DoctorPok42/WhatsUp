@@ -68,8 +68,10 @@ const SideBar = ({
         </div>
 
         <div className={styles.footer}>
-          <div className={styles.profile} onClick={() => router.push('/me')}>
-            <Image src={`https://api.dicebear.com/7.x/avataaars/png?seed=${phone}&radius=20&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="favicon" width={50} height={50} />
+          <div className={styles.profile} onClick={() => router.push('/me')} style={{
+            transform: path === '/me' ? 'scale(1.1)' : 'scale(1)',
+          }}>
+            <Image src={`https://api.dicebear.com/8.x/avataaars/svg?seed=${phone}&radius=20&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="favicon" width={50} height={50} />
           </div>
         </div>
       </div>

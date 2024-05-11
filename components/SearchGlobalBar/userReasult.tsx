@@ -26,7 +26,7 @@ const UserResult = ({
     }}>
       {userSearchedAdd.map((user, index) => (
         <div key={index} className={styles.userCard} onClick={() => handleAddUser(user.id)}>
-          <Image src={`https://api.dicebear.com/7.x/avataaars/png?seed=${user.phone}&radius=22&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="userCardIcon" width={50} height={50} />
+          <Image src={`https://api.dicebear.com/8.x/avataaars/svg?seed=${user.phone}&radius=22&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="userCardIcon" width={50} height={50} />
           <div className={styles.userInfo}>
             <h3>{user.username}</h3>
             <p>{user.phone.replace(/(\d{2})(?=\d)/g, "$1 ")}</p>

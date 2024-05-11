@@ -1,23 +1,33 @@
 import UserModel from "../../schemas/users";
-import { User } from "../../types";
+import { DecodedToken } from "../../types";
 
 const usersGet = async (
-  phone: User["phone"][]
-): Promise<{ status: string; message: string; data: User[] | null }> => {
+  {},
+  decoded: DecodedToken
+): Promise<{ status: string; message: string; data: any }> => {
   try {
-    const usersInfos = await UserModel.find({ phone: { $in: phone } });
-
-    if (!usersInfos)
-      return { status: "error", message: "Users not found.", data: null };
+    const user = await UserModel.findOne({ _id: decoded.id });
+    if (!user)
+      return { status: "error", message: "Author not found.", data: null };
 
     return {
       status: "success",
       message: "Users have been found.",
-      data: usersInfos,
+      data: {
+        _id: user._id,
+        phone: user.phone,
+        username: user.username,
+        options: user.options,
+        joinedAt: user.joinedAt,
+      },
     };
   } catch (error) {
     return { status: "error", message: "An error occurred.", data: null };
   }
+};
+
+module.exports.params = {
+  authRequired: true,
 };
 
 export default usersGet;

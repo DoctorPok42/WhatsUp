@@ -15,7 +15,6 @@ const userLogin = async ({
     return { status: "error", message: "Data not found.", token: null };
 
   const user = await UserModel.findOne({ phone });
-
   if (!user)
     return { status: "error", message: "User not found.", token: null };
 
