@@ -84,6 +84,13 @@ const ChatsPage = ({ id, token, phone, userId } : any) => {
     return downloadFile(token, fileId, name, type, content)
   }
 
+  const handleUpdateMessage = (convId: string, messages: any) => {
+    setAllMessages({
+      ...allMessages,
+      [convId]: messages
+    })
+  }
+
   return (
     <>
       <Head>
@@ -122,6 +129,7 @@ const ChatsPage = ({ id, token, phone, userId } : any) => {
           messages={
             allMessages?.[id[0]] ? allMessages[id[0]] : []
           }
+          setMessages={handleUpdateMessage}
           files={files}
           setFiles={setFiles}
         />
