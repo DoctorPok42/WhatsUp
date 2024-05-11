@@ -61,14 +61,14 @@ const Me = ({ token, phone, userId }: any) => {
               {user?._id && <><div className="inputContent">
                 <div className="inputBox">
                   <label>
-                    Phone number
+                    Phone number{' '}
                     <input type="text" name="phone" required value={user?.phone} disabled />
                   </label>
                 </div>
 
                 <div className="inputBox">
                   <label>
-                    Member since
+                    Member since{' '}
                     <input type="text" name="joinedAt" required value={
                       formatDate(new Date(user?.joinedAt as Date))
                     } disabled />
@@ -77,7 +77,7 @@ const Me = ({ token, phone, userId }: any) => {
 
                 <div className="inputBox">
                   <label>
-                    Username
+                    Username{' '}
                     <input type="text" name="username" required placeholder={user?.username} onChange={(e) => setUsername(e.target.value)} />
                   </label>
                 </div>
