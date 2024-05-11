@@ -155,6 +155,15 @@ export async function getServerSideProps(context: any) {
   const cookies = new Cookies(context.req.headers.cookie);
   const { token, phone, userId } = getToken(cookies)
 
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       id: id || "",

@@ -2,7 +2,7 @@ import UserModel from "../../schemas/users";
 import { DecodedToken } from "../../types";
 
 const usersGet = async (
-  {},
+  {}: any,
   decoded: DecodedToken
 ): Promise<{ status: string; message: string; data: any }> => {
   try {

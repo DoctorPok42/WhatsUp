@@ -60,20 +60,26 @@ const Me = ({ token, phone, userId }: any) => {
             <div className="content">
               {user?._id && <><div className="inputContent">
                 <div className="inputBox">
-                  <label>Phone number</label>
-                  <input type="text" name="phone" required value={user?.phone} disabled />
+                  <label>
+                    Phone number
+                    <input type="text" name="phone" required value={user?.phone} disabled />
+                  </label>
                 </div>
 
                 <div className="inputBox">
-                  <label>Member since</label>
-                  <input type="text" name="joinedAt" required value={
-                    formatDate(new Date(user?.joinedAt as Date))
-                  } disabled />
+                  <label>
+                    Member since
+                    <input type="text" name="joinedAt" required value={
+                      formatDate(new Date(user?.joinedAt as Date))
+                    } disabled />
+                  </label>
                 </div>
 
                 <div className="inputBox">
-                  <label>Username</label>
-                  <input type="text" name="username" required placeholder={user?.username} onChange={(e) => setUsername(e.target.value)} />
+                  <label>
+                    Username
+                    <input type="text" name="username" required placeholder={user?.username} onChange={(e) => setUsername(e.target.value)} />
+                  </label>
                 </div>
 
                 <div className="inputBox">
@@ -101,6 +107,15 @@ export default Me;
 export async function getServerSideProps(context: any) {
   const cookies = new Cookies(context.req.headers.cookie);
   const { token, phone, userId } = getToken(cookies)
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {
