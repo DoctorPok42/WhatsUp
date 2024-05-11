@@ -1,22 +1,29 @@
+import { createAuthToken } from "../../functions";
 import UserModel from "../../schemas/users";
-import { User } from "../../types";
+import { DecodedToken } from "../../types";
 
 const userUpdate = async (
-  phone: User["phone"],
-  user: User
-): Promise<{ status: string; message: string }> => {
+  { username }: { username: string },
+  decoded: DecodedToken
+): Promise<{ status: string; message: string; token: string | null }> => {
   try {
-    const userToUpdate = await UserModel.findOneAndUpdate(
-      { phone: phone },
-      user
-    );
+    const user = await UserModel.findOne({ _id: decoded.id });
+    if (!user)
+      return { status: "error", message: "Author not found.", token: null };
 
-    if (!userToUpdate) return { status: "error", message: "User not found." };
+    user.username = username;
+    await user.save();
 
-    return { status: "success", message: "User has been updated." };
+    const token = await createAuthToken(user._id);
+
+    return { status: "success", message: "User has been updated.", token };
   } catch (error) {
-    return { status: "error", message: "An error occurred." };
+    return { status: "error", message: "An error occurred.", token: null };
   }
+};
+
+module.exports.params = {
+  authRequired: true,
 };
 
 export default userUpdate;
