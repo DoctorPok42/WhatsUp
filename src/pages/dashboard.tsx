@@ -5,7 +5,7 @@ import { ConfirmPopup, SideBar } from "../../components";
 import router from "next/router";
 import DashBox from "../../components/DashBox";
 import emitEvent from "@/tools/webSocketHandler";
-import jwt from "jsonwebtoken";
+import getToken from "@/tools/getToken";
 
 const Dashboard = ({ token, phone }: any) => {
   const [dashboard, setDashboard] = useState<any>();
@@ -122,27 +122,30 @@ const Dashboard = ({ token, phone }: any) => {
                 />
               </div>
               }
-              {(!loading && !dashboard) && <div className="noDash">
-                <DashBox
-                  title="No dashboard found!"
-                  titleEmoji="1f625"
-                  style={{
-                    width: "100%",
-                    backgroundColor: "#2e333d",
-                    border: "none"
-                  }}
-                >
-                  <span>It seems that you don&#39;t have any dashboard yet.</span>
-                  <p>Warning: When you create a dashboard, more data about you will be stored, you can delete it at any time.</p>
 
-                  <button
-                    className="button"
-                    onClick={createDashboard}
+              {(!loading && !dashboard) &&
+                <div className="noDash">
+                  <DashBox
+                    title="No dashboard found!"
+                    titleEmoji="1f625"
+                    style={{
+                      width: "100%",
+                      backgroundColor: "#2e333d",
+                      border: "none"
+                    }}
                   >
-                    Create dashboard
-                  </button>
-                </DashBox>
-              </div>}
+                    <span>It seems that you don&#39;t have any dashboard yet.</span>
+                    <p>Warning: When you create a dashboard, more data about you will be stored, you can delete it at any time.</p>
+
+                    <button
+                      className="button"
+                      onClick={createDashboard}
+                    >
+                      Create dashboard
+                    </button>
+                  </DashBox>
+                </div>
+              }
           </div>
         </div>
       </main>
@@ -156,36 +159,14 @@ export async function getServerSideProps(context: any) {
   const { id } = context.query;
 
   const cookies = new Cookies(context.req.headers.cookie);
-  const token = cookies.get("token");
-
-  let decodedToken;
-
-  try {
-    decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string, name: string };
-  } catch (error) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  if (!token) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
+  const { token, phone, userId } = getToken(cookies)
 
   return {
     props: {
       id: id || "",
-      token: token,
-      phone: decodedToken.name,
-      userId: decodedToken.id,
+      token,
+      phone,
+      userId,
     }
   };
 }

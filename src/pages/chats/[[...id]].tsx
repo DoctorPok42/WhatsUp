@@ -5,7 +5,7 @@ import Cookies from "universal-cookie";
 import emitEvent from "@/tools/webSocketHandler";
 import { decryptMessage } from "@/tools/cryptMessage";
 import downloadFile from "@/tools/downloadFile";
-import jwt from 'jsonwebtoken';
+import getToken from "@/tools/getToken";
 
 const ChatsPage = ({ id, token, phone, userId } : any) => {
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false)
@@ -153,36 +153,14 @@ export async function getServerSideProps(context: any) {
   const { id } = context.query;
 
   const cookies = new Cookies(context.req.headers.cookie);
-  const token = cookies.get("token");
-
-  let decodedToken;
-
-  try {
-    decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string, name: string };
-  } catch (error) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  if (!token) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
+  const { token, phone, userId } = getToken(cookies)
 
   return {
     props: {
       id: id || "",
-      token: token,
-      phone: decodedToken.name,
-      userId: decodedToken.id,
+      token,
+      phone,
+      userId,
     }
   };
 }

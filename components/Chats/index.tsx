@@ -78,10 +78,13 @@ const Chats = ({
   const [isForceUnread, setIsForceUnread] = useState<boolean>(false)
   const [lastReaction, setLastReaction] = useState<{ value: string, authorId: string[] }[] | null>(null)
 
+  const updateMessage = () => setMessages(id, allMessages);
+
   const getMessages = async (nbMessages?: boolean) => {
     if (!id) return
     emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
       setAllMessages(data.data)
+      updateMessage()
       setMessageLoaded(
         nbMessages ? 10 : messageLoaded + 10
       )
@@ -103,6 +106,8 @@ const Chats = ({
       newConversations[conversationIndex].unreadMessages++
       setConversation(newConversations)
     }
+
+    updateMessage()
   })
 
   socket.on("isTypingUser", (data: any) => {
@@ -126,6 +131,7 @@ const Chats = ({
 
     setLastReaction(data.reaction)
     setAllMessages(newAllMessages)
+    updateMessage()
   })
 
   const conversationName = conversations?.find(e => e._id === id)?.name
@@ -141,6 +147,7 @@ const Chats = ({
 
       emitEvent("sendMessage", { token, conversationId: id, content: "", files: fileToSend }, (data: any) => {
         setAllMessages([...allMessages, data.data])
+        updateMessage()
       })
     }
   }
@@ -169,6 +176,7 @@ const Chats = ({
           ...data.data,
           content: message,
         }])
+        updateMessage()
       })
     }
   }
@@ -236,7 +244,7 @@ const Chats = ({
   const closeContextMenu = () => setContextMenu(initialContextMenu)
 
   const handleContextMenuAction = (action: string) => {
-    ContextMenuFunctions(action, token, id, allMessages, conversations, setConversation, setAllMessages, setInputBarMode, setInputBarValue, emitEvent, messageIdHoverContextMenu, copyToClipboard, setCanHaveNewMessages, userId, setIsForceUnread)
+    ContextMenuFunctions(action, token, id, allMessages, conversations, setConversation, setAllMessages, updateMessage, setInputBarMode, setInputBarValue, emitEvent, messageIdHoverContextMenu, copyToClipboard, setCanHaveNewMessages, userId, setIsForceUnread)
   }
 
   const handleAddReaction = (reaction: string) => {
@@ -249,6 +257,7 @@ const Chats = ({
       newAllMessages[messageIndex].reactions = data.data.messageToUpdate.reactions
 
       setAllMessages(newAllMessages)
+      updateMessage()
     })
   }
 
@@ -263,10 +272,6 @@ const Chats = ({
       })
     }, 5000)
   }, [messages])
-
-  useEffect(() => {
-    setMessages(id, allMessages)
-  }, [allMessages])
 
   if (isLoading) return <Loading />
 
