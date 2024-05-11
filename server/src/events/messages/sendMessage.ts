@@ -129,6 +129,7 @@ const sendMessage = async (
       }),
     },
     reactions: [],
+    viewedBy: [decoded.id],
   } as Message;
 
   if (filesData) {
@@ -174,6 +175,7 @@ const sendMessage = async (
         date: message.date,
         authorId: message.authorId,
         phone: author.phone,
+        img: author.username,
         options: message.options,
         type: files ? "file" : "text",
       } as Message & User & { status: string; type: string });
@@ -192,6 +194,7 @@ const sendMessage = async (
       date: message.date,
       authorId: message.authorId,
       phone: author.phone,
+      img: author.username,
       options: message.options,
     } as Message & User,
   };

@@ -147,7 +147,7 @@ const Chats = ({
     message = message.trim()
     if (!message && !files.length) return
     const tempId = Math.random().toString(36).substring(7)
-    setAllMessages([...allMessages, { content: message, authorId: userId, phone, date: new Date().toISOString(), _id: `temp-${tempId}`, files, isTemp: true }])
+    setAllMessages([...allMessages, { content: message, authorId: userId, img: phone, date: new Date().toISOString(), _id: `temp-${tempId}`, files, isTemp: true }])
     // Crypt message
     const encryptedMessage = cryptMessage(message, conversations.find(e => e._id === id)?.publicKey)
     if (!encryptedMessage) {
