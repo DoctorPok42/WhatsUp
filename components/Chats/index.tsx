@@ -30,6 +30,7 @@ interface ChatsProps {
   isLoading: boolean
   phone: string
   messages: any[]
+  setMessages: (convId: string, messages: any[]) => void
   files: File[]
   setFiles: (e: File[]) => void
 }
@@ -56,6 +57,7 @@ const Chats = ({
   isLoading,
   phone,
   messages,
+  setMessages,
   files,
   setFiles,
 }: ChatsProps) => {
@@ -261,6 +263,10 @@ const Chats = ({
       })
     }, 5000)
   }, [messages])
+
+  useEffect(() => {
+    setMessages(id, allMessages)
+  }, [allMessages])
 
   if (isLoading) return <Loading />
 

@@ -60,7 +60,6 @@ const addReaction = async (
     conversation.membersId.map(async (memberId) => {
       const user = (await UserModel.findOne({ _id: memberId })) as any;
       if (!user.options.online) return;
-      if (user._id.toString() == decoded.id) return;
 
       const io = require("../../main").io as Socket;
 
