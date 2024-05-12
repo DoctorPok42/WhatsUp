@@ -37,6 +37,15 @@ export const createAuthToken = async (id: string) => {
   );
 };
 
+export const isUserInConversation = (userId: string, convId: string) => {
+  const isConvHaveUser = ConversationsModel.findOne({
+    _id: convId,
+    membersId: userId,
+  });
+
+  return isConvHaveUser;
+};
+
 export const verifyAuthToken = (token: string) => {
   return jwt.verify(token, process.env.JWT_SECRET as string);
 };

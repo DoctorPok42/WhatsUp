@@ -33,6 +33,7 @@ interface ChatsProps {
   setMessages: (convId: string, messages: any[]) => void
   files: File[]
   setFiles: (e: File[]) => void
+  setReloadConversations: (e: boolean) => void;
 }
 
 const initialContextMenu = {
@@ -60,6 +61,7 @@ const Chats = ({
   setMessages,
   files,
   setFiles,
+  setReloadConversations,
 }: ChatsProps) => {
   const [allMessages, setAllMessages] = useState<any[]>(messages)
 
@@ -314,6 +316,7 @@ const Chats = ({
         isLoading={isLoading}
         showContact={showContact}
         setShowContact={setShowContact}
+        setReloadConversations={setReloadConversations}
       />
 
       {(isConversation && isInfoOpen !== undefined && setIsInfoOpen !== undefined) &&

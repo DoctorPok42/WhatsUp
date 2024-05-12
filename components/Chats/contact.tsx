@@ -11,13 +11,14 @@ import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import styles from './style.module.scss';
 
 interface ContactProps {
-  token: string
-  id?: string
-  conversations?: any[]
-  userId: string
-  isLoading: boolean
-  showContact: boolean
-  setShowContact: (show: boolean) => void
+  token: string;
+  id?: string;
+  conversations?: any[];
+  userId: string;
+  isLoading: boolean;
+  showContact: boolean;
+  setShowContact: (show: boolean) => void;
+  setReloadConversations: (reload: boolean) => void;
 }
 
 const Contact = ({
@@ -28,6 +29,7 @@ const Contact = ({
   isLoading,
   showContact,
   setShowContact,
+  setReloadConversations,
 }: ContactProps) => {
   const [userSearched, setUserSearched] = useState<{
     id: string
@@ -69,14 +71,11 @@ const Contact = ({
 
   const onChooseUser = (user: any) => {
     emitEvent("conversationsChoose", { token, userId: user.id }, (data: any) => {
-      if (data.status === "success") {
-        setUserSearched([])
-        setIsPopupOpen(false)
-        setSearch('')
-        router.push(`/chats/${data.data._id}`)
-      } else {
-        alert(data.message)
-      }
+      setUserSearched([])
+      setIsPopupOpen(false)
+      setSearch('')
+      setReloadConversations(true)
+      router.push(`/chats/${data.data._id}`)
     })
   }
 
@@ -97,7 +96,7 @@ const Contact = ({
         />
       </div>
 
-      <SearchBar onSearch={onSearch} showContact={showContact} setShowContact={setShowContact} />
+      <SearchBar onSearch={onSearch} showContact={showContact} setShowContact={setShowContact} clearSearch={search === ''} />
 
       <div className={styles.userSearched} style={{
         padding: isPopupOpen ? '0.6em 0.5em' : '0 0.5em',

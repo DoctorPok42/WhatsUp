@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
@@ -6,14 +6,16 @@ import styles from './style.module.scss';
 
 interface SearchBarProps {
   onSearch: (value: string) => void;
-  showContact: boolean
-  setShowContact: (show: boolean) => void
+  showContact: boolean;
+  setShowContact: (show: boolean) => void;
+  clearSearch: boolean;
 }
 
 const SearchBar = ({
   onSearch,
   showContact,
   setShowContact,
+  clearSearch,
 }: SearchBarProps) => {
   const ref = useRef<HTMLInputElement>(null);
 
@@ -24,6 +26,13 @@ const SearchBar = ({
       ref.current.focus()
     }
   }
+
+  useEffect(() => {
+    if (showContact && ref.current && clearSearch) {
+      ref.current.value = ''
+    }
+  }, [clearSearch])
+
 
   return (
     <div className={styles.SearchBar_container} onKeyUp={(e) => {
