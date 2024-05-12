@@ -1,4 +1,8 @@
+<img src="./public/favicon.ico" width="100" height="100" align="right" />
+
 # What's Up
+
+[![CI/CD Pipeline](https://github.com/DoctorPok42/WhatsUp/actions/workflows/cicd.yml/badge.svg)](https://github.com/DoctorPok42/WhatsUp/actions/workflows/cicd.yml)
 
 This is a WhatsApp clone built using Next.js, MongoDB, and Socket.io. It is a simple chat application that allows users to send and receive encrypted messages in real-time.
 
@@ -9,6 +13,8 @@ This is a WhatsApp clone built using Next.js, MongoDB, and Socket.io. It is a si
 - User authentication
 - Message history
 - User dashboard
+- File sharing
+- User profile
 
 ## Technologies
 
@@ -17,6 +23,7 @@ This is a WhatsApp clone built using Next.js, MongoDB, and Socket.io. It is a si
 - Node.js
 - MongoDB
 - Socket.io
+- Twilio
 - JWT
 
 ## Installation
@@ -32,7 +39,7 @@ npm install
 cd server && npm install
 ```
 
-3. Rename `.env.example` to `.env` and fill in the required environment variables (for both the client and server)
+3. Rename `.env.example` to `.env` and fill in the required environment variables (for both client and server)
 
 4. Start the server
 
