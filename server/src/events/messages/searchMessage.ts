@@ -1,5 +1,4 @@
 import { decryptMessages } from "../../functions";
-import UserModel from "../../schemas/users";
 import mongoose from "mongoose";
 import { Message } from "../../types";
 

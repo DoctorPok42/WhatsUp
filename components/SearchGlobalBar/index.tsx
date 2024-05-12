@@ -54,7 +54,7 @@ const SearchGlobalBar = ({
     setLoading(true)
     setIsSearching(true)
 
-    state === 'user' ? await onUserSearch(search) : await onMessageSearch(search)
+    state === 'user' ? onUserSearch(search) : onMessageSearch(search)
 
     setTimeout(() => {
       setLoading(false)

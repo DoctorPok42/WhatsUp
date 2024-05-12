@@ -1,6 +1,5 @@
 import { decryptMessages } from "../../functions";
-import UserModel from "../../schemas/users";
-import { Message, User } from "../../types";
+import { Message } from "../../types";
 import mongoose from "mongoose";
 
 const getMessage = async ({
