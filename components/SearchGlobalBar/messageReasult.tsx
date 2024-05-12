@@ -19,7 +19,7 @@ const MessageResult = ({
     }}>
       {messageSearched.map((e, index) => (
         <div key={index} className={styles.message} onClick={() => handleGoToMessage(e._id)}>
-          <Image src={`https://api.dicebear.com/8.x/avataaars/svg?seed=${e.username}&radius=22&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="userCardIcon" width={50} height={50} />
+          <Image src={`https://api.dicebear.com/8.x/avataaars/svg?seed=${e.img}&radius=22&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="userCardIcon" width={50} height={50} />
           <p>{e.content}</p>
           <span>{formatDate(new Date(e.date))}</span>
         </div>

@@ -1,5 +1,6 @@
-import UserModel from "../../schemas/users";
+import { decryptMessages } from "../../functions";
 import mongoose from "mongoose";
+import { Message } from "../../types";
 
 const searchMessage = async ({
   conversationId,
@@ -8,20 +9,45 @@ const searchMessage = async ({
   conversationId: string;
   message: string;
 }) => {
-  const messages = await mongoose.connection.db
-    .collection(`conversation_${conversationId}`)
-    .find({ content: new RegExp(message, "i") })
-    .limit(5)
-    .toArray();
+  let selectedMessages = [] as Message[];
+  let decryptedMessages = [] as any[];
+  let conversationKey = null;
 
-  // add username to messages
-  for (let i = 0; i < messages.length; i++) {
-    const user = await UserModel.findById(messages[i].authorId);
-    if (!user) return { status: "error", message: "User not found." };
-    messages[i].username = user.username;
+  while (selectedMessages.length < 5) {
+    let messages = (await mongoose.connection.db
+      .collection(`conversation_${conversationId}`)
+      .find()
+      .limit(5)
+      .skip(selectedMessages.length)
+      .toArray()) as any;
+    if (!messages) break;
+
+    // Decrypt messages
+    if (!conversationKey) {
+      const realPrivateKeysId = new mongoose.Types.ObjectId(conversationId);
+      conversationKey = await mongoose.connection.db
+        .collection("privateKeys")
+        .findOne({ conversationId: realPrivateKeysId });
+      if (!conversationKey) break;
+    }
+
+    decryptedMessages = decryptMessages(messages, conversationKey.key);
+
+    decryptedMessages.forEach((m: Message) => {
+      const regex = new RegExp(message, "i");
+      if (regex.test(m.content)) {
+        selectedMessages.push(m);
+      }
+    });
+
+    if (selectedMessages.length) break;
   }
 
-  return { status: "success", message: "Messages found.", data: messages };
+  return {
+    status: "success",
+    message: "Messages found.",
+    data: selectedMessages,
+  };
 };
 
 module.exports.params = {

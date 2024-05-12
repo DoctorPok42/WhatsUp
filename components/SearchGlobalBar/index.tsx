@@ -43,8 +43,8 @@ const SearchGlobalBar = ({
 
   if (!isOpen) return null
 
-  const onSearch = (search: string) => {
-    if (search.trim().length < 1) {
+  const onSearch = async (search: string) => {
+    if (search.trim().length < 2) {
       setUserSearchedAdd([])
       setMessageSearched([])
       setIsSearching(false)
@@ -55,6 +55,10 @@ const SearchGlobalBar = ({
     setIsSearching(true)
 
     state === 'user' ? onUserSearch(search) : onMessageSearch(search)
+
+    setTimeout(() => {
+      setLoading(false)
+    }, 1000)
   }
 
   const handleClose = () => {
@@ -78,7 +82,6 @@ const SearchGlobalBar = ({
         const usersNotInConversation = newUsers.filter((e: any) => !usersConversation.find((el: string) => el === e.id))
         newUsers = [...usersNotInConversation, ...usersInConversation]
         setUserSearchedAdd(newUsers)
-        setLoading(false)
       }
     })
   }
@@ -98,21 +101,18 @@ const SearchGlobalBar = ({
   const onMessageSearch = (message: string) => {
     if (message.length < 2) return
     emitEvent('searchMessage', { token, conversationId: conversationId, message: message }, (response) => {
-      if (response.status === 'success') {
-        setMessageSearched(response.data)
-        setLoading(false)
-      }
+      setMessageSearched(response.data)
     });
   }
 
   const handleGoToMessage = (messageId: string) => {
     emitEvent('getMessage', { token, conversationId, messageId }, (response) => {
-      if (response.status === 'success') {
-        setAllMessages && setAllMessages(response.data)
-      }
+      setAllMessages && setAllMessages(response.data)
     });
     handleClose()
   }
+
+  console.log('userSearchedAdd', messageSearched.length, userSearchedAdd.length, isSearching, loading)
 
   return (
     <div className={styles.SearchGlobalBar_container} onKeyDown={(e) => {
@@ -139,7 +139,7 @@ const SearchGlobalBar = ({
           </div>}
         </div>
 
-        {(userSearchedAdd.length < 1 && isSearching && !loading) && <div className={styles.noUserFound}>
+        {((userSearchedAdd.length < 1 && messageSearched.length < 1) && isSearching && !loading) && <div className={styles.noUserFound}>
           <h2>😢 No {state} found</h2>
         </div>}
 
