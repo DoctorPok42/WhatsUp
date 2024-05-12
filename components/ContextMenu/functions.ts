@@ -6,7 +6,7 @@ const ContextMenuFunctions = (
   conversations: any,
   setConversation: any,
   setAllMessages: any,
-  updateMessage: () => void,
+  updateMessage: (changedMessages?: any) => void,
   setInputBarMode: (arg: "chat" | "edit") => void,
   setInputBarValue: (arg: string) => void,
   emitEvent: any,
@@ -89,7 +89,11 @@ const ContextMenuFunctions = (
               (e: { _id: string }) => e._id !== messageIdHoverContextMenu
             )
           );
-          updateMessage();
+          updateMessage(
+            allMessages.filter(
+              (e: { _id: string }) => e._id !== messageIdHoverContextMenu
+            )
+          );
         }
       );
       break;
