@@ -16,6 +16,7 @@ interface InfoChatsProps {
   conversations: any[]
   setIsSearchOpen: (e: boolean) => void
   downloadFile: (fileId: string, name: string, type: string, content?: string) => void
+  setReloadConversations: (reload: boolean) => void
 }
 
 const InfoChats = ({
@@ -26,11 +27,13 @@ const InfoChats = ({
   conversations,
   setIsSearchOpen,
   downloadFile,
+  setReloadConversations,
 }: InfoChatsProps) => {
   const leaveChat = () => {
     emitEvent("leave", { token, conversationId: id }, (data: any) => {
       if (data.status === "success") {
         setIsInfoOpen(false)
+        setReloadConversations(true)
         router.push("/chats")
       } else {
         alert(data.message)

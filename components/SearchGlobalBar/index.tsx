@@ -112,8 +112,6 @@ const SearchGlobalBar = ({
     handleClose()
   }
 
-  console.log('userSearchedAdd', messageSearched.length, userSearchedAdd.length, isSearching, loading)
-
   return (
     <div className={styles.SearchGlobalBar_container} onKeyDown={(e) => {
       if (e.key === "Escape") {

@@ -81,7 +81,6 @@ const conversationsChoose = async (
 
     // Add the conversation id to the user's conversations list
     const conversationId = response._id;
-    console.log("conversationId", conversationId);
     firstUser.conversationsId.push({ conversationId, lastMessageSeen: "" });
     secondUser.conversationsId.push({ conversationId, lastMessageSeen: "" });
 
