@@ -14,22 +14,22 @@ interface ContactProps {
   token: string;
   id?: string;
   conversations?: any[];
+  setConversation?: (any: any) => void;
   userId: string;
   isLoading: boolean;
   showContact: boolean;
   setShowContact: (show: boolean) => void;
-  setReloadConversations: (reload: boolean) => void;
 }
 
 const Contact = ({
   token,
   id,
   conversations = [],
+  setConversation,
   userId,
   isLoading,
   showContact,
   setShowContact,
-  setReloadConversations,
 }: ContactProps) => {
   const [userSearched, setUserSearched] = useState<{
     id: string
@@ -74,7 +74,7 @@ const Contact = ({
       setUserSearched([])
       setIsPopupOpen(false)
       setSearch('')
-      setReloadConversations(true)
+      setConversation && setConversation([...conversations, data.data])
       router.push(`/chats/${data.data._id}`)
     })
   }

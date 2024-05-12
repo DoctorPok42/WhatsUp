@@ -16,7 +16,6 @@ const ChatsPage = ({ id, token, phone, userId } : any) => {
   const [isOnDrop, setIsOnDrop] = useState<boolean>(false)
   const [files, setFiles] = useState<File[]>([]);
   const [firstTime, setFirstTime] = useState<boolean>(true)
-  const [reloadConversations, setReloadConversations] = useState<boolean>(false)
 
   const getConversations = async () => {
     emitEvent("getConversations", { token }, (data: any) => {
@@ -36,13 +35,12 @@ const ChatsPage = ({ id, token, phone, userId } : any) => {
   })
 
   useEffect(() => {
-    if (firstTime || reloadConversations) {
+    if (firstTime) {
       setFirstTime(false)
       getConversations()
       getAllMessages()
-      setReloadConversations(false)
     }
-  }, [reloadConversations])
+  }, [])
 
   useEffect(() => {
     if (allMessages && conversations) {
@@ -134,7 +132,6 @@ const ChatsPage = ({ id, token, phone, userId } : any) => {
           setMessages={handleUpdateMessage}
           files={files}
           setFiles={setFiles}
-          setReloadConversations={setReloadConversations}
         />
         {(id && conversations) && <InfoChats
           isInfoOpen={isInfoOpen}
@@ -142,9 +139,9 @@ const ChatsPage = ({ id, token, phone, userId } : any) => {
           id={id[0]}
           token={token}
           conversations={conversations}
+          setConversations={setConversations}
           setIsSearchOpen={setIsSearchOpen}
           downloadFile={handleDownloadFile}
-          setReloadConversations={setReloadConversations}
         />}
       </main>
     </>
