@@ -62,7 +62,7 @@ const conversationsChoose = async (
       key: privateKey,
     };
 
-    const response = await newConversation.save();
+    let response = (await newConversation.save()) as any;
     if (!response)
       return { status: "error", message: "An error occurred.", data: null };
 
@@ -86,6 +86,8 @@ const conversationsChoose = async (
 
     await firstUser.save();
     await secondUser.save();
+
+    response = { ...response._doc, name: secondUser.username };
 
     return {
       status: "success",
