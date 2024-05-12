@@ -78,7 +78,7 @@ const Chats = ({
   const [isForceUnread, setIsForceUnread] = useState<boolean>(false)
   const [lastReaction, setLastReaction] = useState<{ value: string, authorId: string[] }[] | null>(null)
 
-  const updateMessage = () => setMessages(id, allMessages);
+  const updateMessage = (changedMessages?: any) => setMessages(id, changedMessages || allMessages)
 
   const getMessages = async (nbMessages?: boolean) => {
     if (!id) return
@@ -100,14 +100,13 @@ const Chats = ({
   socket.on("message", (data: any) => {
     if (data.conversationsId === id) {
       setAllMessages([...allMessages, data])
+      updateMessage([...allMessages, data])
     } else {
       const conversationIndex = conversations.findIndex(e => e._id === data.conversationsId)
       const newConversations = [...conversations]
       newConversations[conversationIndex].unreadMessages++
       setConversation(newConversations)
     }
-
-    updateMessage()
   })
 
   socket.on("isTypingUser", (data: any) => {
@@ -176,7 +175,10 @@ const Chats = ({
           ...data.data,
           content: message,
         }])
-        updateMessage()
+        updateMessage([...allMessages, {
+          ...data.data,
+          content: message,
+        }])
       })
     }
   }
