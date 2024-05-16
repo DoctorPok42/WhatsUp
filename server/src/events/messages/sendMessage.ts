@@ -5,6 +5,8 @@ import { Socket } from "socket.io";
 import mongoose from "mongoose";
 import dashboardActions from "../../userDashboard";
 import fs from "fs";
+import { decryptMessages } from "../../functions";
+import PrivateKeyModel from "../../schemas/privateKey";
 
 type FileData = {
   id: string;
@@ -167,11 +169,20 @@ const sendMessage = async (
       if (user._id === author._id) return;
       if (user._id.toString() == decoded.id) return;
 
+      const realIdPreaveteKey = new mongoose.Types.ObjectId(conversationId);
+      const prevateKey = await mongoose.connection.db
+        .collection("privateKeys")
+        .findOne({ conversationId: realIdPreaveteKey });
+      if (!prevateKey) return;
+
+      const decryptedMessage = decryptMessages([message], prevateKey.key) as any;
+      if (!decryptedMessage || decryptMessages.length <= 0 || decryptMessages == null) return;
+
       io.to(user.socketId).emit("message", {
         status: "success",
         conversationsId: conversationId,
         _id: message._id,
-        content: message.content,
+        content: decryptedMessage.length >= 1 ? decryptedMessage[0].content : null,
         date: message.date,
         authorId: message.authorId,
         phone: author.phone,
