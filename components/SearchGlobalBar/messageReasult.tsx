@@ -18,7 +18,7 @@ const MessageResult = ({
       padding: messageSearched.length ? '0.6em 0.5em' : '0 0.5em',
     }}>
       {messageSearched.map((e, index) => (
-        <div key={index} className={styles.message} onClick={() => handleGoToMessage(e._id)}>
+        <div key={e._id + index} className={styles.message} onClick={() => handleGoToMessage(e._id)}>
           <Image src={`https://api.dicebear.com/8.x/avataaars/svg?seed=${e.img}&radius=22&backgroundColor=65c9ff,b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&randomizeIds=true`} alt="userCardIcon" width={50} height={50} />
           <p>{e.content}</p>
           <span>{formatDate(new Date(e.date))}</span>

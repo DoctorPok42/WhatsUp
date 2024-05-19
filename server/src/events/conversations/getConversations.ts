@@ -20,7 +20,7 @@ const getConversations = async (
     return { status: "error", message: "Conversations not found.", data: null };
 
   const userConversations = user.conversationsId as User["conversationsId"];
-  let conversationsList = [] as any[];
+  let conversationsList: any[];
 
   // Get the conversations
   conversationsList = await Promise.all(

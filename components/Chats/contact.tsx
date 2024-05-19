@@ -108,17 +108,17 @@ const Contact = ({
         </div>}
 
         {userSearched.map((user, index) => (
-          <UserCard key={index} user={user} onClick={() => onChooseUser(user)} />
+          <UserCard key={index + user.id} user={user} onClick={() => onChooseUser(user)} />
         ))}
       </div>
 
       <div className={styles.conversations}>
         {(!isLoading && conversations) ? conversations.map((conversation, index) => (
-          <ConversationCard key={index} id={id} conversation={conversation} onClick={() => router.push(`/chats/${conversation._id}`)} showContact={showContact} />
+          <ConversationCard key={index + conversation._id} id={id} conversation={conversation} onClick={() => router.push(`/chats/${conversation._id}`)} showContact={showContact} />
         )) :
           Array(7).fill(0).map((_, index) => (
             <Skeleton
-              key={index}
+              key={index + "skeleton"}
               variant="rectangular"
               width="22em"
               height="100px"

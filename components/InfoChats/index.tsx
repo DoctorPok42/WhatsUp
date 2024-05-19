@@ -101,7 +101,7 @@ const InfoChats = ({
 
       <div className={styles.buttons}>
         {buttons.map((button, index) => (
-          <ButtonChat key={index} {...button} />
+          <ButtonChat key={button.name + index} {...button} />
         ))}
       </div>
 

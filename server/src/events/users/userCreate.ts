@@ -1,8 +1,6 @@
 import UserModel from "../../schemas/users";
 import { User } from "../../types";
 import { createAuthToken, sendMessage } from "../../functions";
-import crypto from "crypto";
-import mongoose from "mongoose";
 
 const userCreate = async (
   user: User
@@ -11,7 +9,7 @@ const userCreate = async (
 
   const newUser = new UserModel({
     phone: user.phone,
-    username: user.username || user.phone,
+    username: user.username ?? user.phone,
     options: user.options,
     joinedAt: user.joinedAt,
     verifCode,
@@ -30,7 +28,7 @@ const userCreate = async (
       return { status: "success", message: "User has been registered.", token };
     else
       return { status: "success", message: "An error occurred.", token: null };
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
 
     if (error.code === 11000) {
