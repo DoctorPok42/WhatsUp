@@ -1,8 +1,6 @@
 import UserModel from "../../schemas/users";
 import { User } from "../../types";
 import { createAuthToken, sendMessage } from "../../functions";
-import crypto from "crypto";
-import mongoose from "mongoose";
 
 const userCreate = async (
   user: User

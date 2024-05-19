@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 import dashboardActions from "../../userDashboard";
 import fs from "fs";
 import { decryptMessages } from "../../functions";
-import PrivateKeyModel from "../../schemas/privateKey";
 
 type FileData = {
   id: string;

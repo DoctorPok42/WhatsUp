@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical, faSearch, faThumbTack } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faThumbTack } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './style.module.scss';
 
