@@ -346,10 +346,10 @@ const Chats = ({
               if (e === null) return
               if (allMessages[index - 1] && !isSameDay(new Date(e.date), new Date(allMessages[index - 1].date))) {
                 return (
-                  <div key={index} className={styles.Chats_date}>
+                  <div key={index + "date"} className={styles.Chats_date}>
                     <p>{formatDate(new Date(e.date), true)}</p>
                     <ChatsMessage
-                      key={index}
+                      key={index + e._id}
                       message={e}
                       isGroup={conversationType}
                       userId={userId}
@@ -365,7 +365,7 @@ const Chats = ({
                 )
               } else {
                 return <ChatsMessage
-                  key={index}
+                  key={index + e._id}
                   message={e}
                   isGroup={false}
                   userId={userId}

@@ -129,7 +129,7 @@ const InputBar = ({
           {files.map((file, index) => {
             const extension = file.name.split('.').pop();
             return (
-              <div key={index} className={styles.Input_file}>
+              <div key={file.name + index} className={styles.Input_file}>
                 <div className={styles.remove}>
                   <FontAwesomeIcon icon={faTrash} width={15} height={15} color='#f03f41' onClick={() => {
                     const newFiles = files.filter((_, i) => i !== index);

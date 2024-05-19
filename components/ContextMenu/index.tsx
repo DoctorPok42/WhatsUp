@@ -139,7 +139,7 @@ const ContextMenu = ({
         <div className={styles.ContextMenu_reactions}>
           {preSelectedReactions.map((reaction, index) => (
             <NameTooltip
-              key={index}
+              key={reaction.icon + index}
               title={reaction.name}
               placement="top"
               TransitionComponent={Zoom}
@@ -147,7 +147,7 @@ const ContextMenu = ({
               arrow
             >
               <div
-                key={index}
+                key={reaction.icon + index}
                 className={styles.ContextMenu_button_reactions}
                 onClick={() => handleAddReaction(reaction.icon)}
               >
@@ -165,7 +165,7 @@ const ContextMenu = ({
 
         {menuButtons.map((button, index) => (
           <div
-            key={index}
+            key={button.name + index}
             className={styles.ContextMenu_button}
             id={button.color ? styles.ContextMenu_button_red : styles.ContextMenu_button_blue}
             onClick={

@@ -51,14 +51,14 @@ const SideBar = ({
         <div className={styles.list}>
           {listButtons.map((button, index) => (
             <NameTooltip
-              key={index}
+              key={button.name + index}
               title={button.name}
               placement="right"
               TransitionComponent={Zoom}
               TransitionProps={{ timeout: 100 }}
               arrow
             >
-              <div key={index} className={styles.button} onClick={() => router.push(button.path)} style={{
+              <div key={button.name + index} className={styles.button} onClick={() => router.push(button.path)} style={{
                 color: path === button.path ? '#5ad27d' : '#8393a3',
               }}>
                 <FontAwesomeIcon className={styles.icon} icon={button.icon} width={18} height={18} />
