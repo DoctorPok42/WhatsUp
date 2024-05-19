@@ -122,9 +122,9 @@ export default function Login() {
                           if (e.target.value.length === 1 && nextInput) nextInput.focus();
                         }}
                         onChange={(e: any) => {
-                          const inputs = document.querySelectorAll(".inputCode input") as NodeListOf<HTMLInputElement>;
+                          const inputs = document.querySelectorAll(".inputCode input") as any;
                           let code = "";
-                          inputs.forEach((input) => {
+                          inputs.forEach((input: any) => {
                             code += input.value;
                           });
                           setVerifCode(verifCode + e.target.value);

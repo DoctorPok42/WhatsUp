@@ -171,7 +171,7 @@ const ContextMenu = ({
             onClick={
               button.action
                 ? button.action
-                : () => handleAction(button.value as string)
+                : () => handleAction(button.value)
             }
             style={{
               backgroundColor: showPicker && button.name === "More reactions" ? "var(--blue)" : "",

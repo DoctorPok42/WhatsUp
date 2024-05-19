@@ -23,6 +23,17 @@ const ConfirmPopup = ({
 }: ConfirmPopupProps) => {
   if (!open) return null;
 
+  const chooseType = () => {
+    switch (type) {
+      case 'danger':
+        return { style: styles.danger, color: '#f44336' };
+      case 'warning':
+        return { style: styles.warning, color: '#ff9800' };
+      default:
+        return { style: styles.info, color: '#2196f3' };
+    }
+  };
+
   return (
     <div className={styles.ConfirmPopup_container} onKeyDown={
       (e) => {
@@ -47,16 +58,10 @@ const ConfirmPopup = ({
 
         <div className={styles.footer}>
           <button
-            className={
-              type === 'danger'
-                ? styles.danger
-                : type === 'warning'
-                  ? styles.warning
-                  : styles.info
-            }
+            className={chooseType().style}
             onClick={actionOnConfirm}
             style={{
-              backgroundColor: type === 'danger' ? '#f44336' : type === 'warning' ? '#ff9800' : '#2196f3',
+              backgroundColor: chooseType().color,
               color: 'var(--white)',
             }}
           >
