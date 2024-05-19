@@ -118,7 +118,7 @@ const Contact = ({
         )) :
           Array(7).fill(0).map((_, index) => (
             <Skeleton
-              key={index + Math.random()}
+              key={index + "skeleton"}
               variant="rectangular"
               width="22em"
               height="100px"
