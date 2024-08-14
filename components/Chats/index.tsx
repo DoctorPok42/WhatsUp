@@ -80,6 +80,32 @@ const Chats = ({
 
   const updateMessage = (changedMessages?: any) => setMessages(id, changedMessages || allMessages)
 
+  // catch ctrl + f, ctrl + k, ctrl + b
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'f') {
+        e.preventDefault();
+        setIsSearchOpen && setIsSearchOpen(!isSearchOpen);
+        setSearchState("message");
+      }
+      if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen && setIsSearchOpen(!isSearchOpen);
+        setSearchState("user");
+      }
+      if (e.ctrlKey && e.key === 'b') {
+        e.preventDefault();
+        setIsInfoOpen && setIsInfoOpen(!isInfoOpen);
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isSearchOpen, isInfoOpen])
+
   const getMessages = async (nbMessages?: boolean) => {
     if (!id) return
     emitEvent("getMessages", { token, conversationId: id, messageLoaded: nbMessages ? 0 : messageLoaded }, (data: any) => {
