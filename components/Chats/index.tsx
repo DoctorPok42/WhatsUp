@@ -12,6 +12,7 @@ import { useCopyToClipboard } from '@uidotdev/usehooks';
 import { cryptMessage } from '@/tools/cryptMessage';
 import downloadFile from '@/tools/downloadFile';
 import ContextMenuFunctions from '../ContextMenu/functions';
+import router from 'next/router';
 
 import styles from './style.module.scss';
 
@@ -97,6 +98,16 @@ const Chats = ({
         e.preventDefault();
         setIsInfoOpen && setIsInfoOpen(!isInfoOpen);
       }
+      if (e.ctrlKey && e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!(conversations[conversations.findIndex((e: any) => e._id === id) - 1])) return
+        router.push(`/chats/${conversations[conversations.findIndex((e: any) => e._id === id) - 1]._id}`)
+      }
+      if (e.ctrlKey && e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (!(conversations[conversations.findIndex((e: any) => e._id === id) + 1])) return
+        router.push(`/chats/${conversations[conversations.findIndex((e: any) => e._id === id) + 1]._id}`)
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
@@ -104,7 +115,7 @@ const Chats = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isSearchOpen, isInfoOpen])
+  }, [isSearchOpen, isInfoOpen, id, conversations])
 
   const getMessages = async (nbMessages?: boolean) => {
     if (!id) return
