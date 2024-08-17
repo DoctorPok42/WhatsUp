@@ -19,7 +19,7 @@ jobs:
       - name: 🕵️‍♂️ Security Scan Backend
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
+          scan-type: 'repo'
           format: table
           exit-code: 1
           severity: 'CRITICAL,HIGH'
@@ -27,7 +27,7 @@ jobs:
       - name: 🕵️‍♂️ Security Scan Frontend
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
+          scan-type: 'repo'
           format: table
           exit-code: 1
           severity: 'CRITICAL,HIGH'
@@ -66,7 +66,7 @@ jobs:
       - name: 🕵️‍♂️ Security Scan Backend
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
+          scan-type: 'repo'
           format: table
           exit-code: 1
           severity: 'CRITICAL,HIGH'
@@ -74,7 +74,7 @@ jobs:
       - name: 🕵️‍♂️ Security Scan Frontend
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
+          scan-type: 'repo'
           format: table
           exit-code: 1
           severity: 'CRITICAL,HIGH'
@@ -107,7 +107,7 @@ jobs:
   push_docker_images:
     name: 📡 Push Docker images
     runs-on: self-hosted
-    needs: security
+    needs: build_docker_images
     if: github.event_name == 'push'
 
     steps:
