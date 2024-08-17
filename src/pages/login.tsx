@@ -127,7 +127,7 @@ export default function Login() {
                           inputs.forEach((input: any) => {
                             code += input.value;
                           });
-                          setVerifCode(verifCode + e.target.value);
+                          setVerifCode(code || "");
                         }}
                         />
                       ))
