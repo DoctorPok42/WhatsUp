@@ -10,32 +10,10 @@ on:
       - "ga-ignore-"
 
 jobs:
-  security_pr:
-    name: 🔒 Security PR
-    runs-on: self-hosted
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: 🕵️‍♂️ Security Scan Backend
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'repo'
-          format: table
-          exit-code: 1
-          severity: 'CRITICAL,HIGH'
-
-      - name: 🕵️‍♂️ Security Scan Frontend
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'repo'
-          format: table
-          exit-code: 1
-          severity: 'CRITICAL,HIGH'
-
   build_pr:
     name: 🛠️ Build PR
     runs-on: self-hosted
-    needs: security_pr
+    if: github.event_name == 'pull_request'
 
     steps:
       - name: 💾 Cache Dependencies
@@ -57,32 +35,10 @@ jobs:
           docker build -t whatsup_backend:latest ./server
           docker build -t whatsup_frontend:latest .
 
-  security:
-    name: 🔒 Security
-    runs-on: self-hosted
-    if: github.event_name == 'push'
-
-    steps:
-      - name: 🕵️‍♂️ Security Scan Backend
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'repo'
-          format: table
-          exit-code: 1
-          severity: 'CRITICAL,HIGH'
-
-      - name: 🕵️‍♂️ Security Scan Frontend
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'repo'
-          format: table
-          exit-code: 1
-          severity: 'CRITICAL,HIGH'
-
   build_docker_images:
     name: 🛠️ Build Docker images
     runs-on: self-hosted
-    needs: security
+    if: github.event_name == 'push'
 
     steps:
       - name: 💾 Cache Dependencies
@@ -104,10 +60,54 @@ jobs:
           docker build -t whatsup_backend:latest ./server --build-arg SERVER_URL=${{ secrets.SERVER_URL }} --build-arg SERVER_PORT=${{ secrets.SERVER_PORT }} --build-arg MONGO_URI=${{ secrets.MONGO_URI }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg TOKEN_EXPIRATION=${{ secrets.TOKEN_EXPIRATION }} --build-arg TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} --build-arg TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }}
           docker build -t whatsup_frontend:latest . --build-arg SERVER_URL=${{ secrets.SERVER_URL }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }}
 
+  security_pr:
+    name: 🔒 Security PR
+    runs-on: self-hosted
+    needs: build_pr
+
+    steps:
+      - name: 🕵️‍♂️ Security Scan Backend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: whatsup_backend:latest
+          format: table
+          exit-code: 1
+          severity: 'CRITICAL,HIGH'
+
+      - name: 🕵️‍♂️ Security Scan Frontend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: whatsup_frontend:latest
+          format: table
+          exit-code: 1
+          severity: 'CRITICAL,HIGH'
+
+  security:
+    name: 🔒 Security
+    runs-on: self-hosted
+    needs: build_docker_images
+
+    steps:
+      - name: 🕵️‍♂️ Security Scan Backend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: whatsup_backend:latest
+          format: table
+          exit-code: 1
+          severity: 'CRITICAL,HIGH'
+
+      - name: 🕵️‍♂️ Security Scan Frontend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: whatsup_frontend:latest
+          format: table
+          exit-code: 1
+          severity: 'CRITICAL,HIGH'
+
   push_docker_images:
     name: 📡 Push Docker images
     runs-on: self-hosted
-    needs: build_docker_images
+    needs: security
     if: github.event_name == 'push'
 
     steps:
