@@ -84,29 +84,35 @@ const Chats = ({
   // catch ctrl + f, ctrl + k, ctrl + b
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 'f') {
-        e.preventDefault();
-        setIsSearchOpen && setIsSearchOpen(!isSearchOpen);
-        setSearchState("message");
-      }
-      if (e.ctrlKey && e.key === 'k') {
-        e.preventDefault();
-        setIsSearchOpen && setIsSearchOpen(!isSearchOpen);
-        setSearchState("user");
-      }
-      if (e.ctrlKey && e.key === 'b') {
-        e.preventDefault();
-        setIsInfoOpen && setIsInfoOpen(!isInfoOpen);
-      }
-      if (e.ctrlKey && e.key === 'ArrowUp') {
-        e.preventDefault();
-        if (!(conversations[conversations.findIndex((e: any) => e._id === id) - 1])) return
-        router.push(`/chats/${conversations[conversations.findIndex((e: any) => e._id === id) - 1]._id}`)
-      }
-      if (e.ctrlKey && e.key === 'ArrowDown') {
-        e.preventDefault();
-        if (!(conversations[conversations.findIndex((e: any) => e._id === id) + 1])) return
-        router.push(`/chats/${conversations[conversations.findIndex((e: any) => e._id === id) + 1]._id}`)
+      if (e.ctrlKey) {
+        switch (e.key) {
+          case "f":
+            e.preventDefault();
+            setIsSearchOpen && setIsSearchOpen(!isSearchOpen);
+            setSearchState("message");
+            break;
+          case "k":
+            e.preventDefault();
+            setIsSearchOpen && setIsSearchOpen(!isSearchOpen);
+            setSearchState("user");
+            break;
+          case "b":
+            e.preventDefault();
+            setIsInfoOpen && setIsInfoOpen(!isInfoOpen);
+            break;
+          case 'ArrowUp':
+            e.preventDefault();
+            if (!(conversations[conversations.findIndex((e: any) => e._id === id) - 1])) return
+            router.push(`/chats/${conversations[conversations.findIndex((e: any) => e._id === id) - 1]._id}`)
+            break;
+          case 'ArrowDown':
+            e.preventDefault();
+            if (!(conversations[conversations.findIndex((e: any) => e._id === id) + 1])) return
+            router.push(`/chats/${conversations[conversations.findIndex((e: any) => e._id === id) + 1]._id}`)
+            break;
+          default:
+            break;
+        }
       }
     }
 
