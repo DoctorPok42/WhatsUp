@@ -1,6 +1,8 @@
 import React from "react";
 import Head from "next/head";
 import { SideBar } from "../../components";
+import getToken from "@/tools/getToken";
+import Cookies from "universal-cookie";
 
 export default function Home() {
   return (
@@ -17,4 +19,22 @@ export default function Home() {
       </main>
     </>
   );
+}
+
+export async function getServerSideProps(context: any) {
+  const cookies = new Cookies(context.req.headers.cookie);
+  const { token, phone, userId } = getToken(cookies)
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {}
+  };
 }
