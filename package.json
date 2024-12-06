@@ -18,6 +18,7 @@
     "@mui/material": "^5.14.18",
     "@uidotdev/usehooks": "^2.4.1",
     "cookie": "^0.7.0",
+    "cross-spawn": "^7.0.5",
     "dotenv": "^16.4.1",
     "emoji-picker-react": "^4.8.0",
     "jsonwebtoken": "^9.0.2",

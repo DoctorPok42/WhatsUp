@@ -16,6 +16,7 @@
         "chalk": "^4.1.2",
         "cls": "^0.1.5",
         "cookie": "^0.7.0",
+        "cross-spawn": "^7.0.5",
         "crypto": "^1.0.1",
         "dotenv": "^16.0.2",
         "jsonwebtoken": "^9.0.2",
