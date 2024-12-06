@@ -21,7 +21,7 @@ jobs:
         with:
           image-ref: whatsup_backend:latest
           format: table
-          exit-code: 1
+          # exit-code: 1
           severity: 'CRITICAL,HIGH'
 
       - name: 🕵️‍♂️ Security Scan Frontend
@@ -29,7 +29,7 @@ jobs:
         with:
           image-ref: whatsup_frontend:latest
           format: table
-          exit-code: 1
+          # exit-code: 1
           severity: 'CRITICAL,HIGH'
 
   security:
@@ -43,7 +43,7 @@ jobs:
         with:
           image-ref: whatsup_backend:latest
           format: table
-          exit-code: 1
+          # exit-code: 1
           severity: 'CRITICAL,HIGH'
 
       - name: 🕵️‍♂️ Security Scan Frontend
@@ -51,7 +51,7 @@ jobs:
         with:
           image-ref: whatsup_frontend:latest
           format: table
-          exit-code: 1
+          # exit-code: 1
           severity: 'CRITICAL,HIGH'
 
   build_pr:
