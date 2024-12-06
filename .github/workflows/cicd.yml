@@ -13,6 +13,7 @@ jobs:
   security_pr:
     name: 🔒 Security PR
     runs-on: self-hosted
+    if: github.event_name == 'pull_request'
 
     steps:
       - name: 🕵️‍♂️ Security Scan Backend
@@ -34,6 +35,7 @@ jobs:
   security:
     name: 🔒 Security
     runs-on: self-hosted
+    if: github.event_name == 'push'
 
     steps:
       - name: 🕵️‍♂️ Security Scan Backend
@@ -109,8 +111,8 @@ jobs:
   push_docker_images:
     name: 📡 Push Docker images
     runs-on: self-hosted
-    needs: security
     if: github.event_name == 'push'
+    needs: build_docker_images
 
     steps:
       - run: |
