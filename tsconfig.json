@@ -17,5 +17,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/tools/calculation.worker.tsx", "public/workerScript.js", "src/tools/decryptMessage.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "server"]
 }
