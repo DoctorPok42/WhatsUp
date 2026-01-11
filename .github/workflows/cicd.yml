@@ -86,6 +86,8 @@ jobs:
     runs-on: self-hosted
     if: github.event_name == 'push'
     needs: security
+    outputs:
+      image-tags: ${{ steps.image-names.outputs.image-tags }}
 
     steps:
       - name: 💾 Cache Dependencies
@@ -107,6 +109,11 @@ jobs:
           docker build -t whatsup_file_storage:latest .
           docker build -t whatsup_backend:latest ./server --build-arg SERVER_URL=${{ secrets.SERVER_URL }} --build-arg SERVER_PORT=${{ secrets.SERVER_PORT }} --build-arg MONGO_URI=${{ secrets.MONGO_URI }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg TOKEN_EXPIRATION=${{ secrets.TOKEN_EXPIRATION }} --build-arg TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} --build-arg TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }}
           docker build -t whatsup_frontend:latest . --build-arg SERVER_URL=${{ secrets.SERVER_URL }} --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }}
+
+      - name: Image Names
+        id: image-names
+        run: |
+          echo "::set-output name=image-tags::whatsup_file_storage:latest,whatsup_backend:latest,whatsup_frontend:latest"
 
   push_docker_images:
     name: 📡 Push Docker images
