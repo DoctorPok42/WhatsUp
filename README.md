@@ -2,8 +2,6 @@
 
 # What's Up
 
-[![CI/CD Pipeline](https://github.com/DoctorPok42/WhatsUp/actions/workflows/cicd.yml/badge.svg)](https://github.com/DoctorPok42/WhatsUp/actions/workflows/cicd.yml)
-
 This is a WhatsApp clone built using Next.js, MongoDB, and Socket.io. It is a simple chat application that allows users to send and receive encrypted messages in real-time.
 
 ## Features
