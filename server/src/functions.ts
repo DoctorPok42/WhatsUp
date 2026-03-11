@@ -24,15 +24,20 @@ export const createAuthToken = async (id: string) => {
   const user = await UserModel.findOne({ _id: id });
   if (!user) return null;
 
+  const secret = process.env.JWT_SECRET;
+  if (!secret) return null;
+
+  const expiresIn = (process.env.TOKEN_EXPIRATION || "1d") as jwt.SignOptions["expiresIn"];
+
   return jwt.sign(
     {
       id,
       phone: user.phone,
       name: user.username,
     },
-    process.env.JWT_SECRET as string,
+    secret,
     {
-      expiresIn: process.env.TOKEN_EXPIRATION,
+      expiresIn,
     }
   );
 };
