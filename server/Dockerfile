@@ -20,11 +20,11 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --ignore-scripts
+RUN npm install --ignore-scripts --legacy-peer-deps
 
 COPY . ./
 
-RUN npm run build -legacy-peer-deps
+RUN npm run build
 
 EXPOSE $PORT
 
