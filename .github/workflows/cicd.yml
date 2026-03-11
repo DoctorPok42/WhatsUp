@@ -131,15 +131,9 @@ jobs:
           docker tag whatsup_file_storage:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage
           docker tag whatsup_backend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
           docker tag whatsup_frontend:latest ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
-          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:backend:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend:latest
-          docker tag whatsup_file_storage:latest ghcr.io/${{ github.repository_owner }}/whatsup_file_storage:latest
-          docker tag whatsup_backend:latest ghcr.io/${{ github.repository_owner }}/whatsup_backend:latest
-          docker tag whatsup_frontend:latest ghcr.io/${{ github.repository_owner }}/whatsup_frontend:latest
-          docker push ghcr.io/${{ github.repository_owner }}/whatsup_file_storage:latest
-          docker push ghcr.io/${{ github.repository_owner }}/whatsup_backend:latest
-          docker push ghcr.io/${{ github.repository_owner }}/whatsup_frontend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:file_storage
+          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/whatsup:frontend
 
   deploy:
     name: 🚀 Deploy to VPS
