@@ -24,7 +24,7 @@ RUN npm install --ignore-scripts
 
 COPY . ./
 
-RUN npm run build
+RUN npm run build -legacy-peer-deps
 
 EXPOSE $PORT
 
